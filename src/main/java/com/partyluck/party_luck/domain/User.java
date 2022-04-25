@@ -2,11 +2,13 @@ package com.partyluck.party_luck.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 public class User {
@@ -14,7 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -26,10 +28,10 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String profileImg;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
