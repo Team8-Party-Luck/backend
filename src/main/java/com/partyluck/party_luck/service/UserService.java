@@ -126,4 +126,22 @@ public class UserService {
 
         return result;
     }
+
+    public ResponseDto deleteuser(long id) {
+        ResponseDto result=new ResponseDto();
+        try {
+            userRepository.deleteById(id);
+        }
+        catch(Exception e){
+            result.setHttp(200);
+            result.setMsg("삭제 실패...");
+            result.setStatus(false);
+            return result;
+        }
+        result.setHttp(200);
+        result.setMsg("삭제 성공!");
+        result.setStatus(true);
+        return result;
+
+    }
 }

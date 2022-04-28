@@ -69,5 +69,9 @@ public class UserController {
     public ResponseDto modifyuser(@AuthenticationPrincipal UserDetailsImpl userDetails,ModifyUserRequestDto dto){
         return userService.modifyuser(userDetails.getId(),dto);
     }
+    @DeleteMapping("/api/user")
+    public ResponseDto deleteuser(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.deleteuser(userDetails.getId());
+    }
 
 }
