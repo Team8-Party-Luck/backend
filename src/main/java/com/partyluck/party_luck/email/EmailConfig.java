@@ -35,8 +35,8 @@ public class EmailConfig {
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost("smtp.gmail.com");
-        javaMailSender.setUsername("wjddnckd1210@gmail.com");
-        javaMailSender.setPassword("jwc20122470!");
+        javaMailSender.setUsername(id);
+        javaMailSender.setPassword(password);
         javaMailSender.setPort(port);
         javaMailSender.setJavaMailProperties(getMailProperties());
         javaMailSender.setDefaultEncoding("UTF-8");
