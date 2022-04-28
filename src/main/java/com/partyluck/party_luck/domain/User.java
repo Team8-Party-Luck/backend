@@ -19,7 +19,7 @@ public class User {
 //    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -28,17 +28,20 @@ public class User {
     @Column(nullable = false)
     private String nickname;
 
-//    @Column(nullable = false)
-    private String profileImg;
+    @Column(unique = true)
+    private Long kakaoId;
 
 //    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+//    private String profileImg;
 
-    @OneToMany(mappedBy = "user")
-    private List<PartyJoin> partyJoinList;
+//    @Column(nullable = false)
+//    @Enumerated(value = EnumType.STRING)
+//    private UserRoleEnum role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Subscribe> subscribeList;
+//    @OneToMany(mappedBy = "user")
+//    private List<PartyJoin> partyJoinList;
+//
+//    @OneToMany(mappedBy = "user")
+//    private List<Subscribe> subscribeList;
 
 }

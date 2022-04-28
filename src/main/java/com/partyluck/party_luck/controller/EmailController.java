@@ -14,32 +14,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.partyluck.party_luck.email.*;
 
 @Controller
-@RequestMapping("/service/*")
+@RequestMapping("/auth/*")
 public class EmailController {
     @Autowired
     EmailService service;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @PostMapping("/mail")
+    @PostMapping("/email")
     @ResponseBody
     public void emailConfirm(String userId)throws Exception{
         logger.info("post emailConfirm");
         System.out.println("전달 받은 이메일 : "+userId);
         service.sendSimpleMessage(userId);
     }
-    @PostMapping("/verifyCode")
+    @PostMapping("/email/check")
     @ResponseBody
-    public int verifyCode(String code) {
+    public String verifyCode(String code) {
         logger.info("Post verifyCode");
 
         int result = 0;
+        String results="인증이 실패했습니다...";
         System.out.println("code : "+code);
         System.out.println("code match : "+ EmailServiceImpl.ePw.equals(code));
         if(EmailServiceImpl.ePw.equals(code)) {
             result =1;
+            results="인증이 성공했습니다!";
         }
 
-        return result;
+        return results;
     }
 }

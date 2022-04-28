@@ -7,16 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SignupRequestDto {
+public class UserResponseResultDto {
+    private Long userid;
     private String email;
-
-    private String password;
-
-    private String passwordCheck;
-
     private String nickname;
-
-
-
-
+    private String password;
 }

@@ -1,19 +1,29 @@
 package com.partyluck.party_luck.controller;
 
-import com.partyluck.party_luck.dto.SignupRequestDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.partyluck.party_luck.domain.User;
+import com.partyluck.party_luck.dto.*;
+import com.partyluck.party_luck.security.UserDetailsImpl;
+import com.partyluck.party_luck.security.jwt.JwtTokenUtils;
 import com.partyluck.party_luck.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.partyluck.party_luck.service.KakaoUserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 public class UserController {
     private final UserService userService;
+    private final KakaoUserService kakaoUserService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, KakaoUserService kakaoUserService) {
         this.userService = userService;
+        this.kakaoUserService = kakaoUserService;
     }
 
     @PostMapping("/api/user")
@@ -24,4 +34,40 @@ public class UserController {
 
         return "Success";
     }
+    @ResponseBody
+    @GetMapping("/user/kakao/callback")
+    public String kakaoLogin(@RequestParam String code, final HttpServletResponse response) throws JsonProcessingException {
+        User user=kakaoUserService.kakaoLogin(code);
+        UserDetailsImpl userDetails=new UserDetailsImpl(user);
+        final String token = JwtTokenUtils.generateJwtToken(userDetails);
+        System.out.println(token);
+        response.addHeader("Authorization", "BEARER" + " " + token);
+        System.out.println(response.getStatus());
+        return token;
+    }
+
+    @PostMapping("/api/user/initial")
+    public ResponseDto initialRegister(@RequestParam("image")MultipartFile multipartFile, InitialDto dto,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails)throws IOException {
+        return userService.initialRegister(multipartFile, dto,userDetails);
+
+    }
+    @GetMapping("/api/user/initial")
+    public InitialResponseDto myinitial(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.myinitial(userDetails.getId());
+    }
+    @PutMapping("/api/user/initial")
+    public ResponseDto modifiyinitial(@RequestParam("image")MultipartFile multipartFile, InitialDto dto,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        return userService.modifyinitial(multipartFile,dto,userDetails.getId());
+    }
+    @GetMapping("/api/user")
+    public UserResponseDto userview(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.userview(userDetails.getId());
+    }
+    @PutMapping("/api/user")
+    public ResponseDto modifyuser(@AuthenticationPrincipal UserDetailsImpl userDetails,ModifyUserRequestDto dto){
+        return userService.modifyuser(userDetails.getId(),dto);
+    }
+
 }

@@ -127,7 +127,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/user/signup");
 
         skipPathList.add("POST,/api/user");
-        skipPathList.add("POST,/service/**");
+        skipPathList.add("POST,/auth/**");
 
         skipPathList.add("GET,/");
         skipPathList.add("GET,/basic.js");

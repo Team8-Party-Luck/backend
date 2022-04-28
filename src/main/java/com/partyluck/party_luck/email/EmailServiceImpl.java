@@ -25,15 +25,15 @@ public class EmailServiceImpl implements EmailService{
         MimeMessage  message = emailSender.createMimeMessage();
 
         message.addRecipients(RecipientType.TO, to);//보내는 대상
-        message.setSubject("BZshop 인증번호가 도착했습니다.");//제목
+        message.setSubject("파티럭 인증번호가 도착했습니다.");//제목
 
         String msgg="";
         msgg+= "<div style='margin:100px;'>";
-        msgg+= "<h1> 안녕하세요  BZshop입니다!!! </h1>";
+        msgg+= "<h1> 안녕하세요? 파티럭 인증메일입니다. </h1>";
         msgg+= "<br>";
         msgg+= "<p>아래 코드를 회원가입 창으로 돌아가 입력해주세요<p>";
         msgg+= "<br>";
-        msgg+= "<p>감사합니다!<p>";
+        msgg+= "<p>감사합니다.<p>";
         msgg+= "<br>";
         msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
         msgg+= "<h3 style='color:blue;'>회원가입 코드입니다.</h3>";
