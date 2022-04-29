@@ -47,4 +47,10 @@ public class PartyController {
         return partyService.partyout(id,userDetails.getId());
     }
 
+    @Transactional
+    @PostMapping("/api/party/sub/{partyid}")
+    public String likeparty(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.likeparty(id,userDetails.getId());
+    }
+
 }

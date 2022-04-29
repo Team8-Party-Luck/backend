@@ -4,14 +4,12 @@ import com.partyluck.party_luck.config.S3Uploader;
 import com.partyluck.party_luck.domain.Image;
 import com.partyluck.party_luck.domain.Party;
 import com.partyluck.party_luck.domain.PartyJoin;
+import com.partyluck.party_luck.domain.Subscribe;
 import com.partyluck.party_luck.dto.PartyRequestDto;
 import com.partyluck.party_luck.dto.PartyResponseDto;
 import com.partyluck.party_luck.dto.PartyResponseResultDto;
 import com.partyluck.party_luck.dto.ResponseDto;
-import com.partyluck.party_luck.repository.ImageRepository;
-import com.partyluck.party_luck.repository.PartyJoinRepository;
-import com.partyluck.party_luck.repository.PartyRepository;
-import com.partyluck.party_luck.repository.UserRepository;
+import com.partyluck.party_luck.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +26,16 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final S3Uploader s3Uploader;
     private final PartyJoinRepository partyJoinRepository;
+    private final SubscribeRepository subscribeRepository;
 
     @Autowired
-    public PartyService(UserRepository userRepository, ImageRepository imageRepository, PartyRepository partyRepository, S3Uploader s3Uploader, PartyJoinRepository partyJoinRepository) {
+    public PartyService(UserRepository userRepository, ImageRepository imageRepository, PartyRepository partyRepository, S3Uploader s3Uploader, PartyJoinRepository partyJoinRepository, SubscribeRepository subscribeRepository) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
         this.partyRepository = partyRepository;
         this.s3Uploader = s3Uploader;
         this.partyJoinRepository = partyJoinRepository;
+        this.subscribeRepository = subscribeRepository;
     }
 
     public ResponseDto registerparty(MultipartFile[] multipartFile, PartyRequestDto dto, long id) throws IOException {
@@ -83,7 +83,8 @@ public class PartyService {
             dto.setLocation(p.getLocataion());
             dto.setHost(p.getHost());
             dto.setTitle(p.getTitle());
-            dto.setMemberCur(0);
+            int sizemem=partyJoinRepository.findAllByParty(p).size();
+            dto.setMemberCur(sizemem);
             List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
             String[] ist=new String[itmp.size()];
             for(int i=0;i<itmp.size();i++){
@@ -139,5 +140,26 @@ public class PartyService {
             return "탈퇴에 실패했습니다...";
         }
         return "탈퇴 성공!";
+    }
+
+    @Transactional
+    public String likeparty(Long id, long id1) {
+
+        Subscribe subscribe=subscribeRepository.findByPartyAndUser(partyRepository.findById(id).orElse(null),userRepository.findById(id1).orElse(null)).orElse(null);
+        try {
+            if (subscribe == null) {
+                Subscribe tmp = new Subscribe();
+                tmp.setParty(partyRepository.findById(id).orElse(null));
+                tmp.setUser(userRepository.findById(id1).orElse(null));
+                subscribeRepository.save(tmp);
+            } else {
+                subscribeRepository.deleteSubscribeByPartyAndUser(partyRepository.findById(id).orElse(null), userRepository.findById(id1).orElse(null));
+
+            }
+        }
+        catch(Exception e){
+            return "오류가 발생했습니다...";
+        }
+        return "성공!";
     }
 }
