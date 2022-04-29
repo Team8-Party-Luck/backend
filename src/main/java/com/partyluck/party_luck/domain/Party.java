@@ -1,9 +1,16 @@
 package com.partyluck.party_luck.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +30,11 @@ public class Party {
     private String date;
 
     @Column(nullable = false)
-    private String location_big;
+    private String locataion;
 
-    @Column(nullable = false)
-    private String location_small;
+    private String store;
+
+    private String host;
 
     @OneToMany(mappedBy = "party")
     private List<PartyJoin> partyJoinList;
