@@ -5,10 +5,7 @@ import com.partyluck.party_luck.domain.Image;
 import com.partyluck.party_luck.domain.Party;
 import com.partyluck.party_luck.domain.PartyJoin;
 import com.partyluck.party_luck.domain.Subscribe;
-import com.partyluck.party_luck.dto.PartyRequestDto;
-import com.partyluck.party_luck.dto.PartyResponseDto;
-import com.partyluck.party_luck.dto.PartyResponseResultDto;
-import com.partyluck.party_luck.dto.ResponseDto;
+import com.partyluck.party_luck.dto.*;
 import com.partyluck.party_luck.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -161,5 +158,38 @@ public class PartyService {
             return "오류가 발생했습니다...";
         }
         return "성공!";
+    }
+
+    public PartyDetailsResponseDto partydetail(Long id, long id1) {
+        PartyDetailsResponseDto result=new PartyDetailsResponseDto();
+        Party party=partyRepository.findById(id).orElse(null);
+        result.setCapacity(party.getCapacity());
+        result.setDate(party.getDate());
+        result.setDesc(party.getDescription());
+        result.setPartyid(id);
+        result.setLocation(party.getLocataion());
+        result.setHostid(userRepository.findByNickname(party.getHost()).orElse(null).getId());
+        result.setHost(party.getHost());
+        result.setStore(party.getStore());
+        result.setTitle(party.getTitle());
+        result.setMemberCnt(partyJoinRepository.findAllByParty(party).size());
+        List<Image> itmp=imageRepository.findAllByPartyid(id);
+        String[] ist=new String[itmp.size()];
+        for(int i=0;i< itmp.size();i++)
+            ist[i]=itmp.get(i).getImageSrc();
+        result.setImage(ist);
+        Subscribe subscribe=subscribeRepository.findByPartyAndUser(party,userRepository.findById(id1).orElse(null)).orElse(null);
+        if(subscribe==null)
+            result.setSub(false);
+        else
+            result.setSub(true);
+        PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(party,userRepository.findById(id1).orElse(null)).orElse(null);
+        if(partyJoin==null)
+            result.setJoin(false);
+        else
+            result.setJoin(true);
+        return result;
+
+
     }
 }

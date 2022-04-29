@@ -1,5 +1,6 @@
 package com.partyluck.party_luck.controller;
 
+import com.partyluck.party_luck.dto.PartyDetailsResponseDto;
 import com.partyluck.party_luck.dto.PartyRequestDto;
 import com.partyluck.party_luck.dto.PartyResponseDto;
 import com.partyluck.party_luck.dto.ResponseDto;
@@ -33,10 +34,12 @@ public class PartyController {
     public PartyResponseDto partyview(){
         return partyService.partyview();
     }
+
     @DeleteMapping("/api/party/{partyid}")
     public ResponseDto deleteparty(@PathVariable("partyid") Long id){
         return partyService.deleteparty(id);
     }
+
     @PostMapping("/api/party/in/{partyid}")
     public String partyjoin(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.partyjoin(id,userDetails.getId());
@@ -51,6 +54,11 @@ public class PartyController {
     @PostMapping("/api/party/sub/{partyid}")
     public String likeparty(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.likeparty(id,userDetails.getId());
+    }
+
+    @GetMapping("/api/party/details/{partyid}")
+    public PartyDetailsResponseDto partydetail(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.partydetail(id,userDetails.getId());
     }
 
 }
