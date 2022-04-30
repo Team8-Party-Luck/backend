@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -172,9 +173,11 @@ public class UserService {
         return result;
     }
 
+    @Transactional
     public ResponseDto deleteuser(long id) {
         ResponseDto result=new ResponseDto();
         try {
+//            System.out.println(id);
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }

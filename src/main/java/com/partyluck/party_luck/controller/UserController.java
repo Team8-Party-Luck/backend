@@ -9,6 +9,7 @@ import com.partyluck.party_luck.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.partyluck.party_luck.service.KakaoUserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,6 +69,7 @@ public class UserController {
     public ResponseDto modifyuser(@AuthenticationPrincipal UserDetailsImpl userDetails,ModifyUserRequestDto dto){
         return userService.modifyuser(userDetails.getId(),dto);
     }
+    @Transactional
     @DeleteMapping("/api/user")
     public ResponseDto deleteuser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.deleteuser(userDetails.getId());
