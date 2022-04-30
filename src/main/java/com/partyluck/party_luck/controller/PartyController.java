@@ -30,7 +30,7 @@ public class PartyController {
                                      @AuthenticationPrincipal UserDetailsImpl userDetails)throws IOException {
         return partyService.registerparty(multipartFile,dto,userDetails.getId());
     }
-    @GetMapping("/api/party")
+    @GetMapping("/home/parties/latest")
     public PartyResponseDto partyview(){
         return partyService.partyview();
     }
@@ -46,7 +46,7 @@ public class PartyController {
         return partyService.partyjoin(id,userDetails.getId());
     }
     @Transactional
-    @DeleteMapping("/api/party/in/{partyid}")
+    @DeleteMapping("/api/party/out/{partyid}")
     public String partyout(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.partyout(id,userDetails.getId());
     }

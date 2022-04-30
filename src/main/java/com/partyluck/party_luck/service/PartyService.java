@@ -46,7 +46,7 @@ public class PartyService {
             party.setCapacity(dto.getCapacity());
             party.setDate(dto.getDate());
             party.setDescription(dto.getDesc());
-            party.setLocataion(dto.getLocation());
+//            party.setLocataion(dto.getLocation());
             party.setStore(dto.getStore());
             party.setMeeting(dto.getMeeting());
             party.setTime(dto.getTime());
@@ -84,10 +84,12 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-            dto.setLocation(p.getLocataion());
+//            dto.setLocation(p.getLocataion());
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
+            dto.setStore(p.getStore());
+            dto.setDesc(p.getDescription());
             List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
             String[] ist=new String[itmp.size()];
             for(int i=0;i<itmp.size();i++){
@@ -181,10 +183,13 @@ public class PartyService {
         result.setDate(party.getDate());
         result.setDesc(party.getDescription());
         result.setPartyid(id);
-        result.setLocation(party.getLocataion());
+        String stmp=party.getStore();
+        String[] s1=stmp.split("\\(");
+        String[] s2=s1[1].split("\\)");
+        result.setStore(s1[0]);
+        result.setLocation(s2[0]);
         result.setHostid(userRepository.findById(party.getUserid()).orElse(null).getId());
         result.setHost(userRepository.findById(party.getUserid()).orElse(null).getNickname());
-        result.setStore(party.getStore());
         result.setTitle(party.getTitle());
         result.setMeeting(party.getMeeting());
         result.setTime(party.getTime());

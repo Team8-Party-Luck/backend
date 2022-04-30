@@ -12,7 +12,9 @@ public class PartyResponseResultDto {
     private Long partyId;
     private String title;
     private Integer capacity;
-    private String location;
+    private String desc;
+    private String store;
+//    private String location;
     private String date;
     private String time;
     private String meeting;

@@ -10,7 +10,7 @@ import lombok.Setter;
 public class PartyRequestDto {
     private String title;
     private Integer capacity;
-    private String location;
+//    private String location;
     private String store;
     private String date;
     private String time;

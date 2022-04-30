@@ -31,8 +31,8 @@ public class Party {
 
     private String time;
 
-    @Column(nullable = false)
-    private String locataion;
+//    @Column(nullable = false)
+//    private String locataion;
 
     private String store;
 
