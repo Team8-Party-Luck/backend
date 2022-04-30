@@ -31,7 +31,24 @@ public class UserService {
         this.initialInfoRepository = initialInfoRepository;
         this.s3Uploader = s3Uploader;
     }
-    public void registerUser(SignupRequestDto dto){
+    public ResponseDto registerUser(SignupRequestDto dto){
+        ResponseDto result=new ResponseDto();
+        result.setHttp(200);
+        result.setStatus(true);
+        result.setMsg("회원가입 성공!");
+        if(!dto.getPassword().equals(dto.getPasswordCheck())){
+            System.out.println(dto.getPassword());
+            System.out.println(dto.getPasswordCheck());
+            result.setStatus(false);
+            result.setMsg("비밀번호와 비밀번호 확인은 같아야합니다.");
+            return result;
+        }
+        User ispresent=userRepository.findByEmail(dto.getEmail()).orElse(null);
+        if(ispresent!=null){
+            result.setStatus(false);
+            result.setMsg("이미 가입한 이메일 입니다.");
+            return result;
+        }
         User user=new User();
         user.setUsername(dto.getEmail());
         user.setEmail(dto.getEmail());
@@ -39,6 +56,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 //        System.out.println(user.getEmail());
         userRepository.save(user);
+
+        return result;
     }
     public ResponseDto initialRegister(MultipartFile multipartFile, InitialDto dto,
                                 UserDetailsImpl userDetails)throws IOException{

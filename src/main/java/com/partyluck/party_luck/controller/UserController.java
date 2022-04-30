@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -27,12 +28,10 @@ public class UserController {
     }
 
     @PostMapping("/api/user")
-    public String signupUser(@RequestBody SignupRequestDto dto){
+    public ResponseDto signupUser(@Valid @RequestBody SignupRequestDto dto){
 
-        userService.registerUser(dto);
+        return userService.registerUser(dto);
 
-
-        return "Success";
     }
     @ResponseBody
     @GetMapping("/auth/kakao")
