@@ -42,20 +42,35 @@ public class UserService {
     }
     public ResponseDto initialRegister(MultipartFile multipartFile, InitialDto dto,
                                 UserDetailsImpl userDetails)throws IOException{
+        InitialInfo tmp=initialInfoRepository.findByUserId(userDetails.getId()).orElse(null);
         InitialInfo info=new InitialInfo();
-        info.setAge(dto.getAge());
-        info.setFood(dto.getFood());
-        info.setGender(dto.getGender());
-        info.setSns_url(dto.getSns());
-        info.setProfile_img(s3Uploader.upload(multipartFile));
-        long idnum=userDetails.getId();
-        info.setUserId(idnum);
-        initialInfoRepository.save(info);
-        ResponseDto result=new ResponseDto();
+        ResponseDto result = new ResponseDto();
         result.setHttp(200);
         result.setMsg("등록 성공!");
         result.setStatus(true);
-
+        try {
+            if(tmp==null) {
+                info.setAge(dto.getAge());
+                info.setFood(dto.getFood());
+                info.setGender(dto.getGender());
+                info.setSns_url(dto.getSns());
+                info.setIntro(dto.getIntro());
+                info.setLocation(dto.getLocation());
+                info.setProfile_img(s3Uploader.upload(multipartFile));
+                long idnum = userDetails.getId();
+                info.setUserId(idnum);
+                initialInfoRepository.save(info);
+            }
+            else{
+                result.setMsg("이미 등록된 사용자입니다.");
+                result.setStatus(false);
+            }
+        }
+        catch(Exception e) {
+            result.setHttp(200);
+            result.setMsg("등록 실패...");
+            result.setStatus(false);
+        }
         return result;
 
     }
@@ -69,22 +84,33 @@ public class UserService {
         result.setGender(info.getGender());
         result.setImage(info.getProfile_img());
         result.setSns(info.getSns_url());
+        result.setIntro(info.getIntro());
+        result.setLocation(info.getLocation());
         return result;
     }
 
 
     public ResponseDto modifyinitial(MultipartFile multipartFile, InitialDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
-        info.setGender(dto.getGender());
-        info.setFood(dto.getFood());
-        info.setSns_url(dto.getSns());
-        info.setAge(dto.getAge());
-        info.setProfile_img(s3Uploader.upload(multipartFile));
-        initialInfoRepository.save(info);
         ResponseDto result=new ResponseDto();
         result.setHttp(200);
         result.setMsg("수정 성공!");
         result.setStatus(true);
+        try {
+            info.setGender(dto.getGender());
+            info.setFood(dto.getFood());
+            info.setSns_url(dto.getSns());
+            info.setAge(dto.getAge());
+            info.setProfile_img(s3Uploader.upload(multipartFile));
+            info.setLocation(dto.getLocation());
+            info.setIntro(dto.getIntro());
+            initialInfoRepository.save(info);
+        }
+        catch(Exception e){
+            result.setHttp(200);
+            result.setMsg("수정 실패...");
+            result.setStatus(false);
+        }
 
         return result;
 
@@ -112,10 +138,10 @@ public class UserService {
         result.setMsg("수정 실패...");
         result.setStatus(false);
         if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-            user.setEmail(dto.getEmail());
+//            user.setEmail(dto.getEmail());
             user.setNickname(dto.getNickname());
             user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-            user.setUsername(dto.getEmail());
+//            user.setUsername(dto.getEmail());
             userRepository.save(user);
 
             result.setHttp(200);
@@ -130,6 +156,7 @@ public class UserService {
     public ResponseDto deleteuser(long id) {
         ResponseDto result=new ResponseDto();
         try {
+            initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }
         catch(Exception e){

@@ -48,15 +48,22 @@ public class PartyService {
             party.setDescription(dto.getDesc());
             party.setLocataion(dto.getLocation());
             party.setStore(dto.getStore());
-            party.setHost(userRepository.findById(id).orElse(null).getNickname());
+            party.setMeeting(dto.getMeeting());
+            party.setTime(dto.getTime());
+            party.setUserid(id);
             long partyid = partyRepository.save(party).getId();
             int leng = multipartFile.length;
             for (int i = 0; i < leng; i++) {
                 Image image = new Image();
                 image.setImageSrc(s3Uploader.upload(multipartFile[i]));
                 image.setPartyid(partyid);
+                image.setImgIndex(i+1);
                 imageRepository.save(image);
             }
+            PartyJoin partyJoin=new PartyJoin();
+            partyJoin.setParty(partyRepository.findById(partyid).orElse(null));
+            partyJoin.setUser(userRepository.findById(id).orElse(null));
+            partyJoinRepository.save(partyJoin);
         }
         catch(Exception e){
             result.setHttp(200);
@@ -78,10 +85,9 @@ public class PartyService {
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
             dto.setLocation(p.getLocataion());
-            dto.setHost(p.getHost());
             dto.setTitle(p.getTitle());
-            int sizemem=partyJoinRepository.findAllByParty(p).size();
-            dto.setMemberCur(sizemem);
+            dto.setMeeting(p.getMeeting());
+            dto.setTime(p.getTime());
             List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
             String[] ist=new String[itmp.size()];
             for(int i=0;i<itmp.size();i++){
@@ -94,10 +100,13 @@ public class PartyService {
         partyResponseDto.setResults(resultss);
         return partyResponseDto;
     }
-
+    @Transactional
     public ResponseDto deleteparty(Long id) {
         ResponseDto result=new ResponseDto();
         try{
+            imageRepository.deleteAllByPartyid(id);
+            partyJoinRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
+            subscribeRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
             partyRepository.deleteById(id);
         }
         catch(Exception e){
@@ -114,11 +123,16 @@ public class PartyService {
 
     public String partyjoin(Long id, long id1) {
         String result="";
+        PartyJoin tmp=partyJoinRepository.findPartyJoinByPartyAndUser(partyRepository.findById(id).orElse(null),userRepository.findById(id1).orElse(null)).orElse(null);
         try {
-            PartyJoin partyJoin = new PartyJoin();
-            partyJoin.setParty(partyRepository.findById(id).orElse(null));
-            partyJoin.setUser(userRepository.findById(id1).orElse(null));
-            partyJoinRepository.save(partyJoin);
+            if(tmp==null) {
+                PartyJoin partyJoin = new PartyJoin();
+                partyJoin.setParty(partyRepository.findById(id).orElse(null));
+                partyJoin.setUser(userRepository.findById(id1).orElse(null));
+                partyJoinRepository.save(partyJoin);
+            }
+            else
+                return "이미 가입한 파티입니다";
         }
         catch(Exception e){
             result="참가 실패...";
@@ -168,10 +182,12 @@ public class PartyService {
         result.setDesc(party.getDescription());
         result.setPartyid(id);
         result.setLocation(party.getLocataion());
-        result.setHostid(userRepository.findByNickname(party.getHost()).orElse(null).getId());
-        result.setHost(party.getHost());
+        result.setHostid(userRepository.findById(party.getUserid()).orElse(null).getId());
+        result.setHost(userRepository.findById(party.getUserid()).orElse(null).getNickname());
         result.setStore(party.getStore());
         result.setTitle(party.getTitle());
+        result.setMeeting(party.getMeeting());
+        result.setTime(party.getTime());
         result.setMemberCnt(partyJoinRepository.findAllByParty(party).size());
         List<Image> itmp=imageRepository.findAllByPartyid(id);
         String[] ist=new String[itmp.size()];

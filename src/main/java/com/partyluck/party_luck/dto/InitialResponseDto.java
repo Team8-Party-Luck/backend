@@ -13,4 +13,6 @@ public class InitialResponseDto {
     private String gender;
     private String sns;
     private String image;
+    private String intro;
+    private String location;
 }

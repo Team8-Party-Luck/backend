@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface SubscribeRepository extends JpaRepository<Subscribe,Long> {
     Optional<Subscribe> findByPartyAndUser(Party party,User user);
     void deleteSubscribeByPartyAndUser(Party party,User user);
+    void deleteAllByParty(Party party);
 
 }

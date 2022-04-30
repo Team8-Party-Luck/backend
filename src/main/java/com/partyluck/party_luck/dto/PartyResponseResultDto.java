@@ -12,10 +12,10 @@ public class PartyResponseResultDto {
     private Long partyId;
     private String title;
     private Integer capacity;
-    private Integer memberCur;
     private String location;
     private String date;
-    private String host;
+    private String time;
+    private String meeting;
     private String[] image;
 
 

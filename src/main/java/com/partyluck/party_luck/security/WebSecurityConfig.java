@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web
                 .ignoring()
                 .antMatchers("/h2-console/**");
+        web.ignoring().antMatchers("kapi.kakao.com/v2/user/me");
     }
 
     @Override
@@ -126,6 +127,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/h2-console/**");
         // 회원 관리 API 허용
         skipPathList.add("GET,/user/**");
+        skipPathList.add("GET,/auth/kakao");
         skipPathList.add("POST,/user/signup");
 
         skipPathList.add("POST,/api/user");

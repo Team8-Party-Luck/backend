@@ -20,5 +20,7 @@ public class Image {
 
     private String imageSrc;
 
+    private Integer imgIndex;
+
     private Long partyid;
 }

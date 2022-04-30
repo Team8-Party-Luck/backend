@@ -25,6 +25,10 @@ public class InitialInfo {
 
     private String sns_url;
 
+    private String location;
+
+    private String intro;
+
     @Column(name="user_id")
     private Long userId;
 

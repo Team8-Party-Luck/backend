@@ -35,6 +35,7 @@ public class PartyController {
         return partyService.partyview();
     }
 
+    @Transactional
     @DeleteMapping("/api/party/{partyid}")
     public ResponseDto deleteparty(@PathVariable("partyid") Long id){
         return partyService.deleteparty(id);

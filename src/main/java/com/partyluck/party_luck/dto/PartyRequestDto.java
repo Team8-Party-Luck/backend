@@ -13,5 +13,7 @@ public class PartyRequestDto {
     private String location;
     private String store;
     private String date;
+    private String time;
+    private String meeting;
     private String desc;
 }

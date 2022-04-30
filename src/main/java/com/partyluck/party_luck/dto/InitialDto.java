@@ -12,5 +12,7 @@ public class InitialDto {
     private String age;
     private String gender;
     private String sns;
+    private String location;
+    private String intro;
 
 }

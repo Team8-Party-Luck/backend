@@ -2,11 +2,12 @@ package com.partyluck.party_luck;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-public class PartyLuckApplication {
+public class PartyLuckApplication extends SpringBootServletInitializer {
 
     public static final String APPLICATION_LOCATIONS = "spring.config.location="
             + "classpath:application.properties,"

@@ -17,7 +17,9 @@ public class PartyDetailsResponseDto {
     private String store;
     private String desc;
     private String date;
+    private String time;
     private String host;
+    private String meeting;
     private String[] image;
     private boolean isJoin;
     private boolean isSub;

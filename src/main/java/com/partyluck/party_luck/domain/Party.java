@@ -29,12 +29,16 @@ public class Party {
     @Column(nullable = false)
     private String date;
 
+    private String time;
+
     @Column(nullable = false)
     private String locataion;
 
     private String store;
 
-    private String host;
+    private String meeting;
+
+    private Long userid;
 
     @OneToMany(mappedBy = "party")
     private List<PartyJoin> partyJoinList;
