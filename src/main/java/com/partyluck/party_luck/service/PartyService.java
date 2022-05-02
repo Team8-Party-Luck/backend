@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,15 +26,17 @@ public class PartyService {
     private final S3Uploader s3Uploader;
     private final PartyJoinRepository partyJoinRepository;
     private final SubscribeRepository subscribeRepository;
+    private final InitialInfoRepository initialInfoRepository;
 
     @Autowired
-    public PartyService(UserRepository userRepository, ImageRepository imageRepository, PartyRepository partyRepository, S3Uploader s3Uploader, PartyJoinRepository partyJoinRepository, SubscribeRepository subscribeRepository) {
+    public PartyService(UserRepository userRepository, ImageRepository imageRepository, PartyRepository partyRepository, S3Uploader s3Uploader, PartyJoinRepository partyJoinRepository, SubscribeRepository subscribeRepository, InitialInfoRepository initialInfoRepository) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
         this.partyRepository = partyRepository;
         this.s3Uploader = s3Uploader;
         this.partyJoinRepository = partyJoinRepository;
         this.subscribeRepository = subscribeRepository;
+        this.initialInfoRepository = initialInfoRepository;
     }
 
     public ResponseDto registerparty(MultipartFile[] multipartFile, PartyRequestDto dto, long id) throws IOException {
@@ -75,10 +79,11 @@ public class PartyService {
 
     }
 
-    public PartyResponseDto partyview() {
+    public PartyResponseDto partyview(long id) {
         PartyResponseDto partyResponseDto=new PartyResponseDto();
         List<Party> parties=partyRepository.findAll();
         List<PartyResponseResultDto> resultss=new ArrayList<>();
+        List<PartyResponseResultDto> results=new ArrayList<>();
         for(Party p:parties){
             PartyResponseResultDto dto=new PartyResponseResultDto();
             dto.setPartyId(p.getId());
@@ -97,9 +102,20 @@ public class PartyService {
             }
             dto.setImage(ist);
             resultss.add(dto);
+            String stmp=p.getStore();
+            String[] s1=stmp.split("\\(");
+            String[] s2=s1[1].split("\\)");
+            System.out.println(s2[0]+"1");
+            System.out.println(initialInfoRepository.findByUserId(id).get().getLocation());
+            if(s2[0].equals(initialInfoRepository.findByUserId(id).get().getLocation()))
+                results.add(dto);
+
+//            PartyJoin partyJoin=partyJoinRepository.findById(p.getId()).orElse(null);
+//            if(partyJoin!=null)
+//                System.out.println(partyJoin.getId());
 
         }
-        partyResponseDto.setResults(resultss);
+        partyResponseDto.setResults(results);
         return partyResponseDto;
     }
     @Transactional
@@ -212,5 +228,149 @@ public class PartyService {
         return result;
 
 
+    }
+
+    public PartyResponseDto mysubparty(long id) {
+        PartyResponseDto partyResponseDto=new PartyResponseDto();
+        List<Party> parties=partyRepository.findAll();
+        List<PartyResponseResultDto> resultss=new ArrayList<>();
+        List<PartyResponseResultDto> results=new ArrayList<>();
+        for(Party p:parties){
+            PartyResponseResultDto dto=new PartyResponseResultDto();
+            dto.setPartyId(p.getId());
+            dto.setDate(p.getDate());
+            dto.setCapacity(p.getCapacity());
+//            dto.setLocation(p.getLocataion());
+            dto.setTitle(p.getTitle());
+            dto.setMeeting(p.getMeeting());
+            dto.setTime(p.getTime());
+            dto.setStore(p.getStore());
+            dto.setDesc(p.getDescription());
+            List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
+            String[] ist=new String[itmp.size()];
+            for(int i=0;i<itmp.size();i++){
+                ist[i]=itmp.get(i).getImageSrc();
+            }
+            dto.setImage(ist);
+            resultss.add(dto);
+            Subscribe subscribe=subscribeRepository.findByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+//            PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            if(subscribe!=null)
+                results.add(dto);
+
+        }
+        partyResponseDto.setResults(results);
+        return partyResponseDto;
+    }
+
+    public PartyResponseDto myhostparty(long id) {
+        PartyResponseDto partyResponseDto=new PartyResponseDto();
+        List<Party> parties=partyRepository.findAll();
+        List<PartyResponseResultDto> resultss=new ArrayList<>();
+        List<PartyResponseResultDto> results=new ArrayList<>();
+        for(Party p:parties){
+            PartyResponseResultDto dto=new PartyResponseResultDto();
+            dto.setPartyId(p.getId());
+            dto.setDate(p.getDate());
+            dto.setCapacity(p.getCapacity());
+//            dto.setLocation(p.getLocataion());
+            dto.setTitle(p.getTitle());
+            dto.setMeeting(p.getMeeting());
+            dto.setTime(p.getTime());
+            dto.setStore(p.getStore());
+            dto.setDesc(p.getDescription());
+            List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
+            String[] ist=new String[itmp.size()];
+            for(int i=0;i<itmp.size();i++){
+                ist[i]=itmp.get(i).getImageSrc();
+            }
+            dto.setImage(ist);
+            resultss.add(dto);
+            if(p.getUserid()==id)
+                results.add(dto);
+
+//            PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+//            if(partyJoin!=null)
+//                results.add(dto);
+
+        }
+        partyResponseDto.setResults(results);
+        return partyResponseDto;
+    }
+
+    public PartyResponseDto willjoinparty(long id) {
+        PartyResponseDto partyResponseDto=new PartyResponseDto();
+        List<Party> parties=partyRepository.findAll();
+        List<PartyResponseResultDto> resultss=new ArrayList<>();
+        List<PartyResponseResultDto> results=new ArrayList<>();
+        for(Party p:parties){
+            PartyResponseResultDto dto=new PartyResponseResultDto();
+            dto.setPartyId(p.getId());
+            dto.setDate(p.getDate());
+            dto.setCapacity(p.getCapacity());
+//            dto.setLocation(p.getLocataion());
+            dto.setTitle(p.getTitle());
+            dto.setMeeting(p.getMeeting());
+            dto.setTime(p.getTime());
+            dto.setStore(p.getStore());
+            dto.setDesc(p.getDescription());
+            List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
+            String[] ist=new String[itmp.size()];
+            for(int i=0;i<itmp.size();i++){
+                ist[i]=itmp.get(i).getImageSrc();
+            }
+            dto.setImage(ist);
+            resultss.add(dto);
+            PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            String cmp=p.getDate()+p.getTime();
+            SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmm");
+            Date cur=new Date();
+            String curtime=format1.format(cur);
+            Long a1=Long.parseLong(cmp);
+            Long a2=Long.parseLong(curtime);
+            if((partyJoin!=null)&&(a1>=a2))
+                results.add(dto);
+
+        }
+        partyResponseDto.setResults(results);
+        return partyResponseDto;
+    }
+
+    public PartyResponseDto joinedparty(long id) {
+        PartyResponseDto partyResponseDto=new PartyResponseDto();
+        List<Party> parties=partyRepository.findAll();
+        List<PartyResponseResultDto> resultss=new ArrayList<>();
+        List<PartyResponseResultDto> results=new ArrayList<>();
+        for(Party p:parties){
+            PartyResponseResultDto dto=new PartyResponseResultDto();
+            dto.setPartyId(p.getId());
+            dto.setDate(p.getDate());
+            dto.setCapacity(p.getCapacity());
+//            dto.setLocation(p.getLocataion());
+            dto.setTitle(p.getTitle());
+            dto.setMeeting(p.getMeeting());
+            dto.setTime(p.getTime());
+            dto.setStore(p.getStore());
+            dto.setDesc(p.getDescription());
+            List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
+            String[] ist=new String[itmp.size()];
+            for(int i=0;i<itmp.size();i++){
+                ist[i]=itmp.get(i).getImageSrc();
+            }
+            dto.setImage(ist);
+            resultss.add(dto);
+            PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            String cmp=p.getDate()+p.getTime();
+            SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmm");
+            Date cur=new Date();
+            String curtime=format1.format(cur);
+            Long a1=Long.parseLong(cmp);
+            Long a2=Long.parseLong(curtime);
+            if((partyJoin!=null)&&(a1<a2))
+                results.add(dto);
+
+        }
+        partyResponseDto.setResults(results);
+        return partyResponseDto;
     }
 }

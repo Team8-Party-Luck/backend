@@ -31,8 +31,24 @@ public class PartyController {
         return partyService.registerparty(multipartFile,dto,userDetails.getId());
     }
     @GetMapping("/home/parties/latest")
-    public PartyResponseDto partyview(){
-        return partyService.partyview();
+    public PartyResponseDto partyview(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.partyview(userDetails.getId());
+    }
+    @GetMapping("/api/parties/sub")
+    public PartyResponseDto mysubparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.mysubparty(userDetails.getId());
+    }
+    @GetMapping("/api/parties/history/creation")
+    public PartyResponseDto myhostparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.myhostparty(userDetails.getId());
+    }
+    @GetMapping("/home/parties/join")
+    public PartyResponseDto willjoinparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.willjoinparty(userDetails.getId());
+    }
+    @GetMapping("/api/parties/history/in")
+    public PartyResponseDto joinedparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.joinedparty(userDetails.getId());
     }
 
     @Transactional
