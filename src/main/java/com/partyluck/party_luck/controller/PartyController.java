@@ -1,9 +1,6 @@
 package com.partyluck.party_luck.controller;
 
-import com.partyluck.party_luck.dto.PartyDetailsResponseDto;
-import com.partyluck.party_luck.dto.PartyRequestDto;
-import com.partyluck.party_luck.dto.PartyResponseDto;
-import com.partyluck.party_luck.dto.ResponseDto;
+import com.partyluck.party_luck.dto.*;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @RestController
 public class PartyController {
@@ -76,6 +74,11 @@ public class PartyController {
     @GetMapping("/api/party/details/{partyid}")
     public PartyDetailsResponseDto partydetail(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.partydetail(id,userDetails.getId());
+    }
+    @PutMapping("/api/party/{partyid}")
+    public ResponseDto modifyparty(@PathVariable("partyid") Long id, PartyModifyDto dto) throws IOException {
+        return partyService.modifyparty(id,dto);
+
     }
 
 }

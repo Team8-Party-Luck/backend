@@ -373,4 +373,34 @@ public class PartyService {
         partyResponseDto.setResults(results);
         return partyResponseDto;
     }
+
+    public ResponseDto modifyparty(Long id, PartyModifyDto dto) throws IOException {
+        ResponseDto result=new ResponseDto();
+        result.setHttp(200);
+        result.setStatus(true);
+        result.setMsg("수정 성공!");
+        try {
+            Party party = partyRepository.findById(id).orElse(null);
+            MultipartFile[] image = dto.getImage();
+            Integer[] imageIndex = dto.getImageIndex();
+            for (int i = 0; i < imageIndex.length; i++) {
+                Image tmp = imageRepository.findImageByImgIndexAndPartyid(imageIndex[i], id).orElse(null);
+                tmp.setImageSrc(s3Uploader.upload(image[i]));
+                imageRepository.save(tmp);
+            }
+            party.setTitle(dto.getTitle());
+            party.setDescription(dto.getDesc());
+            party.setTime(dto.getTime());
+            party.setMeeting(dto.getMeeting());
+            party.setStore(dto.getStore());
+            party.setDate(dto.getDate());
+            party.setCapacity(dto.getCapacity());
+            partyRepository.save(party);
+        }
+        catch(Exception e){
+            result.setMsg("수정 실패...");
+            result.setStatus(false);
+        }
+        return result;
+    }
 }
