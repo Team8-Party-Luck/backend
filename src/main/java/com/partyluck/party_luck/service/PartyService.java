@@ -403,4 +403,33 @@ public class PartyService {
         }
         return result;
     }
+
+    public PartyResponseDto rawpartyview() {
+        PartyResponseDto partyResponseDto=new PartyResponseDto();
+        List<Party> parties=partyRepository.findAll();
+        List<PartyResponseResultDto> resultss=new ArrayList<>();
+        for(Party p:parties){
+            PartyResponseResultDto dto=new PartyResponseResultDto();
+            dto.setPartyId(p.getId());
+            dto.setDate(p.getDate());
+            dto.setCapacity(p.getCapacity());
+//            dto.setLocation(p.getLocataion());
+            dto.setTitle(p.getTitle());
+            dto.setMeeting(p.getMeeting());
+            dto.setTime(p.getTime());
+            dto.setStore(p.getStore());
+            dto.setDesc(p.getDescription());
+            List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
+            String[] ist=new String[itmp.size()];
+            for(int i=0;i<itmp.size();i++){
+                ist[i]=itmp.get(i).getImageSrc();
+            }
+            dto.setImage(ist);
+            resultss.add(dto);
+
+
+        }
+        partyResponseDto.setResults(resultss);
+        return partyResponseDto;
+    }
 }

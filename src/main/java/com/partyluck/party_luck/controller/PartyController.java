@@ -1,5 +1,7 @@
 package com.partyluck.party_luck.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.partyluck.party_luck.dto.*;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.service.PartyService;
@@ -28,7 +30,11 @@ public class PartyController {
                                      @AuthenticationPrincipal UserDetailsImpl userDetails)throws IOException {
         return partyService.registerparty(multipartFile,dto,userDetails.getId());
     }
-    @GetMapping("/home/parties/latest")
+    @GetMapping("/api/parties")
+    public PartyResponseDto rawpartyview(){
+        return partyService.rawpartyview();
+    }
+    @GetMapping("/home/parties/local")
     public PartyResponseDto partyview(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.partyview(userDetails.getId());
     }
@@ -79,6 +85,15 @@ public class PartyController {
     public ResponseDto modifyparty(@PathVariable("partyid") Long id, PartyModifyDto dto) throws IOException {
         return partyService.modifyparty(id,dto);
 
+    }
+    @PostMapping("/api/apis")
+    public void testtest(@RequestParam("data") String dto) throws JsonProcessingException {
+        ObjectMapper objectMapper=new ObjectMapper();
+        SignupRequestDto dto1=objectMapper.readValue(dto,SignupRequestDto.class);
+        System.out.println(dto1.getNickname());
+        System.out.println(dto1.getEmail());
+        System.out.println(dto1.getPassword());
+        System.out.println(dto1.getPasswordCheck());
     }
 
 }

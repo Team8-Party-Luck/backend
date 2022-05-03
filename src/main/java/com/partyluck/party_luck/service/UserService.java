@@ -158,10 +158,10 @@ public class UserService {
         result.setMsg("수정 실패...");
         result.setStatus(false);
         if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-//            user.setEmail(dto.getEmail());
+
             user.setNickname(dto.getNickname());
             user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-//            user.setUsername(dto.getEmail());
+
             userRepository.save(user);
 
             result.setHttp(200);
@@ -177,7 +177,7 @@ public class UserService {
     public ResponseDto deleteuser(long id) {
         ResponseDto result=new ResponseDto();
         try {
-//            System.out.println(id);
+
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }

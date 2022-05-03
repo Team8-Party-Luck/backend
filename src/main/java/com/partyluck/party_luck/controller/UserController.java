@@ -28,14 +28,9 @@ public class UserController {
         this.kakaoUserService = kakaoUserService;
     }
 
-    @PostMapping("/api/user")
-    public ResponseDto signupUser(@Valid @RequestBody SignupRequestDto dto){
 
-        return userService.registerUser(dto);
-
-    }
     @ResponseBody
-    @GetMapping("/auth/kakao")
+    @GetMapping("/user/kakao/callback")
     public String kakaoLogin(@RequestParam String code, final HttpServletResponse response) throws JsonProcessingException {
         User user=kakaoUserService.kakaoLogin(code);
         UserDetailsImpl userDetails=new UserDetailsImpl(user);
