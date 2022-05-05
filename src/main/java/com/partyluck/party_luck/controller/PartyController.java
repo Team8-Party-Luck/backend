@@ -25,10 +25,10 @@ public class PartyController {
     }
 
     @PostMapping("/api/party")
-    public ResponseDto registerparty(@RequestParam("image") MultipartFile[] multipartFile,
+    public ResponseDto registerparty(
                                      PartyRequestDto dto,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails)throws IOException {
-        return partyService.registerparty(multipartFile,dto,userDetails.getId());
+        return partyService.registerparty(dto,userDetails.getId());
     }
     @GetMapping("/api/parties")
     public PartyResponseDto rawpartyview(){

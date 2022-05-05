@@ -13,7 +13,7 @@ public class PartyDetailsResponseDto {
     private String title;
     private Integer capacity;
     private Integer memberCnt;
-    private String location;
+    private String address;
     private String store;
     private String desc;
     private String date;

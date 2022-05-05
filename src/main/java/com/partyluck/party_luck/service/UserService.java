@@ -60,7 +60,7 @@ public class UserService {
 
         return result;
     }
-    public ResponseDto initialRegister(MultipartFile multipartFile, InitialDto dto,
+    public ResponseDto initialRegister(InitialDto dto,
                                 UserDetailsImpl userDetails)throws IOException{
         InitialInfo tmp=initialInfoRepository.findByUserId(userDetails.getId()).orElse(null);
         InitialInfo info=new InitialInfo();
@@ -75,11 +75,16 @@ public class UserService {
                 info.setGender(dto.getGender());
                 info.setSns_url(dto.getSns());
                 info.setIntro(dto.getIntro());
-                info.setLocation(dto.getLocation());
-                info.setProfile_img(s3Uploader.upload(multipartFile));
+                info.setCity(dto.getCity());
+                info.setRegion(dto.getRegion());
+//                if(dto.getImage().getBytes().length!=0)
+//                    info.setProfile_img(s3Uploader.upload(dto.getImage()));
                 long idnum = userDetails.getId();
                 info.setUserId(idnum);
                 initialInfoRepository.save(info);
+                User usernick=userRepository.findById(idnum).orElse(null);
+                usernick.setNickname(dto.getNickname());
+                userRepository.save(usernick);
             }
             else{
                 result.setMsg("이미 등록된 사용자입니다.");
@@ -105,12 +110,14 @@ public class UserService {
         result.setImage(info.getProfile_img());
         result.setSns(info.getSns_url());
         result.setIntro(info.getIntro());
-        result.setLocation(info.getLocation());
+        result.setCity(info.getCity());
+        result.setRegion(info.getRegion());
+        result.setNickname(userRepository.findById(id).orElse(null).getNickname());
         return result;
     }
 
 
-    public ResponseDto modifyinitial(MultipartFile multipartFile, InitialDto dto, long id) throws IOException {
+    public ResponseDto modifyinitial(InitialModifyDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto();
         result.setHttp(200);
@@ -121,10 +128,18 @@ public class UserService {
             info.setFood(dto.getFood());
             info.setSns_url(dto.getSns());
             info.setAge(dto.getAge());
-            info.setProfile_img(s3Uploader.upload(multipartFile));
-            info.setLocation(dto.getLocation());
+//            System.out.println(dto.getImage()+"1");
+//            System.out.println(dto.getImage().isEmpty()+"2");
+            if((dto.getImage()!=null)&&(!dto.getImage().isEmpty())) {
+                info.setProfile_img(s3Uploader.upload(dto.getImage()));
+            }
+            info.setRegion(dto.getRegion());
+            info.setCity(dto.getCity());
             info.setIntro(dto.getIntro());
             initialInfoRepository.save(info);
+            User usernick=userRepository.findById(id).orElse(null);
+            usernick.setNickname(dto.getNickname());
+            userRepository.save(usernick);
         }
         catch(Exception e){
             result.setHttp(200);

@@ -31,10 +31,9 @@ public class Party {
 
     private String time;
 
-//    @Column(nullable = false)
-//    private String locataion;
-
     private String store;
+
+    private String address;
 
     private String meeting;
 

@@ -13,7 +13,7 @@ public class PartyModifyDto {
     private Integer[] imageIndex;
     private String title;
     private Integer capacity;
-    //    private String location;
+    private String address;
     private String store;
     private String date;
     private String time;

@@ -1,5 +1,6 @@
 package com.partyluck.party_luck.dto;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,8 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 @NoArgsConstructor
-public class InitialDto {
-    private String image;
+public class InitialModifyDto {
+    private MultipartFile image;
     private String food;
     private String age;
     private String gender;

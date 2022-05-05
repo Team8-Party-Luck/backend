@@ -28,9 +28,14 @@ public class UserController {
         this.kakaoUserService = kakaoUserService;
     }
 
+    @PostMapping("/api/user")
+    public ResponseDto signupUser(@Valid @RequestBody SignupRequestDto dto){
 
+        return userService.registerUser(dto);
+
+    }
     @ResponseBody
-    @GetMapping("/user/kakao/callback")
+    @GetMapping("/auth/kakao")
     public String kakaoLogin(@RequestParam String code, final HttpServletResponse response) throws JsonProcessingException {
         User user=kakaoUserService.kakaoLogin(code);
         UserDetailsImpl userDetails=new UserDetailsImpl(user);
@@ -42,9 +47,9 @@ public class UserController {
     }
 
     @PostMapping("/api/user/initial")
-    public ResponseDto initialRegister(@RequestParam("image")MultipartFile multipartFile, InitialDto dto,
+    public ResponseDto initialRegister(@RequestBody InitialDto dto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails)throws IOException {
-        return userService.initialRegister(multipartFile, dto,userDetails);
+        return userService.initialRegister(dto,userDetails);
 
     }
     @GetMapping("/api/user/initial")
@@ -52,9 +57,9 @@ public class UserController {
         return userService.myinitial(userDetails.getId());
     }
     @PutMapping("/api/user/initial")
-    public ResponseDto modifiyinitial(@RequestParam("image")MultipartFile multipartFile, InitialDto dto,
+    public ResponseDto modifiyinitial(InitialModifyDto dto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return userService.modifyinitial(multipartFile,dto,userDetails.getId());
+        return userService.modifyinitial(dto,userDetails.getId());
     }
     @GetMapping("/api/user")
     public UserResponseDto userview(@AuthenticationPrincipal UserDetailsImpl userDetails){

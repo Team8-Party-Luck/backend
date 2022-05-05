@@ -10,7 +10,6 @@ import com.partyluck.party_luck.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -39,7 +38,7 @@ public class PartyService {
         this.initialInfoRepository = initialInfoRepository;
     }
 
-    public ResponseDto registerparty(MultipartFile[] multipartFile, PartyRequestDto dto, long id) throws IOException {
+    public ResponseDto registerparty(PartyRequestDto dto, long id) throws IOException {
         ResponseDto result=new ResponseDto();
         result.setHttp(200);
         result.setMsg("등록 성공!");
@@ -50,19 +49,21 @@ public class PartyService {
             party.setCapacity(dto.getCapacity());
             party.setDate(dto.getDate());
             party.setDescription(dto.getDesc());
-//            party.setLocataion(dto.getLocation());
+            party.setAddress(dto.getAddress());
             party.setStore(dto.getStore());
             party.setMeeting(dto.getMeeting());
             party.setTime(dto.getTime());
             party.setUserid(id);
             long partyid = partyRepository.save(party).getId();
-            int leng = multipartFile.length;
-            for (int i = 0; i < leng; i++) {
-                Image image = new Image();
-                image.setImageSrc(s3Uploader.upload(multipartFile[i]));
-                image.setPartyid(partyid);
-                image.setImgIndex(i+1);
-                imageRepository.save(image);
+            if((dto.getImage())!=null&&(!dto.getImage()[0].isEmpty())) {
+                int leng = dto.getImage().length;
+                for (int i = 0; i < leng; i++) {
+                    Image image = new Image();
+                    image.setImageSrc(s3Uploader.upload(dto.getImage()[i]));
+                    image.setPartyid(partyid);
+                    image.setImgIndex(i + 1);
+                    imageRepository.save(image);
+                }
             }
             PartyJoin partyJoin=new PartyJoin();
             partyJoin.setParty(partyRepository.findById(partyid).orElse(null));
@@ -89,12 +90,21 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-//            dto.setLocation(p.getLocataion());
+            dto.setAddress(p.getAddress());
             dto.setTitle(p.getTitle());
+            dto.setStore(p.getStore());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
-            dto.setStore(p.getStore());
             dto.setDesc(p.getDescription());
+            if(p.getUserid()==id)
+                dto.setIshost(true);
+            else
+                dto.setIshost(false);
+            Subscribe issubpresent=subscribeRepository.findByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            if(issubpresent==null)
+                dto.setIssub(false);
+            else
+                dto.setIssub(true);
             List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
             String[] ist=new String[itmp.size()];
             for(int i=0;i<itmp.size();i++){
@@ -102,17 +112,10 @@ public class PartyService {
             }
             dto.setImage(ist);
             resultss.add(dto);
-            String stmp=p.getStore();
-            String[] s1=stmp.split("\\(");
-            String[] s2=s1[1].split("\\)");
-            System.out.println(s2[0]+"1");
-            System.out.println(initialInfoRepository.findByUserId(id).get().getLocation());
-            if(s2[0].equals(initialInfoRepository.findByUserId(id).get().getLocation()))
+            String city1=initialInfoRepository.findByUserId(id).orElse(null).getCity();
+            String region1=initialInfoRepository.findByUserId(id).orElse(null).getRegion();
+            if((city1+" "+region1).equals(p.getAddress()))
                 results.add(dto);
-
-//            PartyJoin partyJoin=partyJoinRepository.findById(p.getId()).orElse(null);
-//            if(partyJoin!=null)
-//                System.out.println(partyJoin.getId());
 
         }
         partyResponseDto.setResults(results);
@@ -199,11 +202,8 @@ public class PartyService {
         result.setDate(party.getDate());
         result.setDesc(party.getDescription());
         result.setPartyid(id);
-        String stmp=party.getStore();
-        String[] s1=stmp.split("\\(");
-        String[] s2=s1[1].split("\\)");
-        result.setStore(s1[0]);
-        result.setLocation(s2[0]);
+        result.setStore(party.getStore());
+        result.setAddress(party.getAddress());
         result.setHostid(userRepository.findById(party.getUserid()).orElse(null).getId());
         result.setHost(userRepository.findById(party.getUserid()).orElse(null).getNickname());
         result.setTitle(party.getTitle());
@@ -240,11 +240,11 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-//            dto.setLocation(p.getLocataion());
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
             dto.setStore(p.getStore());
+            dto.setAddress(p.getAddress());
             dto.setDesc(p.getDescription());
             List<Image> itmp=imageRepository.findAllByPartyid(p.getId());
             String[] ist=new String[itmp.size()];
@@ -252,11 +252,17 @@ public class PartyService {
                 ist[i]=itmp.get(i).getImageSrc();
             }
             dto.setImage(ist);
+            if(p.getUserid()==id)
+                dto.setIshost(true);
+            else
+                dto.setIshost(false);
+            dto.setIssub(false);
             resultss.add(dto);
             Subscribe subscribe=subscribeRepository.findByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
-//            PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
-            if(subscribe!=null)
+            if(subscribe!=null) {
+                dto.setIssub(true);
                 results.add(dto);
+            }
 
         }
         partyResponseDto.setResults(results);
@@ -273,7 +279,7 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-//            dto.setLocation(p.getLocataion());
+            dto.setAddress(p.getAddress());
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
@@ -285,14 +291,17 @@ public class PartyService {
                 ist[i]=itmp.get(i).getImageSrc();
             }
             dto.setImage(ist);
+            dto.setIshost(false);
+            Subscribe issubpresent=subscribeRepository.findByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            if(issubpresent==null)
+                dto.setIssub(false);
+            else
+                dto.setIssub(true);
             resultss.add(dto);
-            if(p.getUserid()==id)
+            if(p.getUserid()==id) {
+                dto.setIshost(true);
                 results.add(dto);
-
-//            PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
-//            if(partyJoin!=null)
-//                results.add(dto);
-
+            }
         }
         partyResponseDto.setResults(results);
         return partyResponseDto;
@@ -308,7 +317,7 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-//            dto.setLocation(p.getLocataion());
+            dto.setAddress(p.getAddress());
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
@@ -320,10 +329,24 @@ public class PartyService {
                 ist[i]=itmp.get(i).getImageSrc();
             }
             dto.setImage(ist);
+            Subscribe issubpresent=subscribeRepository.findByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            if(issubpresent==null)
+                dto.setIssub(false);
+            else
+                dto.setIssub(true);
+            if(p.getUserid()==id)
+                dto.setIshost(true);
+            else
+                dto.setIshost(false);
             resultss.add(dto);
             PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
-            String cmp=p.getDate()+p.getTime();
-            SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmm");
+            String[] tmp1=p.getDate().split("월 ");//tmp1.[0]월
+            String[] tmp2=tmp1[1].split("일");//tmp2.[0]일
+            String[] tmp3=p.getTime().split("시 ");//tmp3.[0]시
+            String[] tmp4=tmp3[1].split("분");//tmp4.[0]분
+            String cmp=tmp1[0]+tmp2[0]+tmp3[0]+tmp4[0];
+            System.out.println(cmp);
+            SimpleDateFormat format1 = new SimpleDateFormat ( "MMddHHmm");
             Date cur=new Date();
             String curtime=format1.format(cur);
             Long a1=Long.parseLong(cmp);
@@ -346,7 +369,7 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-//            dto.setLocation(p.getLocataion());
+            dto.setAddress(p.getAddress());
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
@@ -358,10 +381,24 @@ public class PartyService {
                 ist[i]=itmp.get(i).getImageSrc();
             }
             dto.setImage(ist);
+            Subscribe issubpresent=subscribeRepository.findByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
+            if(issubpresent==null)
+                dto.setIssub(false);
+            else
+                dto.setIssub(true);
+            if(p.getUserid()==id)
+                dto.setIshost(true);
+            else
+                dto.setIshost(false);
             resultss.add(dto);
             PartyJoin partyJoin=partyJoinRepository.findPartyJoinByPartyAndUser(p,userRepository.findById(id).orElse(null)).orElse(null);
-            String cmp=p.getDate()+p.getTime();
-            SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMddHHmm");
+            String[] tmp1=p.getDate().split("월 ");//tmp1.[0]월
+            String[] tmp2=tmp1[1].split("일");//tmp2.[0]일
+            String[] tmp3=p.getTime().split("시 ");//tmp3.[0]시
+            String[] tmp4=tmp3[1].split("분");//tmp4.[0]분
+            String cmp=tmp1[0]+tmp2[0]+tmp3[0]+tmp4[0];
+            System.out.println(cmp);
+            SimpleDateFormat format1 = new SimpleDateFormat ( "MMddHHmm");
             Date cur=new Date();
             String curtime=format1.format(cur);
             Long a1=Long.parseLong(cmp);
@@ -381,14 +418,17 @@ public class PartyService {
         result.setMsg("수정 성공!");
         try {
             Party party = partyRepository.findById(id).orElse(null);
-            MultipartFile[] image = dto.getImage();
-            Integer[] imageIndex = dto.getImageIndex();
-            for (int i = 0; i < imageIndex.length; i++) {
-                Image tmp = imageRepository.findImageByImgIndexAndPartyid(imageIndex[i], id).orElse(null);
-                tmp.setImageSrc(s3Uploader.upload(image[i]));
-                imageRepository.save(tmp);
+            if((dto.getImageIndex()!=null)&&(dto.getImageIndex().length!=0)) {
+                Integer[] imageIndex = dto.getImageIndex();
+                System.out.println(imageIndex.length);
+                for (int i = 0; i < imageIndex.length; i++) {
+                    Image tmp = imageRepository.findImageByImgIndexAndPartyid(imageIndex[i], id).orElse(null);
+                    tmp.setImageSrc(s3Uploader.upload(dto.getImage()[i]));
+                    imageRepository.save(tmp);
+                }
             }
             party.setTitle(dto.getTitle());
+            party.setAddress(dto.getAddress());
             party.setDescription(dto.getDesc());
             party.setTime(dto.getTime());
             party.setMeeting(dto.getMeeting());
@@ -413,7 +453,7 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-//            dto.setLocation(p.getLocataion());
+            dto.setAddress(p.getAddress());
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
