@@ -5,12 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class InitialDto {
     private String image;
-    private String food;
+    List<String> food;
     private String age;
     private String gender;
     private String sns;

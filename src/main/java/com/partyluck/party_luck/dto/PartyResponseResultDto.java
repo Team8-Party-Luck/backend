@@ -21,6 +21,8 @@ public class PartyResponseResultDto {
     private String[] image;
     private boolean ishost;
     private boolean issub;
+    private String age;
+    private String gender;
 
 
 }

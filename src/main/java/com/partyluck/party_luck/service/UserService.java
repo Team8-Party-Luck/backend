@@ -71,7 +71,10 @@ public class UserService {
         try {
             if(tmp==null) {
                 info.setAge(dto.getAge());
-                info.setFood(dto.getFood());
+                String s="";
+                for(int i=0;i<dto.getFood().size();i++)
+                    s=s+dto.getFood().get(i)+" ";
+                info.setFood(s.substring(0,s.length()-1));
                 info.setGender(dto.getGender());
                 info.setSns_url(dto.getSns());
                 info.setIntro(dto.getIntro());
@@ -105,7 +108,8 @@ public class UserService {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         InitialResponseDto result=new InitialResponseDto();
         result.setAge(info.getAge());
-        result.setFood(info.getFood());
+        String[] foods=info.getFood().split(" ");
+        result.setFood(foods);
         result.setGender(info.getGender());
         result.setImage(info.getProfile_img());
         result.setSns(info.getSns_url());
@@ -125,7 +129,10 @@ public class UserService {
         result.setStatus(true);
         try {
             info.setGender(dto.getGender());
-            info.setFood(dto.getFood());
+            String s="";
+            for(int i=0;i<dto.getFood().size();i++)
+                s=s+dto.getFood().get(i)+" ";
+            info.setFood(s.substring(0,s.length()-1));
             info.setSns_url(dto.getSns());
             info.setAge(dto.getAge());
 //            System.out.println(dto.getImage()+"1");
@@ -156,7 +163,11 @@ public class UserService {
         User user=userRepository.findById(id).orElse(null);
         UserResponseDto dto=new UserResponseDto();
         UserResponseResultDto resultDto=new UserResponseResultDto();
-        dto.setOk(true);
+        InitialInfo tmp=initialInfoRepository.findByUserId(id).orElse(null);
+        if(tmp==null)
+            dto.setOk(false);
+        else
+            dto.setOk(true);
         resultDto.setEmail(user.getEmail());
         resultDto.setPassword(user.getPassword());
         resultDto.setUserid(id);

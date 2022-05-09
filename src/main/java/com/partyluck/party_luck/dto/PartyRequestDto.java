@@ -18,4 +18,6 @@ public class PartyRequestDto {
     private String time;
     private String meeting;
     private String desc;
+    private String age;
+    private String gender;
 }

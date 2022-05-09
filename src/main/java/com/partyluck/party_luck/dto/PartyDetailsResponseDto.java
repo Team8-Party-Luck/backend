@@ -20,6 +20,8 @@ public class PartyDetailsResponseDto {
     private String time;
     private String host;
     private String meeting;
+    private String age;
+    private String gender;
     private String[] image;
     private boolean isJoin;
     private boolean isSub;
