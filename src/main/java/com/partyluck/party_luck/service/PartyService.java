@@ -57,6 +57,8 @@ public class PartyService {
             party.setTime(dto.getTime());
             party.setAge(dto.getAge());
             party.setGender(dto.getGender());
+            party.setXy(dto.getXy());
+            party.setPlace_url(dto.getPlace_url());
             party.setUserid(id);
             long partyid = partyRepository.save(party).getId();
             if ((dto.getImage()) != null && (!dto.getImage()[0].isEmpty())) {
@@ -93,7 +95,9 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-            dto.setAddress(p.getAddress());
+            String[] tmp=p.getAddress().split(" ");
+            String addr=tmp[0]+" "+tmp[1];
+            dto.setAddress(addr);
             dto.setTitle(p.getTitle());
             dto.setStore(p.getStore());
             dto.setMeeting(p.getMeeting());
@@ -223,6 +227,8 @@ public class PartyService {
             result.setTime(party.getTime());
             result.setAge(party.getAge());
             result.setGender(party.getGender());
+            result.setXy(party.getXy());
+            result.setPlace_url(party.getPlace_url());
             result.setMemberCnt(partyJoinRepository.findAllByParty(party).size());
             List<Image> itmp = imageRepository.findAllByPartyid(id);
             String[] ist = new String[itmp.size()];
@@ -257,6 +263,8 @@ public class PartyService {
             result.setTime(party.getTime());
             result.setAge(party.getAge());
             result.setGender(party.getGender());
+            result.setXy(party.getXy());
+            result.setPlace_url(party.getPlace_url());
             result.setMemberCnt(partyJoinRepository.findAllByParty(party).size());
             List<Image> itmp = imageRepository.findAllByPartyid(id);
             String[] ist = new String[itmp.size()];
@@ -295,6 +303,8 @@ public class PartyService {
         result.setTime(party.getTime());
         result.setAge(party.getAge());
         result.setGender(party.getGender());
+        result.setPlace_url(party.getPlace_url());
+        result.setXy(party.getXy());
         result.setMemberCnt(partyJoinRepository.findAllByParty(party).size());
         List<Image> itmp = imageRepository.findAllByPartyid(id);
         String[] ist = new String[itmp.size()];
@@ -330,7 +340,9 @@ public class PartyService {
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
             dto.setStore(p.getStore());
-            dto.setAddress(p.getAddress());
+            String[] tmp=p.getAddress().split(" ");
+            String addr=tmp[0]+" "+tmp[1];
+            dto.setAddress(addr);
             dto.setDesc(p.getDescription());
             dto.setAge(p.getAge());
             dto.setGender(p.getGender());
@@ -378,7 +390,9 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-            dto.setAddress(p.getAddress());
+            String[] tmp=p.getAddress().split(" ");
+            String addr=tmp[0]+" "+tmp[1];
+            dto.setAddress(addr);
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
@@ -429,7 +443,9 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-            dto.setAddress(p.getAddress());
+            String[] tmp=p.getAddress().split(" ");
+            String addr=tmp[0]+" "+tmp[1];
+            dto.setAddress(addr);
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
@@ -494,7 +510,9 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-            dto.setAddress(p.getAddress());
+            String[] tmp=p.getAddress().split(" ");
+            String addr=tmp[0]+" "+tmp[1];
+            dto.setAddress(addr);
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());
@@ -594,7 +612,9 @@ public class PartyService {
             dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
-            dto.setAddress(p.getAddress());
+            String[] tmp=p.getAddress().split(" ");
+            String addr=tmp[0]+" "+tmp[1];
+            dto.setAddress(addr);
             dto.setTitle(p.getTitle());
             dto.setMeeting(p.getMeeting());
             dto.setTime(p.getTime());

@@ -41,6 +41,10 @@ public class Party {
 
     private String age;
 
+    private String place_url;
+
+    private String xy;
+
     private Long userid;
 
     @OneToMany(mappedBy = "party")

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>진짜 네이버 로그인</title>
+    <style>
+        #btn{
+            border: 1px solid limegreen;
+            background-color: rgba(0,0,0,0);
+            color: limegreen;
+            padding: 5px; }
+        #btn:hover
+        {
+            color:white;
+            background-color: limegreen;
+        }
+
+
+    </style>
+</head>
+<body>
+<button id="btn" type="button" onclick="location.href='https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=XChO_shb0XLnJL7kCokg&state=STATE_STRING&redirect_uri=http://localhost:8080/naver/callback' ">NAVER
+</button>
+
+</body>
+</html>

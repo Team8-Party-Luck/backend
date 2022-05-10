@@ -20,4 +20,6 @@ public class PartyRequestDto {
     private String desc;
     private String age;
     private String gender;
+    private String xy;
+    private String place_url;
 }

@@ -22,6 +22,8 @@ public class PartyDetailsResponseDto {
     private String meeting;
     private String age;
     private String gender;
+    private String xy;
+    private String place_url;
     private String[] image;
     private boolean isJoin;
     private boolean isSub;
