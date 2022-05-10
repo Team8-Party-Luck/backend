@@ -507,7 +507,7 @@ public class PartyService {
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
             PartyResponseResultDto dto = new PartyResponseResultDto();
-            dto.setPartyId(p.getId());
+            dto.setPartyId(p.getId()); 
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
             String[] tmp=p.getAddress().split(" ");
