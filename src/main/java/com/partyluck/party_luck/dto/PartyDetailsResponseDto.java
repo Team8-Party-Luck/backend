@@ -25,6 +25,7 @@ public class PartyDetailsResponseDto {
     private String xy;
     private String place_url;
     private String[] image;
+    private String[] userimageurls;
     private boolean isJoin;
     private boolean isSub;
 }

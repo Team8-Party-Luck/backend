@@ -14,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PartyService {
@@ -219,7 +216,8 @@ public class PartyService {
             result.setDesc(party.getDescription());
             result.setPartyid(id);
             result.setStore(party.getStore());
-            result.setAddress(party.getAddress());
+            String[] addtmp=party.getAddress().split(" ");
+            result.setAddress(addtmp[0]+" "+addtmp[1]);
             result.setHostid(userRepository.findById(party.getUserid()).orElse(null).getId());
             result.setHost(userRepository.findById(party.getUserid()).orElse(null).getNickname());
             result.setTitle(party.getTitle());
@@ -235,6 +233,11 @@ public class PartyService {
             for (int i = 0; i < itmp.size(); i++)
                 ist[i] = itmp.get(i).getImageSrc();
             result.setImage(ist);
+            List<PartyJoin> partyJoins=partyJoinRepository.findAllByParty(party);
+            String[] urls=new String[partyJoins.size()];
+            for(int i=0;i<partyJoins.size();i++)
+                urls[i]= Objects.requireNonNull(initialInfoRepository.findByUserId(partyJoins.get(i).getUser().getId()).orElse(null)).getProfile_img();
+            result.setUserimageurls(urls);
             Subscribe subscribe1 = subscribeRepository.findByPartyAndUser(party, userRepository.findById(id1).orElse(null)).orElse(null);
             if (subscribe1 == null)
                 result.setSub(false);
@@ -255,7 +258,8 @@ public class PartyService {
             result.setDesc(party.getDescription());
             result.setPartyid(id);
             result.setStore(party.getStore());
-            result.setAddress(party.getAddress());
+            String[] addtmp=party.getAddress().split(" ");
+            result.setAddress(addtmp[0]+" "+addtmp[1]);
             result.setHostid(userRepository.findById(party.getUserid()).orElse(null).getId());
             result.setHost(userRepository.findById(party.getUserid()).orElse(null).getNickname());
             result.setTitle(party.getTitle());
@@ -271,6 +275,11 @@ public class PartyService {
             for (int i = 0; i < itmp.size(); i++)
                 ist[i] = itmp.get(i).getImageSrc();
             result.setImage(ist);
+            List<PartyJoin> partyJoins=partyJoinRepository.findAllByParty(party);
+            String[] urls=new String[partyJoins.size()];
+            for(int i=0;i<partyJoins.size();i++)
+                urls[i]= Objects.requireNonNull(initialInfoRepository.findByUserId(partyJoins.get(i).getUser().getId()).orElse(null)).getProfile_img();
+            result.setUserimageurls(urls);
             Subscribe subscribe2 = subscribeRepository.findByPartyAndUser(party, userRepository.findById(id1).orElse(null)).orElse(null);
             if (subscribe2 == null)
                 result.setSub(false);
@@ -295,7 +304,8 @@ public class PartyService {
         result.setDesc(party.getDescription());
         result.setPartyid(id);
         result.setStore(party.getStore());
-        result.setAddress(party.getAddress());
+        String[] addtmp=party.getAddress().split(" ");
+        result.setAddress(addtmp[0]+" "+addtmp[1]);
         result.setHostid(userRepository.findById(party.getUserid()).orElse(null).getId());
         result.setHost(userRepository.findById(party.getUserid()).orElse(null).getNickname());
         result.setTitle(party.getTitle());
@@ -311,6 +321,11 @@ public class PartyService {
         for (int i = 0; i < itmp.size(); i++)
             ist[i] = itmp.get(i).getImageSrc();
         result.setImage(ist);
+        List<PartyJoin> partyJoins=partyJoinRepository.findAllByParty(party);
+        String[] urls=new String[partyJoins.size()];
+        for(int i=0;i<partyJoins.size();i++)
+            urls[i]= Objects.requireNonNull(initialInfoRepository.findByUserId(partyJoins.get(i).getUser().getId()).orElse(null)).getProfile_img();
+        result.setUserimageurls(urls);
         Subscribe subscribe = subscribeRepository.findByPartyAndUser(party, userRepository.findById(id1).orElse(null)).orElse(null);
         if (subscribe == null)
             result.setSub(false);
@@ -507,7 +522,7 @@ public class PartyService {
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
             PartyResponseResultDto dto = new PartyResponseResultDto();
-            dto.setPartyId(p.getId()); 
+            dto.setPartyId(p.getId());
             dto.setDate(p.getDate());
             dto.setCapacity(p.getCapacity());
             String[] tmp=p.getAddress().split(" ");
