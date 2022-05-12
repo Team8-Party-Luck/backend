@@ -31,19 +31,12 @@ public class Party {
 
     private String time;
 
+//    @Column(nullable = false)
+//    private String locataion;
+
     private String store;
 
-    private String address;
-
     private String meeting;
-
-    private String gender;
-
-    private String age;
-
-    private String place_url;
-
-    private String xy;
 
     private Long userid;
 

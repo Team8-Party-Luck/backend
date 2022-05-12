@@ -13,12 +13,10 @@ public class PartyModifyDto {
     private Integer[] imageIndex;
     private String title;
     private Integer capacity;
-    private String address;
+    //    private String location;
     private String store;
     private String date;
     private String time;
     private String meeting;
     private String desc;
-    private String age;
-    private String gender;
 }

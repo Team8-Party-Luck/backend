@@ -25,35 +25,34 @@ public class PartyController {
     }
 
     @PostMapping("/api/party")
-    public ResponseDto registerparty(
+    public ResponseDto registerparty(@RequestParam("image") MultipartFile[] multipartFile,
                                      PartyRequestDto dto,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails)throws IOException {
-        return partyService.registerparty(dto,userDetails.getId());
+        return partyService.registerparty(multipartFile,dto,userDetails.getId());
     }
-    @GetMapping("/api/parties/raw/{page}")
-    public PartyResponseDto rawpartyview(@PathVariable Integer page){
-        page=page-1;
-        return partyService.rawpartyview(page);
+    @GetMapping("/api/parties")
+    public PartyResponseDto rawpartyview(){
+        return partyService.rawpartyview();
     }
-    @GetMapping("/home/parties/local/{pageid}")
-    public PartyResponseDto partyview(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Integer pageid){
-        return partyService.partyview(userDetails.getId(),pageid);
+    @GetMapping("/home/parties/local")
+    public PartyResponseDto partyview(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.partyview(userDetails.getId());
     }
-    @GetMapping("/api/parties/sub/{pageid}")
-    public PartyResponseDto mysubparty(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Integer pageid){
-        return partyService.mysubparty(userDetails.getId(),pageid);
+    @GetMapping("/api/parties/sub")
+    public PartyResponseDto mysubparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.mysubparty(userDetails.getId());
     }
-    @GetMapping("/api/parties/history/creation/{pageid}")
-    public PartyResponseDto myhostparty(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Integer pageid){
-        return partyService.myhostparty(userDetails.getId(),pageid);
+    @GetMapping("/api/parties/history/creation")
+    public PartyResponseDto myhostparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.myhostparty(userDetails.getId());
     }
-    @GetMapping("/home/parties/join/{pageid}")
-    public PartyResponseDto willjoinparty(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Integer pageid){
-        return partyService.willjoinparty(userDetails.getId(),pageid);
+    @GetMapping("/home/parties/join")
+    public PartyResponseDto willjoinparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.willjoinparty(userDetails.getId());
     }
-    @GetMapping("/api/parties/history/in/{pageid}")
-    public PartyResponseDto joinedparty(@AuthenticationPrincipal UserDetailsImpl userDetails,@PathVariable Integer pageid){
-        return partyService.joinedparty(userDetails.getId(),pageid);
+    @GetMapping("/api/parties/history/in")
+    public PartyResponseDto joinedparty(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return partyService.joinedparty(userDetails.getId());
     }
 
     @Transactional
@@ -62,7 +61,7 @@ public class PartyController {
         return partyService.deleteparty(id);
     }
 
-    @GetMapping("/api/party/in/{partyid}")
+    @PostMapping("/api/party/in/{partyid}")
     public String partyjoin(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.partyjoin(id,userDetails.getId());
     }
@@ -73,8 +72,8 @@ public class PartyController {
     }
 
     @Transactional
-    @GetMapping("/api/party/sub/{partyid}")
-    public PartyDetailsResponseDto likeparty(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
+    @PostMapping("/api/party/sub/{partyid}")
+    public String likeparty(@PathVariable("partyid") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         return partyService.likeparty(id,userDetails.getId());
     }
 

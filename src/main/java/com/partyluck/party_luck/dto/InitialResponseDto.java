@@ -8,13 +8,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class InitialResponseDto {
-    private String[] food;
+    private String food;
     private String age;
     private String gender;
     private String sns;
     private String image;
     private String intro;
-    private String city;
-    private String region;
-    private String nickname;
+    private String location;
 }
