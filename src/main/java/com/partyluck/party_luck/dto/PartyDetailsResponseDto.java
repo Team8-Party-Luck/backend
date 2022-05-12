@@ -13,14 +13,19 @@ public class PartyDetailsResponseDto {
     private String title;
     private Integer capacity;
     private Integer memberCnt;
-    private String location;
+    private String address;
     private String store;
     private String desc;
     private String date;
     private String time;
     private String host;
     private String meeting;
+    private String age;
+    private String gender;
+    private String xy;
+    private String place_url;
     private String[] image;
+    private String[] userimageurls;
     private boolean isJoin;
     private boolean isSub;
 }

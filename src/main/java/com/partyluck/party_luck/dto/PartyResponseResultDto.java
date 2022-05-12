@@ -14,11 +14,15 @@ public class PartyResponseResultDto {
     private Integer capacity;
     private String desc;
     private String store;
-//    private String location;
+    private String address;
     private String date;
     private String time;
     private String meeting;
     private String[] image;
+    private boolean ishost;
+    private boolean issub;
+    private String age;
+    private String gender;
 
 
 }
