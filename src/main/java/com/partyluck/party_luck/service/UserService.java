@@ -60,7 +60,7 @@ public class UserService {
 
         return result;
     }
-    public ResponseDto initialRegister(InitialDto dto,
+    public ResponseDto initialRegister(MultipartFile multipartFile, InitialDto dto,
                                 UserDetailsImpl userDetails)throws IOException{
         InitialInfo tmp=initialInfoRepository.findByUserId(userDetails.getId()).orElse(null);
         InitialInfo info=new InitialInfo();
@@ -71,23 +71,15 @@ public class UserService {
         try {
             if(tmp==null) {
                 info.setAge(dto.getAge());
-                String s="";
-                for(int i=0;i<dto.getFood().size();i++)
-                    s=s+dto.getFood().get(i)+" ";
-                info.setFood(s.substring(0,s.length()-1));
+                info.setFood(dto.getFood());
                 info.setGender(dto.getGender());
                 info.setSns_url(dto.getSns());
                 info.setIntro(dto.getIntro());
-                info.setCity(dto.getCity());
-                info.setRegion(dto.getRegion());
-//                if(dto.getImage().getBytes().length!=0)
-//                    info.setProfile_img(s3Uploader.upload(dto.getImage()));
+                info.setLocation(dto.getLocation());
+                info.setProfile_img(s3Uploader.upload(multipartFile));
                 long idnum = userDetails.getId();
                 info.setUserId(idnum);
                 initialInfoRepository.save(info);
-                User usernick=userRepository.findById(idnum).orElse(null);
-                usernick.setNickname(dto.getNickname());
-                userRepository.save(usernick);
             }
             else{
                 result.setMsg("이미 등록된 사용자입니다.");
@@ -108,20 +100,17 @@ public class UserService {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         InitialResponseDto result=new InitialResponseDto();
         result.setAge(info.getAge());
-        String[] foods=info.getFood().split(" ");
-        result.setFood(foods);
+        result.setFood(info.getFood());
         result.setGender(info.getGender());
         result.setImage(info.getProfile_img());
         result.setSns(info.getSns_url());
         result.setIntro(info.getIntro());
-        result.setCity(info.getCity());
-        result.setRegion(info.getRegion());
-        result.setNickname(userRepository.findById(id).orElse(null).getNickname());
+        result.setLocation(info.getLocation());
         return result;
     }
 
 
-    public ResponseDto modifyinitial(InitialModifyDto dto, long id) throws IOException {
+    public ResponseDto modifyinitial(MultipartFile multipartFile, InitialDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto();
         result.setHttp(200);
@@ -129,24 +118,13 @@ public class UserService {
         result.setStatus(true);
         try {
             info.setGender(dto.getGender());
-            String s="";
-            for(int i=0;i<dto.getFood().size();i++)
-                s=s+dto.getFood().get(i)+" ";
-            info.setFood(s.substring(0,s.length()-1));
+            info.setFood(dto.getFood());
             info.setSns_url(dto.getSns());
             info.setAge(dto.getAge());
-//            System.out.println(dto.getImage()+"1");
-//            System.out.println(dto.getImage().isEmpty()+"2");
-            if((dto.getImage()!=null)&&(!dto.getImage().isEmpty())) {
-                info.setProfile_img(s3Uploader.upload(dto.getImage()));
-            }
-            info.setRegion(dto.getRegion());
-            info.setCity(dto.getCity());
+            info.setProfile_img(s3Uploader.upload(multipartFile));
+            info.setLocation(dto.getLocation());
             info.setIntro(dto.getIntro());
             initialInfoRepository.save(info);
-            User usernick=userRepository.findById(id).orElse(null);
-            usernick.setNickname(dto.getNickname());
-            userRepository.save(usernick);
         }
         catch(Exception e){
             result.setHttp(200);
@@ -163,11 +141,7 @@ public class UserService {
         User user=userRepository.findById(id).orElse(null);
         UserResponseDto dto=new UserResponseDto();
         UserResponseResultDto resultDto=new UserResponseResultDto();
-        InitialInfo tmp=initialInfoRepository.findByUserId(id).orElse(null);
-        if(tmp==null)
-            dto.setOk(false);
-        else
-            dto.setOk(true);
+        dto.setOk(true);
         resultDto.setEmail(user.getEmail());
         resultDto.setPassword(user.getPassword());
         resultDto.setUserid(id);

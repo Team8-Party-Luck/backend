@@ -1,5 +1,6 @@
 package com.partyluck.party_luck.domain;
 
+import com.partyluck.party_luck.dto.InitialFood;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class InitialInfo {
     private String profile_img;
 
     private String food;
+//    private InitialFood food;
 
     private String age;
 
@@ -25,9 +27,7 @@ public class InitialInfo {
 
     private String sns_url;
 
-    private String region;
-
-    private String city;
+    private String location;
 
     private String intro;
 
