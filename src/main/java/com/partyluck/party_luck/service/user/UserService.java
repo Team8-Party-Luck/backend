@@ -1,22 +1,26 @@
-package com.partyluck.party_luck.service;
+package com.partyluck.party_luck.service.user;
 
 import com.partyluck.party_luck.config.S3Uploader;
 import com.partyluck.party_luck.domain.InitialInfo;
 import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.dto.*;
+import com.partyluck.party_luck.dto.user.request.InitialDto;
+import com.partyluck.party_luck.dto.user.request.ModifyUserRequestDto;
+import com.partyluck.party_luck.dto.user.request.SignupRequestDto;
+import com.partyluck.party_luck.dto.user.response.InitialResponseDto;
+import com.partyluck.party_luck.dto.user.response.UserResponseDto;
+import com.partyluck.party_luck.dto.user.response.UserResponseResultDto;
 import com.partyluck.party_luck.repository.InitialInfoRepository;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
+
+import static com.partyluck.party_luck.exception.ExceptionMessage.*;
 
 @Service
 public class UserService {
@@ -60,8 +64,9 @@ public class UserService {
 
         return result;
     }
+    //유저 상세정보 등록
     public ResponseDto initialRegister(InitialDto dto,
-                                UserDetailsImpl userDetails)throws IOException{
+                                       UserDetailsImpl userDetails)throws IOException{
         InitialInfo tmp=initialInfoRepository.findByUserId(userDetails.getId()).orElse(null);
         InitialInfo info=new InitialInfo();
         ResponseDto result = new ResponseDto();
@@ -90,7 +95,7 @@ public class UserService {
                 userRepository.save(usernick);
             }
             else{
-                result.setMsg("이미 등록된 사용자입니다.");
+                result.setMsg(ILLEGAL_INITIALINFO_DUPLICATE);
                 result.setStatus(false);
             }
         }
@@ -103,7 +108,7 @@ public class UserService {
 
     }
 
-
+//본인 상세정보 조회
     public InitialResponseDto myinitial(long id) {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         InitialResponseDto result=new InitialResponseDto();
@@ -120,8 +125,8 @@ public class UserService {
         return result;
     }
 
-
-    public ResponseDto modifyinitial(InitialModifyDto dto, long id) throws IOException {
+//유저 상세정보 수정
+    public ResponseDto modifyinitial(InitialDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto();
         result.setHttp(200);
@@ -135,8 +140,6 @@ public class UserService {
             info.setFood(s.substring(0,s.length()-1));
             info.setSns_url(dto.getSns());
             info.setAge(dto.getAge());
-//            System.out.println(dto.getImage()+"1");
-//            System.out.println(dto.getImage().isEmpty()+"2");
             if((dto.getImage()!=null)&&(!dto.getImage().isEmpty())) {
                 info.setProfile_img(s3Uploader.upload(dto.getImage()));
             }
@@ -158,7 +161,7 @@ public class UserService {
 
 
     }
-
+//본인 기본정보 조회
     public UserResponseDto userview(long id) {
         User user=userRepository.findById(id).orElse(null);
         UserResponseDto dto=new UserResponseDto();
@@ -176,12 +179,12 @@ public class UserService {
         return dto;
 
     }
-
+//기본정보 수정
     public ResponseDto modifyuser(long id, ModifyUserRequestDto dto) {
         User user=userRepository.findById(id).orElse(null);
         ResponseDto result=new ResponseDto();
         result.setHttp(200);
-        result.setMsg("수정 실패...");
+        result.setMsg(ILLEGAL_PASSWORD_INVALIDATION);
         result.setStatus(false);
         if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
 
@@ -198,12 +201,11 @@ public class UserService {
 
         return result;
     }
-
+//회원 탈퇴
     @Transactional
-    public ResponseDto deleteuser(long id) {
+    public ResponseDto deleteUser(long id) {
         ResponseDto result=new ResponseDto();
         try {
-
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }

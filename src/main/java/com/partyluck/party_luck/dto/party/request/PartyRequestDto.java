@@ -1,31 +1,25 @@
-package com.partyluck.party_luck.dto;
+package com.partyluck.party_luck.dto.party.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class PartyDetailsResponseDto {
-    private Long hostid;
-    private Long partyid;
+public class PartyRequestDto {
+    private MultipartFile[] image;
     private String title;
     private Integer capacity;
-    private Integer memberCnt;
     private String address;
     private String store;
-    private String desc;
     private String date;
     private String time;
-    private String host;
     private String meeting;
+    private String desc;
     private String age;
     private String gender;
     private String xy;
     private String place_url;
-    private String[] image;
-    private String[] userimageurls;
-    private boolean isJoin;
-    private boolean isSub;
 }
