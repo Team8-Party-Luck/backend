@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.dto;
+package com.partyluck.party_luck.websocket.dto.request;
 
 
 import com.partyluck.party_luck.websocket.domain.ChatMessage;

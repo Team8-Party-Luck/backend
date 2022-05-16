@@ -1,6 +1,8 @@
 package com.partyluck.party_luck.websocket.domain;
 
-import com.partyluck.party_luck.websocket.dto.MessageRequestDto;
+
+import com.partyluck.party_luck.websocket.Timestamped;
+import com.partyluck.party_luck.websocket.dto.request.MessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,11 +10,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Getter
 @NoArgsConstructor
-@Setter
+@Getter @Setter
 @Entity
-public class ChatMessage {
+public class ChatMessage extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
@@ -25,9 +26,6 @@ public class ChatMessage {
 
     @Column
     private String message; // 메시지
-
-    @Column
-    private String createdAt;
 
     @Column
     private Long senderId;
@@ -43,7 +41,6 @@ public class ChatMessage {
         this.senderId = senderId;
         this.chatroom = chatRoom;
         this.message = message.getMessage();
-        this.createdAt = message.getCreatedAt();
         this.messageType = message.getType();
     }
 }

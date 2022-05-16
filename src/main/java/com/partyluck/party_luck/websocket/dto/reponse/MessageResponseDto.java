@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.dto;
+package com.partyluck.party_luck.websocket.dto.reponse;
 
 import lombok.Builder;
 import lombok.Getter;
