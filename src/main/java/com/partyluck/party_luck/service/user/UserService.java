@@ -13,6 +13,7 @@ import com.partyluck.party_luck.dto.user.response.UserResponseResultDto;
 import com.partyluck.party_luck.repository.InitialInfoRepository;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.io.IOException;
 
 import static com.partyluck.party_luck.exception.ExceptionMessage.*;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final PasswordEncoder passwordEncoder;
@@ -29,80 +31,40 @@ public class UserService {
     private final InitialInfoRepository initialInfoRepository;
     private final S3Uploader s3Uploader;
 
-    @Autowired
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, InitialInfoRepository initialInfoRepository, S3Uploader s3Uploader) {
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.initialInfoRepository = initialInfoRepository;
-        this.s3Uploader = s3Uploader;
-    }
+    //일반 회원가입
     public ResponseDto registerUser(SignupRequestDto dto){
-        ResponseDto result=new ResponseDto();
-        result.setHttp(200);
-        result.setStatus(true);
-        result.setMsg("회원가입 성공!");
+        ResponseDto result=new ResponseDto(true,200,"회원가입 성공!");
         if(!dto.getPassword().equals(dto.getPasswordCheck())){
-            System.out.println(dto.getPassword());
-            System.out.println(dto.getPasswordCheck());
-            result.setStatus(false);
-            result.setMsg("비밀번호와 비밀번호 확인은 같아야합니다.");
-            return result;
+            return new ResponseDto(false,400,"비밀번호와 비밀번호 확인은 같아야합니다.");
         }
         User ispresent=userRepository.findByEmail(dto.getEmail()).orElse(null);
         if(ispresent!=null){
-            result.setStatus(false);
-            result.setMsg("이미 가입한 이메일 입니다.");
-            return result;
+            return new ResponseDto(false,400,"이미 가입한 이메일 입니다.");
         }
-        User user=new User();
-        user.setUsername(dto.getEmail());
-        user.setEmail(dto.getEmail());
-        user.setNickname(dto.getNickname());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-//        System.out.println(user.getEmail());
+        User user=new User(passwordEncoder, dto);
         userRepository.save(user);
-
         return result;
     }
     //유저 상세정보 등록
     public ResponseDto initialRegister(InitialDto dto,
                                        UserDetailsImpl userDetails)throws IOException{
         InitialInfo tmp=initialInfoRepository.findByUserId(userDetails.getId()).orElse(null);
-        InitialInfo info=new InitialInfo();
-        ResponseDto result = new ResponseDto();
-        result.setHttp(200);
-        result.setMsg("등록 성공!");
-        result.setStatus(true);
+        InitialInfo info;
+        ResponseDto result = new ResponseDto(true,200,"등록 성공!");
         try {
             if(tmp==null) {
-                info.setAge(dto.getAge());
-                String s="";
-                for(int i=0;i<dto.getFood().size();i++)
-                    s=s+dto.getFood().get(i)+" ";
-                info.setFood(s.substring(0,s.length()-1));
-                info.setGender(dto.getGender());
-                info.setSns_url(dto.getSns());
-                info.setIntro(dto.getIntro());
-                info.setCity(dto.getCity());
-                info.setRegion(dto.getRegion());
-//                if(dto.getImage().getBytes().length!=0)
-//                    info.setProfile_img(s3Uploader.upload(dto.getImage()));
-                long idnum = userDetails.getId();
-                info.setUserId(idnum);
+                info=new InitialInfo(dto,userDetails);
                 initialInfoRepository.save(info);
-                User usernick=userRepository.findById(idnum).orElse(null);
+                User usernick=userRepository.findById(userDetails.getId()).orElse(null);
                 usernick.setNickname(dto.getNickname());
                 userRepository.save(usernick);
             }
             else{
-                result.setMsg(ILLEGAL_INITIALINFO_DUPLICATE);
-                result.setStatus(false);
+                return new ResponseDto(false,400,ILLEGAL_INITIALINFO_DUPLICATE);
             }
         }
         catch(Exception e) {
-            result.setHttp(200);
-            result.setMsg("등록 실패...");
-            result.setStatus(false);
+            return new ResponseDto(false,500,"등록 실패...");
         }
         return result;
 
@@ -111,16 +73,7 @@ public class UserService {
 //본인 상세정보 조회
     public InitialResponseDto myinitial(long id) {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
-        InitialResponseDto result=new InitialResponseDto();
-        result.setAge(info.getAge());
-        String[] foods=info.getFood().split(" ");
-        result.setFood(foods);
-        result.setGender(info.getGender());
-        result.setImage(info.getProfile_img());
-        result.setSns(info.getSns_url());
-        result.setIntro(info.getIntro());
-        result.setCity(info.getCity());
-        result.setRegion(info.getRegion());
+        InitialResponseDto result=new InitialResponseDto(info);
         result.setNickname(userRepository.findById(id).orElse(null).getNickname());
         return result;
     }
@@ -128,10 +81,7 @@ public class UserService {
 //유저 상세정보 수정
     public ResponseDto modifyinitial(InitialDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
-        ResponseDto result=new ResponseDto();
-        result.setHttp(200);
-        result.setMsg("수정 성공!");
-        result.setStatus(true);
+        ResponseDto result=new ResponseDto(true,200,"수정 성공!");
         try {
             info.setGender(dto.getGender());
             String s="";
@@ -152,73 +102,43 @@ public class UserService {
             userRepository.save(usernick);
         }
         catch(Exception e){
-            result.setHttp(200);
-            result.setMsg("수정 실패...");
-            result.setStatus(false);
+            return new ResponseDto(false,400,"수정 실패..");
         }
-
         return result;
-
-
     }
 //본인 기본정보 조회
     public UserResponseDto userview(long id) {
         User user=userRepository.findById(id).orElse(null);
-        UserResponseDto dto=new UserResponseDto();
-        UserResponseResultDto resultDto=new UserResponseResultDto();
+        UserResponseResultDto resultDto=new UserResponseResultDto(user,id);
         InitialInfo tmp=initialInfoRepository.findByUserId(id).orElse(null);
         if(tmp==null)
-            dto.setOk(false);
+            return new UserResponseDto(false,resultDto);
         else
-            dto.setOk(true);
-        resultDto.setEmail(user.getEmail());
-        resultDto.setPassword(user.getPassword());
-        resultDto.setUserid(id);
-        resultDto.setNickname(user.getNickname());
-        dto.setResult(resultDto);
-        return dto;
+            return new UserResponseDto(true,resultDto);
 
     }
 //기본정보 수정
     public ResponseDto modifyuser(long id, ModifyUserRequestDto dto) {
         User user=userRepository.findById(id).orElse(null);
-        ResponseDto result=new ResponseDto();
-        result.setHttp(200);
-        result.setMsg(ILLEGAL_PASSWORD_INVALIDATION);
-        result.setStatus(false);
+        ResponseDto result=new ResponseDto(false,200,ILLEGAL_PASSWORD_INVALIDATION);
         if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-
             user.setNickname(dto.getNickname());
             user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-
             userRepository.save(user);
-
-            result.setHttp(200);
-            result.setMsg("수정 성공!");
-            result.setStatus(true);
-
+            return new ResponseDto(true,200,"수정 성공!");
         }
-
         return result;
     }
 //회원 탈퇴
     @Transactional
     public ResponseDto deleteUser(long id) {
-        ResponseDto result=new ResponseDto();
         try {
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }
         catch(Exception e){
-            result.setHttp(200);
-            result.setMsg("삭제 실패...");
-            result.setStatus(false);
-            return result;
+            return new ResponseDto(false,400,"삭제 실패...");
         }
-        result.setHttp(200);
-        result.setMsg("삭제 성공!");
-        result.setStatus(true);
-        return result;
-
+        return new ResponseDto(true,200,"삭제 성공!");
     }
 }

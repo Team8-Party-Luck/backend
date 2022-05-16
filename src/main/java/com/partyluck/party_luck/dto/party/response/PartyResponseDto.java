@@ -2,14 +2,13 @@ package com.partyluck.party_luck.dto.party.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class PartyResponseDto {
-//    private PartyResponseResultDto[] result;
     List<PartyResponseResultDto> results;
+    public PartyResponseDto(List<PartyResponseResultDto> results){
+        this.results=results;
+    }
 }

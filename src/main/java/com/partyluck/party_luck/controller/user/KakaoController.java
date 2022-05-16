@@ -8,21 +8,15 @@ import com.partyluck.party_luck.service.user.KakaoUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
 @RequiredArgsConstructor
 public class KakaoController {
-
     private final KakaoUserService kakaoUserService;
 
-
-
-    @ResponseBody
     @GetMapping("/auth/kakao")
     public String kakaoLogin(@RequestParam String code, final HttpServletResponse response) throws JsonProcessingException {
         User user=kakaoUserService.kakaoLogin(code);
@@ -33,5 +27,4 @@ public class KakaoController {
         System.out.println(response.getStatus());
         return token;
     }
-
 }

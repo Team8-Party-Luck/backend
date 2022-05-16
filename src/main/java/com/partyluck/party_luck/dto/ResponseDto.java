@@ -1,10 +1,10 @@
 package com.partyluck.party_luck.dto;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor
 public class ResponseDto {
     private boolean status;
     private int http;
@@ -14,9 +14,5 @@ public class ResponseDto {
         this.status=status;
         this.http=http;
         this.msg=msg;
-    }
-
-    public ResponseDto() {
-
     }
 }

@@ -1,9 +1,9 @@
 package com.partyluck.party_luck.domain;
 
+import com.partyluck.party_luck.dto.party.request.PartyRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -52,4 +52,20 @@ public class Party {
 
     @OneToMany(mappedBy = "party")
     private List<Subscribe> subscribeList;
+
+    public Party(PartyRequestDto dto,long id){
+        this.title=dto.getTitle();
+        this.capacity=dto.getCapacity();
+        this.date=dto.getDate();
+        this.time=dto.getTime();
+        this.age=dto.getAge();
+        this.gender=dto.getGender();
+        this.meeting=dto.getMeeting();
+        this.place_url=dto.getPlace_url();
+        this.store=dto.getStore();
+        this.description=dto.getDesc();
+        this.userid=id;
+        this.address=dto.getAddress();
+        this.xy=dto.getXy();
+    }
 }
