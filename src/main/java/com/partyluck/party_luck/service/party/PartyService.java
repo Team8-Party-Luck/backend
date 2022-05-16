@@ -463,10 +463,11 @@ public class PartyService {
             party.setStore(dto.getStore());
             party.setDate(dto.getDate());
             party.setCapacity(dto.getCapacity());
-            String[] ages=dto.getAge();
+            List<String> ages=dto.getAge();
+            Collections.sort(ages);
             String s="";
-            for(int i=0;i<ages.length;i++){
-                s+=ages[i]+" ";
+            for(int i=0;i<ages.size();i++){
+                s+=ages.get(i)+" ";
             }
             party.setAge(s.substring(0,s.length()-1));
             party.setGender(dto.getGender());

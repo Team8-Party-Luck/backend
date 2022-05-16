@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -58,10 +59,11 @@ public class Party {
         this.capacity=dto.getCapacity();
         this.date=dto.getDate();
         this.time=dto.getTime();
-        String[] tmp=dto.getAge();
+        List<String> tmp=dto.getAge();
+        Collections.sort(tmp);
         String s="";
-        for(int i=0;i<tmp.length;i++)
-            s+=tmp[i]+" ";
+        for(int i=0;i<tmp.size();i++)
+            s+=tmp.get(i)+" ";
         this.age=s.substring(0,s.length()-1);
         this.gender=dto.getGender();
         this.meeting=dto.getMeeting();

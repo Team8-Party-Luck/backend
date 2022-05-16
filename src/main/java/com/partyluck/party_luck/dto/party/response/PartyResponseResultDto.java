@@ -22,6 +22,7 @@ public class PartyResponseResultDto {
     private boolean issub;
     private String age;
     private String gender;
+    private Long hostId;
 
     public PartyResponseResultDto(Party p,String[] ist){
         this.partyId=p.getId();
@@ -37,6 +38,7 @@ public class PartyResponseResultDto {
         this.age=p.getAge();
         this.gender=p.getGender();
         this.image=ist;
+        this.hostId=p.getUserid();
     }
     public PartyResponseResultDto(Party p,String[] ist,boolean ishost,boolean issub){
         this.partyId=p.getId();
@@ -52,6 +54,7 @@ public class PartyResponseResultDto {
         this.age=p.getAge();
         this.gender=p.getGender();
         this.image=ist;
+        this.hostId=p.getUserid();
         this.ishost=ishost;
         this.issub=issub;
     }

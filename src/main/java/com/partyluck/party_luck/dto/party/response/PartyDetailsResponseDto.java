@@ -6,6 +6,10 @@ import com.partyluck.party_luck.repository.UserRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+
+import static com.partyluck.party_luck.service.party.DefaultImage.DefaultImages;
+
 @Getter
 @NoArgsConstructor
 public class PartyDetailsResponseDto {
@@ -27,6 +31,7 @@ public class PartyDetailsResponseDto {
     private String place_url;
     private String[] image;
     private String[] userimageurls;
+    private boolean isDefault;
     private boolean isJoin;
     private boolean isSub;
 
@@ -50,6 +55,10 @@ public class PartyDetailsResponseDto {
         this.hostid=userRepository.findById(party.getUserid()).orElse(null).getId();
         this.memberCnt=partyJoinRepository.findAllByParty(party).size();
         this.image=ist;
+        if(ist!=null&&ist.length!=0&&Arrays.asList(DefaultImages).contains(ist[0]))
+            this.isDefault=true;
+        else
+            this.isDefault=false;
         this.userimageurls=urls;
         this.isSub=sub;
         this.isJoin=join;

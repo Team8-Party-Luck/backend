@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class PartyRequestDto {
     private String time;
     private String meeting;
     private String desc;
-    private String[] age;
+    private List<String> age;
     private String gender;
     private String xy;
     private String place_url;
