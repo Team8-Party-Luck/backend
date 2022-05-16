@@ -29,4 +29,9 @@ public class Image {
         this.imgIndex=i+1;
         this.partyid=partyid;
     }
+    public Image(String imageSrc, int imgIndex, long partyid){
+        this.imageSrc=imageSrc;
+        this.imgIndex=imgIndex;
+        this.partyid=partyid;
+    }
 }

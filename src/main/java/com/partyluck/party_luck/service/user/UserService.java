@@ -84,9 +84,13 @@ public class UserService {
         try {
             info.setGender(dto.getGender());
             String s="";
-            for(int i=0;i<dto.getFood().size();i++)
-                s=s+dto.getFood().get(i)+" ";
-            info.setFood(s.substring(0,s.length()-1));
+            try {
+                for (int i = 0; i < dto.getFood().size(); i++)
+                    s = s + dto.getFood().get(i) + " ";
+                info.setFood(s.substring(0, s.length() - 1));
+            }catch (Exception e){
+                info.setFood("");
+            }
             info.setSns_url(dto.getSns());
             info.setAge(dto.getAge());
             if((dto.getImage()!=null)&&(!dto.getImage().isEmpty())) {

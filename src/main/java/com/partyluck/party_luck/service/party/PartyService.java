@@ -39,7 +39,9 @@ public class PartyService {
         try {
             Party party = new Party(dto,id);
             long partyid = partyRepository.save(party).getId();
-            if ((dto.getImage()) != null && (!dto.getImage()[0].isEmpty())) {
+            if(dto.getDefaultImage()!=null&& !dto.getDefaultImage().equals(""))
+                setDefaultImage(dto.getDefaultImage(),partyid);
+            else if ((dto.getImage()) != null && (!dto.getImage()[0].isEmpty())) {
                 int leng = dto.getImage().length;
                 for (int i = 0; i < leng; i++) {
                     Image image = new Image(s3Uploader,dto,i,partyid);
@@ -55,7 +57,53 @@ public class PartyService {
 
 
     }
-//파티 지역 조회
+//기본 이미지 삽입
+    private void setDefaultImage(String type, long partyid) {
+        if(type.equals("한식")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/35864eef-fd80-42db-9e78-3706d98feb32";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("중식/아시안")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/dfe05574-3938-463d-a622-f93e8ae04195";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("일식")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/0dae4dca-de5d-4651-815a-e730509f764b";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("양식")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/3c174935-3ee9-4eb6-a648-a1ffc4c7dba9";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("패스트푸드")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/b682e7d5-7ab7-4a05-a086-825503828236";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("샐러드")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/aa8e9806-9cd9-484e-9b28-bc3f71ef8316";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("커피/디저트")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/a350ea48-cc74-4b89-bdc8-cd060019699d";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+        else if(type.equals("기타")){
+            String src="https://minibucketjwc.s3.ap-northeast-2.amazonaws.com/static/image/a4596ad8-ff63-4c01-997e-d715f600cb72";
+            Image image=new Image(src,1,partyid);
+            imageRepository.save(image);
+        }
+
+
+    }
+
+    //파티 지역 조회
     public PartyResponseDto LocalPartyView(long id) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
@@ -112,12 +160,8 @@ public class PartyService {
             if (tmp == null) {
                 InitialInfo initialInfo = initialInfoRepository.findByUserId(id1).orElse(null);
                 Party party = partyRepository.findById(id).orElse(null);
-                if (
-                        ((party.getAge().equals("전체")) && (party.getGender().equals("모두"))) ||
-                                ((party.getAge().equals("전체")) && (initialInfo.getGender().equals(party.getGender()))) ||
-                                ((initialInfo.getAge().equals(party.getAge())) && (party.getGender().equals("모두"))) ||
-                                ((initialInfo.getAge().equals(party.getAge())) && (initialInfo.getGender().equals(party.getGender())))
-                ) {
+                if ((checkAge(party, initialInfo)&&party.getGender().equals("모두") )||
+                        (checkAge(party,initialInfo)&&party.getGender().equals(initialInfo.getGender()))) {
                     if (partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null)).size() < partyRepository.findById(id).orElse(null).getCapacity()) {
                         PartyJoin partyJoin = new PartyJoin(userRepository.findById(id1).orElse(null),partyRepository.findById(id).orElse(null));
                         partyJoinRepository.save(partyJoin);
@@ -151,10 +195,18 @@ public class PartyService {
         }
         return result;
     }
+//나이 필터링
+    private boolean checkAge(Party party, InitialInfo initialInfo) {
+        String[] ages=party.getAge().split(" ");
+        if(Arrays.asList(ages).contains("전체")||Arrays.asList(ages).contains(initialInfo.getAge()))
+            return true;
+        return false;
+    }
+
     //파티 참가 취소
     @Transactional
     public PartyDetailsResponseDto PartyOut(Long id, long id1) {
-        PartyDetailsResponseDto result=new PartyDetailsResponseDto();
+        PartyDetailsResponseDto result;
         try {
             if(partyJoinRepository.findPartyJoinByPartyAndUser(partyRepository.findById(id).orElse(null), userRepository.findById(id1).orElse(null)).orElse(null)!=null)
             {
@@ -411,7 +463,12 @@ public class PartyService {
             party.setStore(dto.getStore());
             party.setDate(dto.getDate());
             party.setCapacity(dto.getCapacity());
-            party.setAge(dto.getAge());
+            String[] ages=dto.getAge();
+            String s="";
+            for(int i=0;i<ages.length;i++){
+                s+=ages[i]+" ";
+            }
+            party.setAge(s.substring(0,s.length()-1));
             party.setGender(dto.getGender());
             party.setXy(dto.getXy());
             party.setPlace_url(dto.getPlace_url());

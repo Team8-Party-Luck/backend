@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class PartyRequestDto {
     private MultipartFile[] image;
+    private String defaultImage;
     private String title;
     private Integer capacity;
     private String address;
@@ -18,7 +19,7 @@ public class PartyRequestDto {
     private String time;
     private String meeting;
     private String desc;
-    private String age;
+    private String[] age;
     private String gender;
     private String xy;
     private String place_url;

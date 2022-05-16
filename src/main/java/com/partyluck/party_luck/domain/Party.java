@@ -58,7 +58,11 @@ public class Party {
         this.capacity=dto.getCapacity();
         this.date=dto.getDate();
         this.time=dto.getTime();
-        this.age=dto.getAge();
+        String[] tmp=dto.getAge();
+        String s="";
+        for(int i=0;i<tmp.length;i++)
+            s+=tmp[i]+" ";
+        this.age=s.substring(0,s.length()-1);
         this.gender=dto.getGender();
         this.meeting=dto.getMeeting();
         this.place_url=dto.getPlace_url();
