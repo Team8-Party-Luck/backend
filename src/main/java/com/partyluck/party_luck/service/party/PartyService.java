@@ -34,7 +34,7 @@ public class PartyService {
 
 
 //파티 등록
-    public ResponseDto registerparty(PartyRequestDto dto, long id) throws IOException {
+    public ResponseDto registerParty(PartyRequestDto dto, long id) throws IOException {
         ResponseDto result = new ResponseDto(true,200,"등록 성공!");
         try {
             Party party = new Party(dto,id);
@@ -56,7 +56,7 @@ public class PartyService {
 
     }
 //파티 지역 조회
-    public PartyResponseDto partyview(long id) {
+    public PartyResponseDto LocalPartyView(long id) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
@@ -86,7 +86,7 @@ public class PartyService {
     }
     //파티 삭제
     @Transactional
-    public ResponseDto deleteparty(Long id, long userDetailsId) {
+    public ResponseDto deleteParty(Long id, long userDetailsId) {
         if(partyRepository.findById(id).orElse(null).getUserid()==userDetailsId) {
             try {
                 if (partyRepository.findById(id).orElse(null) != null) {
@@ -95,17 +95,17 @@ public class PartyService {
                     subscribeRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
                     partyRepository.deleteById(id);
                 } else
-                    return new ResponseDto(false, 200, "존재하지 않는 파티입니다.");
+                    return new ResponseDto(false, 500, "존재하지 않는 파티입니다.");
             } catch (Exception e) {
                 return new ResponseDto(false,500,"삭제 실패...");
             }
         }
         else
-            return new ResponseDto(false,200,"본인 파티만 삭제할 수 있습니다.");
+            return new ResponseDto(false,400,"본인 파티만 삭제할 수 있습니다.");
         return new ResponseDto(true,200,"삭제 성공!");
     }
 //파티 참가
-    public PartyDetailsResponseDto partyjoin(Long id, long id1) {
+    public PartyDetailsResponseDto PartyJoin(Long id, long id1) {
         PartyJoin tmp = partyJoinRepository.findPartyJoinByPartyAndUser(partyRepository.findById(id).orElse(null), userRepository.findById(id1).orElse(null)).orElse(null);
         PartyDetailsResponseDto result;
         try {
@@ -153,7 +153,7 @@ public class PartyService {
     }
     //파티 참가 취소
     @Transactional
-    public PartyDetailsResponseDto partyout(Long id, long id1) {
+    public PartyDetailsResponseDto PartyOut(Long id, long id1) {
         PartyDetailsResponseDto result=new PartyDetailsResponseDto();
         try {
             if(partyJoinRepository.findPartyJoinByPartyAndUser(partyRepository.findById(id).orElse(null), userRepository.findById(id1).orElse(null)).orElse(null)!=null)
@@ -175,7 +175,7 @@ public class PartyService {
                     result = new PartyDetailsResponseDto(party,id,userRepository,partyJoinRepository,ist,urls,false,false);
                 else if (subscribe1!=null&&partyJoin==null)
                     result = new PartyDetailsResponseDto(party,id,userRepository,partyJoinRepository,ist,urls,true,false);
-                else if (subscribe1==null&&partyJoin != null)
+                else if (subscribe1==null&&partyJoin!=null)
                     result = new PartyDetailsResponseDto(party,id,userRepository,partyJoinRepository,ist,urls,false,true);
                 else
                     result = new PartyDetailsResponseDto(party,id,userRepository,partyJoinRepository,ist,urls,true,true);
@@ -190,7 +190,7 @@ public class PartyService {
 
     //좋아요
     @Transactional
-    public PartyDetailsResponseDto likeparty(Long id, long id1) {
+    public PartyDetailsResponseDto likeParty(Long id, long id1) {
 
         Subscribe subscribe = subscribeRepository.findByPartyAndUser(partyRepository.findById(id).orElse(null), userRepository.findById(id1).orElse(null)).orElse(null);
         if (subscribe == null) {
@@ -245,8 +245,8 @@ public class PartyService {
         }
     }
     //상세 페이지 조회
-    public PartyDetailsResponseDto partydetail(Long id, long id1) {
-        PartyDetailsResponseDto result = new PartyDetailsResponseDto();
+    public PartyDetailsResponseDto PartyDetail(Long id, long id1) {
+        PartyDetailsResponseDto result;
         Party party = partyRepository.findById(id).orElse(null);
 
         List<Image> itmp = imageRepository.findAllByPartyid(id);
@@ -271,7 +271,7 @@ public class PartyService {
     }
 
     //좋아요한 파티 조회
-    public PartyResponseDto mysubparty(long id) {
+    public PartyResponseDto mySubParty(long id) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
@@ -300,7 +300,7 @@ public class PartyService {
     }
 
     //내가 주최한 파티
-    public PartyResponseDto myhostparty(long id) {
+    public PartyResponseDto myHostParty(long id) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
@@ -327,7 +327,7 @@ public class PartyService {
     }
 
     //참가할 파티
-    public PartyResponseDto willjoinparty(long id) {
+    public PartyResponseDto willjoinParty(long id) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
@@ -363,7 +363,7 @@ public class PartyService {
     }
 
     //참가한 파티
-    public PartyResponseDto joinedparty(long id) {
+    public PartyResponseDto joinedParty(long id) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
@@ -399,7 +399,7 @@ public class PartyService {
         return new PartyResponseDto(results);
     }
     //파티 수정
-    public ResponseDto modifyparty(Long id, PartyRequestDto dto) throws IOException {
+    public ResponseDto modifyParty(Long id, PartyRequestDto dto) throws IOException {
         ResponseDto result = new ResponseDto(true,200,"수정 성공!");
         try {
             Party party = partyRepository.findById(id).orElse(null);
@@ -422,7 +422,7 @@ public class PartyService {
         return result;
     }
     //파티 일반 보기(비로그인)
-    public PartyResponseDto rawpartyview(int page) {
+    public PartyResponseDto RawPartyView(int page) {
         Pageable pageable= PageRequest.of(page,10, Sort.by((Sort.Direction.DESC),"id"));
         Page<Party> parties = partyRepository.findAll(pageable);
         List<PartyResponseResultDto> resultss = new ArrayList<>();
@@ -439,7 +439,7 @@ public class PartyService {
     }
 
     //등록할 때 유효성 검사
-    public boolean checkregister(PartyRequestDto dto) {
+    public boolean checkRegister(PartyRequestDto dto) {
         boolean check=true;
         if(
         dto.getAddress()==null|| dto.getAddress().equals("") ||
@@ -453,7 +453,7 @@ public class PartyService {
     }
 
     //수정할 때 유효성 검사
-    public boolean checkmodify(PartyRequestDto dto){
+    public boolean checkModify(PartyRequestDto dto){
         boolean check=true;
         if(
                 dto.getAddress()==null|| dto.getAddress().equals("") ||
@@ -467,7 +467,7 @@ public class PartyService {
 
     }
     //각 파티 참여자 조회
-    public List<UserlistResponseDto> userlist(Long partyid) {
+    public List<UserlistResponseDto> Userlist(Long partyid) {
         List<UserlistResponseDto> results= new ArrayList<>();
         List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(partyid).orElse(null));
         for(PartyJoin i : tmp){

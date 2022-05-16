@@ -14,7 +14,6 @@ import com.partyluck.party_luck.repository.InitialInfoRepository;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,7 @@ public class UserService {
         return result;
     }
     //유저 상세정보 등록
-    public ResponseDto initialRegister(InitialDto dto,
+    public ResponseDto InitialRegister(InitialDto dto,
                                        UserDetailsImpl userDetails)throws IOException{
         InitialInfo tmp=initialInfoRepository.findByUserId(userDetails.getId()).orElse(null);
         InitialInfo info;
@@ -71,7 +70,7 @@ public class UserService {
     }
 
 //본인 상세정보 조회
-    public InitialResponseDto myinitial(long id) {
+    public InitialResponseDto myInitial(long id) {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         InitialResponseDto result=new InitialResponseDto(info);
         result.setNickname(userRepository.findById(id).orElse(null).getNickname());
@@ -79,7 +78,7 @@ public class UserService {
     }
 
 //유저 상세정보 수정
-    public ResponseDto modifyinitial(InitialDto dto, long id) throws IOException {
+    public ResponseDto modifyInitial(InitialDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto(true,200,"수정 성공!");
         try {
@@ -107,7 +106,7 @@ public class UserService {
         return result;
     }
 //본인 기본정보 조회
-    public UserResponseDto userview(long id) {
+    public UserResponseDto userView(long id) {
         User user=userRepository.findById(id).orElse(null);
         UserResponseResultDto resultDto=new UserResponseResultDto(user,id);
         InitialInfo tmp=initialInfoRepository.findByUserId(id).orElse(null);
@@ -118,9 +117,9 @@ public class UserService {
 
     }
 //기본정보 수정
-    public ResponseDto modifyuser(long id, ModifyUserRequestDto dto) {
+    public ResponseDto modifyUser(long id, ModifyUserRequestDto dto) {
         User user=userRepository.findById(id).orElse(null);
-        ResponseDto result=new ResponseDto(false,200,ILLEGAL_PASSWORD_INVALIDATION);
+        ResponseDto result=new ResponseDto(false,400,ILLEGAL_PASSWORD_INVALIDATION);
         if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
             user.setNickname(dto.getNickname());
             user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
@@ -137,7 +136,7 @@ public class UserService {
             userRepository.deleteById(id);
         }
         catch(Exception e){
-            return new ResponseDto(false,400,"삭제 실패...");
+            return new ResponseDto(false,500,"삭제 실패...");
         }
         return new ResponseDto(true,200,"삭제 성공!");
     }
