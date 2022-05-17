@@ -6,12 +6,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class UserlistResponseDto {
+    private Long userId;
     private String nickname;
     private String age;
     private String gender;
     private String imageUrl;
     private String location;
-    public UserlistResponseDto(String nickname, String age, String gender, String imageUrl, String location){
+    public UserlistResponseDto(Long userId,String nickname, String age, String gender, String imageUrl, String location){
+        this.userId=userId;
         this.nickname=nickname;
         this.age=age;
         this.gender=gender;

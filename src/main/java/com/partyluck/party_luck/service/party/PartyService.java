@@ -529,13 +529,14 @@ public class PartyService {
         List<UserlistResponseDto> results= new ArrayList<>();
         List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(partyid).orElse(null));
         for(PartyJoin i : tmp){
+            Long userId=i.getUser().getId();
             String nickname=userRepository.findById(i.getUser().getId()).orElse(null).getNickname();
             String gender=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getGender();
             String age=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getAge();
             String imageUrl=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getProfile_img();
             String city=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getCity();
             String region=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getRegion();
-            UserlistResponseDto dto=new UserlistResponseDto(nickname,age,gender,imageUrl,city+" "+region);
+            UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region);
             results.add(dto);
         }
         return results;
