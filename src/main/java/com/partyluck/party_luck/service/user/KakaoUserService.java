@@ -1,10 +1,9 @@
-package com.partyluck.party_luck.service;
+package com.partyluck.party_luck.service.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.partyluck.party_luck.domain.UserRoleEnum;
-import com.partyluck.party_luck.dto.KakaoUserInfoDto;
+import com.partyluck.party_luck.dto.user.kakao.KakaoUserInfoDto;
 import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;

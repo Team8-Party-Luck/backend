@@ -3,8 +3,11 @@ package com.partyluck.party_luck.websocket.controller;
 
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
+import com.partyluck.party_luck.websocket.domain.Alarm;
+import com.partyluck.party_luck.websocket.dto.AlarmDto;
 import com.partyluck.party_luck.websocket.dto.MessageRequestDto;
 import com.partyluck.party_luck.websocket.dto.MessageResponseDto;
+import com.partyluck.party_luck.websocket.repository.AlarmRepository;
 import com.partyluck.party_luck.websocket.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.Header;
@@ -22,6 +25,7 @@ public class ChatMessageController {
     private final JwtDecoder jwtDecoder;
     private final ChatMessageService chatMessageService;
     private final UserRepository userRepository;
+    private final AlarmRepository alarmRepository;
 
     // stomp-ws를 통해 해당 경로로 메시지가 들어왔을 때 메시지의 "destination header"와 "messageMapping"에
     // 설정된 경로가 일치하는 handler를 찾고 처리한다
@@ -54,6 +58,17 @@ public class ChatMessageController {
     public void sending(@RequestBody MessageRequestDto message, @Header("token") String token) {
         MessageResponseDto messageResponseDto = chatMessageService.save(message ,token);
         messagingTemplate.convertAndSend("/topic/" + message.getRoomId(),messageResponseDto);
+    }
+
+    @MessageMapping("/alarm")
+    public void sendAlarm(@RequestBody AlarmDto alarmDto, @Header("token") String token){
+        Alarm alarm=new Alarm(alarmDto);
+        alarmRepository.save(alarm);
+        messagingTemplate.convertAndSend("/queue/",alarmDto);
+
+//        MessageResponseDto dto= chatMessageService.save(message,token);
+//        messagingTemplate.convertAndSend("/topic/" + message.getRoomId(),dto);
+
     }
 
 

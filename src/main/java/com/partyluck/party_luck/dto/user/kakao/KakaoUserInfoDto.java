@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.dto;
+package com.partyluck.party_luck.dto.user.kakao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

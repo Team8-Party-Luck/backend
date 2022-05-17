@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.service;
+package com.partyluck.party_luck.service.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

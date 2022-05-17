@@ -1,11 +1,12 @@
 package com.partyluck.party_luck.domain;
 
+import com.partyluck.party_luck.dto.user.request.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -31,17 +32,11 @@ public class User {
     @Column(unique = true)
     private Long kakaoId;
 
-//    @Column(nullable = false)
-//    private String profileImg;
-
-//    @Column(nullable = false)
-//    @Enumerated(value = EnumType.STRING)
-//    private UserRoleEnum role;
-
-//    @OneToMany(mappedBy = "user")
-//    private List<PartyJoin> partyJoinList;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<Subscribe> subscribeList;
+    public User(PasswordEncoder passwordEncoder, SignupRequestDto dto){
+        this.email=dto.getEmail();
+        this.password=passwordEncoder.encode(dto.getPassword());
+        this.nickname=dto.getNickname();
+        this.username=dto.getEmail();
+    }
 
 }

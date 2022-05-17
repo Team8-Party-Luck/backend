@@ -16,5 +16,4 @@ public interface PartyJoinRepository extends JpaRepository<PartyJoin,Long> {
     Optional<PartyJoin>findPartyJoinByPartyAndUser(Party party,User user);
     void deleteAllByParty(Party party);
     List<PartyJoin> findPartyJoinsByUser(User user);
-    List<PartyJoin> findPartyJoinsByUser_Id(Long userId);
 }
