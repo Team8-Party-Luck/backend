@@ -4,10 +4,7 @@ import com.partyluck.party_luck.config.S3Uploader;
 import com.partyluck.party_luck.domain.*;
 import com.partyluck.party_luck.dto.*;
 import com.partyluck.party_luck.dto.party.request.PartyRequestDto;
-import com.partyluck.party_luck.dto.party.response.PartyDetailsResponseDto;
-import com.partyluck.party_luck.dto.party.response.PartyResponseDto;
-import com.partyluck.party_luck.dto.party.response.PartyResponseResultDto;
-import com.partyluck.party_luck.dto.party.response.UserlistResponseDto;
+import com.partyluck.party_luck.dto.party.response.*;
 import com.partyluck.party_luck.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -525,9 +522,10 @@ public class PartyService {
 
     }
     //각 파티 참여자 조회
-    public List<UserlistResponseDto> Userlist(Long partyid) {
+    public UserlistResultDto Userlist(Long partyid) {
         List<UserlistResponseDto> results= new ArrayList<>();
         List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(partyid).orElse(null));
+        Long hostId=partyRepository.findById(partyid).orElse(null).getUserid();
         for(PartyJoin i : tmp){
             Long userId=i.getUser().getId();
             String nickname=userRepository.findById(i.getUser().getId()).orElse(null).getNickname();
@@ -539,6 +537,6 @@ public class PartyService {
             UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region);
             results.add(dto);
         }
-        return results;
+        return new UserlistResultDto(hostId,results);
     }
 }

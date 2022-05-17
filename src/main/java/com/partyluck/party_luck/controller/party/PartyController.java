@@ -5,6 +5,7 @@ import com.partyluck.party_luck.dto.party.request.PartyRequestDto;
 import com.partyluck.party_luck.dto.party.response.PartyDetailsResponseDto;
 import com.partyluck.party_luck.dto.party.response.PartyResponseDto;
 import com.partyluck.party_luck.dto.party.response.UserlistResponseDto;
+import com.partyluck.party_luck.dto.party.response.UserlistResultDto;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.service.party.PartyService;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +91,7 @@ public class PartyController {
     }
 //파티 참가인원 보기
     @GetMapping("/api/party/userlist/{partyid}")
-    public List<UserlistResponseDto> Userlist(@PathVariable Long partyid){
+    public UserlistResultDto Userlist(@PathVariable Long partyid){
         return partyService.Userlist(partyid);
     }
 

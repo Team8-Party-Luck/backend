@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface InitialInfoRepository extends JpaRepository<InitialInfo,Long> {
     Optional<InitialInfo> findByUserId(Long id);
     void deleteInitialInfoByUserId(Long id);
+    Optional<InitialInfo> findInitialInfoByUserId(Long userId);
 
 }
