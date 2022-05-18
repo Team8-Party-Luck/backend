@@ -54,7 +54,7 @@ public class ChatMessageController {
         );
         String nickname = foundUser.getNickname();
         String enterMessage = nickname + "님이 입장하셨습니다.";
-        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(),enterMessage);
+        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), enterMessage);
     }
 
     // 2. 채팅방을 나갔을 때 호출되는 메시지
@@ -70,7 +70,7 @@ public class ChatMessageController {
 
         ///////////////////////////////////////////////////////
         String quitMessage = nickname + "님이 퇴장하셨습니다.";
-        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(),quitMessage);
+        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), quitMessage);
     }
 
     // 3. 채팅 메시지 처리하기
@@ -80,8 +80,9 @@ public class ChatMessageController {
         System.out.println(message);
         System.out.println(message.getMessage());
         System.out.println(message.getChatRoomId());
-        MessageResponseDto messageResponseDto = chatMessageService.save(message ,token);
+        MessageResponseDto messageResponseDto = chatMessageService.save(message, token);
         System.out.println("메시지 전송 확인");
-        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(),messageResponseDto);
+        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), messageResponseDto);
     }
 
+}

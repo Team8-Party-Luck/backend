@@ -58,7 +58,7 @@ public class ChatMessageService {
         return MessageResponseDto.builder()
                 .message(message.getMessage())
                 .createdAt(message.getCreatedAt())
-                .userId(userId)
+                .userId(chatMessage.getSenderId())
                 .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
                 .build();
     }
@@ -69,13 +69,15 @@ public class ChatMessageService {
 
         // 해당방에 맞는 유저인지 검증
         List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatroomId);
+        int cnt=0;
         for(JoinChatRoom joinChatRoom : joinChatRoomList) {
             if(joinChatRoom.getUser().getId().equals(userId)) {
                 break;
             }
-            throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
+            cnt++;
         }
-
+        if(cnt==joinChatRoomList.size())
+            throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
         List<ChatMessage> chatMessageList = chatMessageRepository.findChatMessagesByChatroom_ChatRoomIdOrderByCreatedAt(chatroomId);
         System.out.println("채팅 메시지 개수 : " + chatMessageList);
 
@@ -90,8 +92,8 @@ public class ChatMessageService {
             MessageResponseDto messageResponseDto = MessageResponseDto.builder()
                     .message(chatMessage.getMessage())
                     .createdAt(chatMessage.getCreatedAt().toString())
-                    .userId(userId)
-                    .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
+                    .userId(senderId)
+                    .imageUrl(initialInfoRepository.findInitialInfoByUserId(senderId).orElse(null).getProfile_img())
                     .build();
             messageResponseDtoList.add(messageResponseDto);
         }

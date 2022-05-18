@@ -38,7 +38,10 @@ public class Alarm {
 
 
     public Alarm(AlarmPageResponseDto alarmPageResponseDto, Long id, User user, String createdAt) {
-        this.alarmMessage = alarmPageResponseDto.getAlarmMessage();
+        String s="";
+        for(int i=0;i<alarmPageResponseDto.getAlarms().size();i++)
+            s+=alarmPageResponseDto.getAlarms().get(i)+System.lineSeparator();
+        this.alarmMessage = s.substring(0,s.length()-1);
         this.partyId = id;
         this.user = user;
         this.createdAt = createdAt;
