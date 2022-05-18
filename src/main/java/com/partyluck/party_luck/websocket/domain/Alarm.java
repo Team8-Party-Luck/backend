@@ -1,10 +1,13 @@
 package com.partyluck.party_luck.websocket.domain;
 
-import com.partyluck.party_luck.websocket.dto.AlarmDto;
+import com.partyluck.party_luck.domain.User;
+import com.partyluck.party_luck.websocket.Timestamped;
+import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -12,19 +15,32 @@ import javax.persistence.*;
 public class Alarm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long alarmId;
+
+    @Column
+    private String alarmMessage;
 
     @Column
     private Long partyId;
 
-    private String type;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
-    private Long userId;
-    public Alarm(AlarmDto dto){
-        this.partyId=dto.getPartyId();
-        this.type=dto.getType();
-        this.userId=dto.getUserId();
+    @Column
+    private String createdAt;
+
+//    public Alarm(AlarmDto dto){
+//        this.partyId=dto.getPartyId();
+//        this.type=dto.getType();
+//        this.userId=dto.getUserId();
+//    }
+
+
+    public Alarm(AlarmPageResponseDto alarmPageResponseDto, Long id, User user, String createdAt) {
+        this.alarmMessage = alarmPageResponseDto.getAlarmMessage();
+        this.partyId = id;
+        this.user = user;
+        this.createdAt = createdAt;
     }
-
-
 }
