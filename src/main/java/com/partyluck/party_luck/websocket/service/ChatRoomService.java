@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -67,6 +68,7 @@ public class ChatRoomService {
                     .image(otherInitialUserInfo.getProfile_img())
                     .creatdAt("")
                     .lastMessage("")
+                    .otherId(otherUser.getId())
                     .build();
             chatRoomResponseDtoList.add(chatRoomResponseDto);
         }
@@ -88,30 +90,24 @@ public class ChatRoomService {
         String chatRoomId = "";
 
         // 중복 채팅방 확인
-        List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByUser_Id(user.getId()).orElse(null);
-        System.out.println("joinChatRoomList = " + joinChatRoomList);
-        System.out.println("joinChatRoomList size = " + joinChatRoomList.size());
+        //List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByUser_Id(user.getId()).orElse(null);
 
+        Optional<JoinChatRoom> joinChatRoomUser = joinChatRoomRepository.findJoinChatRoomByUser_Id(user.getId());
+        Optional<JoinChatRoom> joinChatRoomOtherUser = joinChatRoomRepository.findJoinChatRoomByUser_Id(otherId);
 
-        // 기존의 채팅방이 존재 체크.
-        if(joinChatRoomList.size() != 0) {
-            System.out.println("기존 채팅방이 존재할 경우");
-            for(JoinChatRoom joinChatRoom : joinChatRoomList) {
-                if(joinChatRoom.getUser().getId().equals(otherUser.getId())) {
-                    // 새로운 채팅방이 아닌 기존의 채팅방으로 이동시켜준다... -> 기존의 채팅방 아이디가 있어야한다.
-                    chatRoomId = joinChatRoom.getChatRoom().getChatRoomId();
-                    break;
-                }
-            }
+        if(joinChatRoomUser.isPresent() && joinChatRoomOtherUser.isPresent()) {
+            String userChatRoomId = joinChatRoomUser.get().getChatRoom().getChatRoomId();
+            String otherChatRoomId = joinChatRoomOtherUser.get().getChatRoom().getChatRoomId();
 
-        // 기존의 채팅방이 존재하지 않는지 체크.
+            if(userChatRoomId.equals(otherChatRoomId))
+                chatRoomId = userChatRoomId;
         } else {
             System.out.println("기존 채팅방이 존재하지 않을 경우");
             // 중복 채팅방이 없다면 채팅방을 새로 만들어준다.
             // 채팅방 생성과 동시에 JoinChatRoom에 두명의 유저가 추가된다.
             ChatRoom chatRoom = new ChatRoom();
-            JoinChatRoom joinChatRoomUser = new JoinChatRoom(user, chatRoom);
-            JoinChatRoom joinChatRoomOtherUser = new JoinChatRoom(otherUser, chatRoom);
+            JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom);
+            JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom);
 
             /* JPA 관련 Hibernate 에러
               ## Error
@@ -125,20 +121,27 @@ public class ChatRoomService {
               joinChatRoom Entity => @ManyToOne(cascade = CascadeType.ALL)
                                      private ChatRoom chatRoom;
              */
-            joinChatRoomRepository.save(joinChatRoomUser);
-            joinChatRoomRepository.save(joinChatRoomOtherUser);
+            joinChatRoomRepository.save(joinChatRoomUserTwo);
+            joinChatRoomRepository.save(joinChatRoomOtherUserTwo);
 
             List<JoinChatRoom> addJoinChatRoomList = new ArrayList<>();
-            addJoinChatRoomList.add(joinChatRoomUser);
-            addJoinChatRoomList.add(joinChatRoomOtherUser);
+            addJoinChatRoomList.add(joinChatRoomUserTwo);
+            addJoinChatRoomList.add(joinChatRoomOtherUserTwo);
             chatRoom.addJoinChatRooms(addJoinChatRoomList);
 
             chatRoomRepository.save(chatRoom);
 
             chatRoomId = chatRoom.getChatRoomId();
         }
-
         return chatRoomId;
     }
 
 }
+
+
+
+
+
+
+
+

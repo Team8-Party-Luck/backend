@@ -8,6 +8,7 @@ import lombok.Getter;
 public class ChatRoomResponseDto {
     private String chatRoomId;
     private String senderNickname;
+    private Long otherId;
     private String image;
     private String creatdAt;
     private String lastMessage;
