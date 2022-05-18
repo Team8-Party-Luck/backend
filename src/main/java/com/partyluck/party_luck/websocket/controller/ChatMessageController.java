@@ -48,19 +48,19 @@ public class ChatMessageController {
     // 메시지들이 이 handler를 타게 된다.
     // 1. 처음 채팅방에 들어왔을 때 호출되는 메시지
     @MessageMapping("/enter")
-    public void entering(@RequestBody MessageRequestDto message, @Header("token") String token) {
+    public void entering(MessageRequestDto message, @Header("token") String token) {
         String username = jwtDecoder.decodeUsername(token);
         User foundUser = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
         String nickname = foundUser.getNickname();
         String enterMessage = nickname + "님이 입장하셨습니다.";
-        messagingTemplate.convertAndSend("/queue/" + message.getRoomId(),enterMessage);
+        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(),enterMessage);
     }
 
     // 2. 채팅방을 나갔을 때 호출되는 메시지
     @MessageMapping("/quit")
-    public void quiting(@RequestBody MessageRequestDto message, @Header("token") String token) {
+    public void quiting(MessageRequestDto message, @Header("token") String token) {
         String username = jwtDecoder.decodeUsername(token);
         User foundUser = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
@@ -71,16 +71,19 @@ public class ChatMessageController {
 
         ///////////////////////////////////////////////////////
         String quitMessage = nickname + "님이 퇴장하셨습니다.";
-        messagingTemplate.convertAndSend("/queue/" + message.getRoomId(),quitMessage);
+        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(),quitMessage);
     }
 
     // 3. 채팅 메시지 처리하기
     @MessageMapping("/send")
-    public void sending(@RequestBody MessageRequestDto message, @Header("token") String token) {
+    public void sending(MessageRequestDto message, @Header("token") String token) {
         System.out.println("메시지 전송 확인");
+        System.out.println(message);
+        System.out.println(message.getMessage());
+        System.out.println(message.getChatRoomId());
         MessageResponseDto messageResponseDto = chatMessageService.save(message ,token);
         System.out.println("메시지 전송 확인");
-        messagingTemplate.convertAndSend("/queue/" + message.getRoomId(),messageResponseDto);
+        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(),messageResponseDto);
     }
 
     @MessageMapping("/alarm")

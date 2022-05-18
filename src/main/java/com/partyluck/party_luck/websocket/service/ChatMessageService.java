@@ -1,6 +1,7 @@
 package com.partyluck.party_luck.websocket.service;
 
 import com.partyluck.party_luck.domain.User;
+import com.partyluck.party_luck.repository.InitialInfoRepository;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
@@ -27,6 +28,7 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final JoinChatRoomRepository joinChatRoomRepository;
     private final JwtDecoder jwtDecoder;
+    private final InitialInfoRepository initialInfoRepository;
 
     public MessageResponseDto save(MessageRequestDto message, String token) {
         System.out.println("save 시작!");
@@ -36,7 +38,8 @@ public class ChatMessageService {
         );
 
         Long userId = user.getId();
-        String chatRoomId = message.getRoomId();
+        String chatRoomId = message.getChatRoomId();
+        System.out.println(message.getChatRoomId());
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomId(chatRoomId).orElseThrow(
                 () -> new IllegalArgumentException("해당 채팅방이 존재하지 않습니다.")
         );
@@ -53,9 +56,10 @@ public class ChatMessageService {
         chatMessageRepository.save(chatMessage);
 
         return MessageResponseDto.builder()
-                .nickname(user.getNickname())
                 .message(message.getMessage())
                 .createdAt(message.getCreatedAt())
+                .userId(userId)
+                .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
                 .build();
     }
 
@@ -84,9 +88,10 @@ public class ChatMessageService {
             );
 
             MessageResponseDto messageResponseDto = MessageResponseDto.builder()
-                    .nickname(sender.getNickname())
                     .message(chatMessage.getMessage())
                     .createdAt(chatMessage.getCreatedAt().toString())
+                    .userId(userId)
+                    .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
                     .build();
             messageResponseDtoList.add(messageResponseDto);
         }
