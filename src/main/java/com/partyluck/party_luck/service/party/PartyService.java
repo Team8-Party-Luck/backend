@@ -3,6 +3,7 @@ package com.partyluck.party_luck.service.party;
 import com.partyluck.party_luck.config.S3Uploader;
 import com.partyluck.party_luck.domain.*;
 import com.partyluck.party_luck.dto.*;
+import com.partyluck.party_luck.dto.party.request.LocalSearchDto;
 import com.partyluck.party_luck.dto.party.request.PartyRequestDto;
 import com.partyluck.party_luck.dto.party.response.*;
 import com.partyluck.party_luck.repository.*;
@@ -101,7 +102,7 @@ public class PartyService {
     }
 
     //파티 지역 조회
-    public PartyResponseDto LocalPartyView(long id) {
+    public PartyResponseDto LocalPartyView(long id, LocalSearchDto localSearchDto) {
         List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> results = new ArrayList<>();
         for (Party p : parties) {
@@ -120,11 +121,11 @@ public class PartyService {
                 dto=new PartyResponseResultDto(p,ist,true,true);
             else
                 dto=new PartyResponseResultDto(p,ist,false,true);
-            String city1 = initialInfoRepository.findByUserId(id).orElse(null).getCity();
-            String region1 = initialInfoRepository.findByUserId(id).orElse(null).getRegion();
+//            String city1 = initialInfoRepository.findByUserId(id).orElse(null).getCity();
+//            String region1 = initialInfoRepository.findByUserId(id).orElse(null).getRegion();
             String[] cmpaddresses = p.getAddress().split(" ");
             String cmpaddress = cmpaddresses[0] + " " + cmpaddresses[1];
-            if ((city1 + " " + region1).equals(cmpaddress))
+            if ((localSearchDto.getAnswer()).equals(cmpaddress))
                 results.add(dto);
         }
         return new PartyResponseDto(results);
@@ -534,7 +535,8 @@ public class PartyService {
             String imageUrl=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getProfile_img();
             String city=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getCity();
             String region=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getRegion();
-            UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region);
+            String sns=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getSns_url();
+            UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region,sns);
             results.add(dto);
         }
         return new UserlistResultDto(hostId,results);

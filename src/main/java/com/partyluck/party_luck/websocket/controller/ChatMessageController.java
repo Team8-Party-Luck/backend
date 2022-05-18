@@ -20,12 +20,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 // 해당 컨트롤러는 Message Handler라고 생각하면 됨
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class ChatMessageController {
 
     private final SimpMessageSendingOperations messagingTemplate;
@@ -76,7 +77,9 @@ public class ChatMessageController {
     // 3. 채팅 메시지 처리하기
     @MessageMapping("/send")
     public void sending(@RequestBody MessageRequestDto message, @Header("token") String token) {
+        System.out.println("메시지 전송 확인");
         MessageResponseDto messageResponseDto = chatMessageService.save(message ,token);
+        System.out.println("메시지 전송 확인");
         messagingTemplate.convertAndSend("/queue/" + message.getRoomId(),messageResponseDto);
     }
 
@@ -84,7 +87,7 @@ public class ChatMessageController {
     public void sendAlarm(@RequestBody AlarmDto alarmDto, @Header("token") String token){
         Alarm alarm=new Alarm(alarmDto);
         alarmRepository.save(alarm);
-        messagingTemplate.convertAndSend("/queue/",alarmDto);
+        messagingTemplate.convertAndSend("/queue/"+alarmDto.getUserId(),alarmDto);
 
 //        MessageResponseDto dto= chatMessageService.save(message,token);
 //        messagingTemplate.convertAndSend("/topic/" + message.getRoomId(),dto);

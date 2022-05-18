@@ -12,12 +12,14 @@ public class UserlistResponseDto {
     private String gender;
     private String imageUrl;
     private String location;
-    public UserlistResponseDto(Long userId,String nickname, String age, String gender, String imageUrl, String location){
+    private String sns;
+    public UserlistResponseDto(Long userId,String nickname, String age, String gender, String imageUrl, String location,String sns){
         this.userId=userId;
         this.nickname=nickname;
         this.age=age;
         this.gender=gender;
         this.imageUrl=imageUrl;
         this.location=location;
+        this.sns=sns;
     }
 }

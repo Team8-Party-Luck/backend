@@ -1,6 +1,7 @@
 package com.partyluck.party_luck.controller.party;
 
 import com.partyluck.party_luck.dto.*;
+import com.partyluck.party_luck.dto.party.request.LocalSearchDto;
 import com.partyluck.party_luck.dto.party.request.PartyRequestDto;
 import com.partyluck.party_luck.dto.party.response.PartyDetailsResponseDto;
 import com.partyluck.party_luck.dto.party.response.PartyResponseDto;
@@ -33,9 +34,10 @@ public class PartyController {
         return partyService.RawPartyView(page);
     }
 //파티 지역 조회
-    @GetMapping("/home/parties/local")
-    public PartyResponseDto LocalPartyView(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return partyService.LocalPartyView(userDetails.getId());
+    @PostMapping("/home/parties/local")
+    public PartyResponseDto LocalPartyView(@AuthenticationPrincipal UserDetailsImpl userDetails, LocalSearchDto localSearchDto){
+        System.out.println(localSearchDto.getAnswer()+"dsfsdfsdfdsag");
+        return partyService.LocalPartyView(userDetails.getId(),localSearchDto);
     }
 //좋아요한 파티 조회
     @GetMapping("/api/parties/sub")
