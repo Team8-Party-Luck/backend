@@ -5,8 +5,7 @@ import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
-import com.partyluck.party_luck.websocket.domain.Alarm;
-import com.partyluck.party_luck.websocket.dto.AlarmDto;
+
 import com.partyluck.party_luck.websocket.dto.reponse.MessageResponseDto;
 import com.partyluck.party_luck.websocket.dto.request.MessageRequestDto;
 import com.partyluck.party_luck.websocket.repository.AlarmRepository;
@@ -80,16 +79,16 @@ public class ChatMessageController {
         messagingTemplate.convertAndSend("/queue/" + message.getRoomId(),messageResponseDto);
     }
 
-    @MessageMapping("/alarm")
-    public void sendAlarm(@RequestBody AlarmDto alarmDto, @Header("token") String token){
-        Alarm alarm=new Alarm(alarmDto);
-        alarmRepository.save(alarm);
-        messagingTemplate.convertAndSend("/queue/",alarmDto);
+//    @MessageMapping("/alarm")
+//    public void sendAlarm(@RequestBody AlarmDto alarmDto, @Header("token") String token){
+//        Alarm alarm=new Alarm(alarmDto);
+//        alarmRepository.save(alarm);
+//        messagingTemplate.convertAndSend("/queue/",alarmDto);
 
 //        MessageResponseDto dto= chatMessageService.save(message,token);
 //        messagingTemplate.convertAndSend("/topic/" + message.getRoomId(),dto);
 
-    }
+//    }
 
 
 
