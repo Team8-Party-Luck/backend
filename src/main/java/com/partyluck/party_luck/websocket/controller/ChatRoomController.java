@@ -3,15 +3,13 @@ package com.partyluck.party_luck.websocket.controller;
 
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomResponseDto;
+import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomUserInofoResponseDto;
 import com.partyluck.party_luck.websocket.dto.request.ChatRoomRequestDto;
 import com.partyluck.party_luck.websocket.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,5 +44,10 @@ public class ChatRoomController {
         }
 
         return ResponseEntity.status(200).body(result);
+    }
+
+    @GetMapping("/chatroom/user/{chatRoomId}")
+    public ChatRoomUserInofoResponseDto readChatRoomUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String chatRoomId) {
+        return chatRoomService.readChatRoomUserInfo(userDetails, chatRoomId);
     }
 }
