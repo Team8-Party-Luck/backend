@@ -48,7 +48,7 @@ public class ChatMessageService {
 
         String msg = message.getMessage();
         ChatMessage.MessageType messageType = message.getType();
-        // createAt 날짜 만들기
+        // createAt 날짜 만들기 (아시아/서울 시간)
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date now = new Date();
         String createdAt = sdf.format(now);
@@ -63,7 +63,7 @@ public class ChatMessageService {
 
         return MessageResponseDto.builder()
                 .message(message.getMessage())
-                .createdAt(message.getCreatedAt())
+                .createdAt(createdAt)
                 .userId(chatMessage.getSenderId())
                 .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
                 .build();

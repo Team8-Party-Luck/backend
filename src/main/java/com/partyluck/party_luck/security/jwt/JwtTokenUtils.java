@@ -20,7 +20,9 @@ public final class JwtTokenUtils {
 
     public static final String CLAIM_EXPIRED_DATE = "EXPIRED_DATE";
     public static final String CLAIM_USER_NAME = "USER_NAME";
-    public static final String JWT_SECRET = "jwt_secret_!@#$%";
+//    public static final String JWT_SECRET = "jwt_secret_!@#$%";
+    // 일단 특수문자 제거
+    public static final String JWT_SECRET = "secretKey-test-authorization-jwt-manage-token";
 
     public static String generateJwtToken(UserDetailsImpl userDetails) {
         String token = null;
