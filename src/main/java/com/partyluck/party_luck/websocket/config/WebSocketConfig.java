@@ -39,6 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // StompHandler가 Websocket 앞단에서 token을 체크할 수 있도록 다음과 같이 인터셉터 설정
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
+        System.out.println("Stomp핸들러 메시지 가로채기");
         registration.interceptors(stompHandler);
     }
 }

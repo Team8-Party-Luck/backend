@@ -47,7 +47,7 @@ public class ChatRoomController {
     }
 
     @GetMapping("/chatroom/user/{chatRoomId}")
-    public ChatRoomUserInofoResponseDto readChatRoomUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String chatRoomId) {
+    public ChatRoomUserInofoResponseDto readChatRoomUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String chatRoomId) {
         return chatRoomService.readChatRoomUserInfo(userDetails, chatRoomId);
     }
 }

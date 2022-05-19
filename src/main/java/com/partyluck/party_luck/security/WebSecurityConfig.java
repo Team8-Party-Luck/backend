@@ -143,10 +143,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/favicon.ico");
 
         // 웹소켓 허용
-        // skipPathList.add("GET,/ws-stomp/**/**");
-        // skipPathList.add("GET,/ws-stomp/**");
-        // skipPathList.add("GET,/ws-stomp");
-
+         skipPathList.add("GET,/ws-stomp/**/**");
+         skipPathList.add("GET,/ws-stomp/**");
+         skipPathList.add("GET,/ws-stomp");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
