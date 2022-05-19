@@ -10,13 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 public class AlarmPageResponseDto {
 
-    private List<String> alarms;
+    private String alarms;
     private String title;
     private String store;
     private String image;
     private String createdAt;
 
-    public AlarmPageResponseDto(String title, String store, String image, List<String> alarms, String createdAt) {
+    public AlarmPageResponseDto(String title, String store, String image, String alarms, String createdAt) {
         this.title = title;
         this.store = store;
         this.image = image;

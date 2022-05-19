@@ -35,11 +35,7 @@ public class AlarmService {
             String image = imageRepository.findImageByImgIndexAndPartyid(1, alarm.getPartyId()).get().getImageSrc();
             String title = partyRepository.findById(alarm.getPartyId()).get().getTitle();
             String store = partyRepository.findById(alarm.getPartyId()).get().getStore();
-            List<String> alarms=new ArrayList<>();
-            String[] tmp=alarm.getAlarmMessage().split(System.lineSeparator());
-            for(int i=0;i< tmp.length;i++){
-                alarms.add(tmp[i]);
-            }
+            String alarms=alarm.getAlarmMessage();
             String curtime = alarm.getCreatedAt();
 
 

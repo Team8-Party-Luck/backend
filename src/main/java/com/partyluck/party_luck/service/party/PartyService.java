@@ -526,11 +526,14 @@ public class PartyService {
             //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
             List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
             for(PartyJoin p : tmp){
-                User user = p.getUser();
-                AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
-                Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
-                alarmRepository.save(alarm);
-                messagingTemplate.convertAndSend("/alarm/"+user.getId().toString(),alarmPageResponseDto); //destination 프론트랑 이야기해야
+                for(int i=0;i<alarms.size();i++){
+                    User user = p.getUser();
+                    AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms.get(i), curtime);
+                    Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
+                    alarmRepository.save(alarm);
+                    messagingTemplate.convertAndSend("/alarm/"+user.getId().toString(),alarmPageResponseDto);
+                }
+
             }
 
 
