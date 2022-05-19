@@ -16,7 +16,9 @@ import com.partyluck.party_luck.websocket.repository.JoinChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -46,12 +48,16 @@ public class ChatMessageService {
 
         String msg = message.getMessage();
         ChatMessage.MessageType messageType = message.getType();
-        String createdAt = message.getCreatedAt();
+        // createAt 날짜 만들기
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date now = new Date();
+        String createdAt = sdf.format(now);
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .senderId(userId)
                 .message(message)
+                .createdAt(createdAt)
                 .build();
         chatMessageRepository.save(chatMessage);
 
@@ -69,15 +75,8 @@ public class ChatMessageService {
 
         // 해당방에 맞는 유저인지 검증
         List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatroomId);
-        int cnt=0;
-        for(JoinChatRoom joinChatRoom : joinChatRoomList) {
-            if(joinChatRoom.getUser().getId().equals(userId)) {
-                break;
-            }
-            cnt++;
-        }
-        if(cnt==joinChatRoomList.size())
-            throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
+        checkCollectUser(userId, joinChatRoomList);
+
         List<ChatMessage> chatMessageList = chatMessageRepository.findChatMessagesByChatroom_ChatRoomIdOrderByCreatedAt(chatroomId);
         System.out.println("채팅 메시지 개수 : " + chatMessageList);
 
@@ -100,4 +99,18 @@ public class ChatMessageService {
         return messageResponseDtoList;
     }
 
+
+    // 해당방에 맞는 유저인지 검증하는 메서드
+    private void checkCollectUser(Long userId, List<JoinChatRoom> joinChatRoomList) {
+        int cnt=0;
+        for(JoinChatRoom joinChatRoom : joinChatRoomList) {
+            if(joinChatRoom.getUser().getId().equals(userId)) {
+                break;
+            } else {
+                cnt++;
+            }
+        }
+        if(cnt== joinChatRoomList.size())
+            throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
+    }
 }
