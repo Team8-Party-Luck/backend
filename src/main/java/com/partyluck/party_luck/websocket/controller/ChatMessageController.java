@@ -60,7 +60,7 @@ public class ChatMessageController {
 //        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), enterMessage);
         EQMessageDto eqMessageDto=new EQMessageDto(enterMessage,message.getChatRoomId());
         String topic=channelTopic.getTopic();
-        redisTemplate.convertAndSend(topic,enterMessage);
+        redisTemplate.convertAndSend(topic,eqMessageDto);
     }
 
     // 2. 채팅방을 나갔을 때 호출되는 메시지
