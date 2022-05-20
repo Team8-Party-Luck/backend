@@ -61,12 +61,14 @@ public class ChatMessageService {
                 .build();
         chatMessageRepository.save(chatMessage);
 
-        return MessageResponseDto.builder()
-                .message(message.getMessage())
-                .createdAt(extractDateFormat(createdAt))
-                .userId(chatMessage.getSenderId())
-                .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
-                .build();
+        return  new MessageResponseDto(message.getMessage(),extractDateFormat(createdAt),chatMessage.getSenderId(),initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img(),message.getChatRoomId());
+//        return MessageResponseDto.builder()
+//                .message(message.getMessage())
+//                .createdAt(extractDateFormat(createdAt))
+//                .userId(chatMessage.getSenderId())
+//                .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
+//                .chatroomId(message.getChatRoomId())
+//                .build();
     }
 
     // 해당 채팅방 메시지 조회

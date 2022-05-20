@@ -12,6 +12,7 @@ public class MessageResponseDto {
     private String createdAt;
     private Long userId;
     private String imageUrl;
+    private String chatroomId;
 
     @Builder
     public MessageResponseDto(String message, String createdAt,Long userId,String imageUrl) {
@@ -20,5 +21,14 @@ public class MessageResponseDto {
         this.createdAt = createdAt;
         this.userId=userId;
         this.imageUrl=imageUrl;
+    }
+
+    public MessageResponseDto(String message, String createdAt,Long userId,String imageUrl,String chatroomId) {
+//        this.nickname = nickname;
+        this.message = message;
+        this.createdAt = createdAt;
+        this.userId=userId;
+        this.imageUrl=imageUrl;
+        this.chatroomId=chatroomId;
     }
 }

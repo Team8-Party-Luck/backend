@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class PartyService {
     private final InitialInfoRepository initialInfoRepository;
     private final AlarmRepository alarmRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final RedisTemplate redisTemplate;
+    private final ChannelTopic channelTopic;
 
 
     //파티 등록
@@ -527,10 +531,12 @@ public class PartyService {
             List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
             for(PartyJoin p : tmp){
                 User user = p.getUser();
-                AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
+                AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime,user.getId());
                 Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
                 alarmRepository.save(alarm);
                 messagingTemplate.convertAndSend("/alarm/"+user.getId().toString(),alarmPageResponseDto); //destination 프론트랑 이야기해야
+                String topic=channelTopic.getTopic();
+                redisTemplate.convertAndSend(topic, alarmPageResponseDto);
             }
 
 

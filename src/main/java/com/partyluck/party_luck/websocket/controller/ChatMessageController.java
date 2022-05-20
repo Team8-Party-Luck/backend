@@ -6,11 +6,14 @@ import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
 
+import com.partyluck.party_luck.websocket.dto.reponse.EQMessageDto;
 import com.partyluck.party_luck.websocket.dto.reponse.MessageResponseDto;
 import com.partyluck.party_luck.websocket.dto.request.MessageRequestDto;
 import com.partyluck.party_luck.websocket.repository.AlarmRepository;
 import com.partyluck.party_luck.websocket.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -31,6 +34,8 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
     private final UserRepository userRepository;
     private final AlarmRepository alarmRepository;
+    private final RedisTemplate redisTemplate;
+    private final ChannelTopic channelTopic;
 
 
     // 메시지 목록 불러오기
@@ -52,7 +57,10 @@ public class ChatMessageController {
         );
         String nickname = foundUser.getNickname();
         String enterMessage = nickname + "님이 입장하셨습니다.";
-        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), enterMessage);
+//        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), enterMessage);
+        EQMessageDto eqMessageDto=new EQMessageDto(enterMessage,message.getChatRoomId());
+        String topic=channelTopic.getTopic();
+        redisTemplate.convertAndSend(topic,enterMessage);
     }
 
     // 2. 채팅방을 나갔을 때 호출되는 메시지
@@ -68,7 +76,10 @@ public class ChatMessageController {
 
         ///////////////////////////////////////////////////////
         String quitMessage = nickname + "님이 퇴장하셨습니다.";
-        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), quitMessage);
+//        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), quitMessage);
+        EQMessageDto eqMessageDto=new EQMessageDto(quitMessage,message.getChatRoomId());
+        String topic=channelTopic.getTopic();
+        redisTemplate.convertAndSend(topic,eqMessageDto);
     }
 
     // 3. 채팅 메시지 처리하기
@@ -80,7 +91,9 @@ public class ChatMessageController {
         System.out.println(message.getChatRoomId());
         MessageResponseDto messageResponseDto = chatMessageService.save(message, token);
         System.out.println("메시지 전송 확인");
-        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), messageResponseDto);
+//        messagingTemplate.convertAndSend("/queue/" + message.getChatRoomId(), messageResponseDto);
+        String topic=channelTopic.getTopic();
+        redisTemplate.convertAndSend(topic,messageResponseDto);
     }
 
 }

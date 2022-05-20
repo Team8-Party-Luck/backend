@@ -15,12 +15,14 @@ public class AlarmPageResponseDto {
     private String store;
     private String image;
     private String createdAt;
+    private Long userId;
 
-    public AlarmPageResponseDto(String title, String store, String image, List<String> alarms, String createdAt) {
+    public AlarmPageResponseDto(String title, String store, String image, List<String> alarms, String createdAt,Long userId) {
         this.title = title;
         this.store = store;
         this.image = image;
         this.alarms=alarms;
         this.createdAt = createdAt;
+        this.userId=userId;
     }
 }

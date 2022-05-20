@@ -43,7 +43,7 @@ public class AlarmService {
             String curtime = alarm.getCreatedAt();
 
 
-            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(title, store, image, alarms,curtime);
+            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(title, store, image, alarms,curtime,userId);
             alarmPageResponseDtoList.add(alarmPageResponseDto);
         }
         return alarmPageResponseDtoList;
