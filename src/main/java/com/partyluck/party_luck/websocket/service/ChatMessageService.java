@@ -63,7 +63,7 @@ public class ChatMessageService {
 
         return MessageResponseDto.builder()
                 .message(message.getMessage())
-                .createdAt(createdAt)
+                .createdAt(extractDateFormat(createdAt))
                 .userId(chatMessage.getSenderId())
                 .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
                 .build();
@@ -90,7 +90,7 @@ public class ChatMessageService {
 
             MessageResponseDto messageResponseDto = MessageResponseDto.builder()
                     .message(chatMessage.getMessage())
-                    .createdAt(chatMessage.getCreatedAt().toString())
+                    .createdAt(extractDateFormat(chatMessage.getCreatedAt()))
                     .userId(senderId)
                     .imageUrl(initialInfoRepository.findInitialInfoByUserId(senderId).orElse(null).getProfile_img())
                     .build();
@@ -112,5 +112,47 @@ public class ChatMessageService {
         }
         if(cnt== joinChatRoomList.size())
             throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
+    }
+
+    // 채팅방 메시지 날짜&시간 형식을 만드는 메서드
+    private String extractDateFormat(String messageDate) {
+
+        String result = "";
+        Date now = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String formattedNow = simpleDateFormat.format(now).toString();
+        String[] curFormattedSplitByDash = formattedNow.split("-");
+        String curYear = curFormattedSplitByDash[0];
+        String curMonth = curFormattedSplitByDash[1];
+        String curDay = curFormattedSplitByDash[2].split(" ")[0];
+        String curHour = curFormattedSplitByDash[2].split(" ")[1].split(":")[0];
+        String curMinute = curFormattedSplitByDash[2].split(" ")[1].split(":")[1];
+        System.out.println("----------------- 현재 날짜 & 시각 -----------------");
+        System.out.println(curYear + "년 " + curMonth + "월 " + curDay + "일 " + curHour + "시 " + curMinute + "분 ");
+
+        String[] formattedSplitByDash = messageDate.split("-");
+        String year = formattedSplitByDash[0];
+        String month = formattedSplitByDash[1];
+        String day = formattedSplitByDash[2].split(" ")[0];
+        String hour = formattedSplitByDash[2].split(" ")[1].split(":")[0];
+        String minute = formattedSplitByDash[2].split(" ")[1].split(":")[1];
+
+        // 1) 오늘인지 아닌지
+        if(curMonth.equals(month) && curDay.equals(day)) {
+            // 2) 오전인지 오후 인지
+            if(Integer.parseInt(hour) < 12) {
+                result = "오전 " + hour + ":" + minute;
+            } else {
+                Integer afterHour = (Integer.parseInt(hour) - 12);
+                result = "오후 " + afterHour.toString() + ":" + minute;
+            }
+        } else if (curMonth.equals(month) && ((Integer.parseInt(curDay) - 1) == Integer.parseInt(day))) {
+            // 3) 하루 전인지 아닌지
+            result = "하루 전";
+        } else {
+            // 4) 하루 전이 아니라면
+            result = month + "월 " + day + "일";
+        }
+        return result;
     }
 }
