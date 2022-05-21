@@ -1,5 +1,6 @@
 package com.partyluck.party_luck.websocket.service;
 
+import com.partyluck.party_luck.domain.Party;
 import com.partyluck.party_luck.domain.PartyJoin;
 import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.repository.ImageRepository;
@@ -31,26 +32,43 @@ public class AlarmService {
 
     // 파티 하루 전 알림
     public void sendAlarm(Long partyId) throws ParseException {
-
+        System.out.println("알림 시작 ---------------------");
         //조인한 파티 D-Day
-        String dDay = partyRepository.findById(partyId).get().getDate()
-                + partyRepository.findById(partyId).get().getTime();
+        Party foundParty = partyRepository.findById(partyId).orElseThrow(
+                () -> new IllegalArgumentException("해당 파티가 존재하지 않습니다.")
+        );
+
+        String month = foundParty.getDate().split("-")[0];
+        String day = foundParty.getDate().split("-")[1];
+        String hour = foundParty.getTime().split(":")[0];
+        String minute = foundParty.getTime().split(":")[1];
+        String dDay = month + day + hour + minute;
+        System.out.println("dDay : " + dDay);
 
         //String 에서 Date 타입으로 변환
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
+        SimpleDateFormat formatter = new SimpleDateFormat("MMddHHmm");
         Date dDayTime = formatter.parse(dDay);
+        System.out.println("dDay Date 변환 : " + dDayTime);
 
+
+        System.out.println("캘린더 객체 호출 전-------------------");
         //두시간 전
         Calendar preTwoHours = Calendar.getInstance();
+        System.out.println("setTime 호출 전 ");
         preTwoHours.setTime(dDayTime);
+        System.out.println("setTime 호출 후 ");
+        System.out.println(preTwoHours.getTime());
+
         preTwoHours.add(Calendar.HOUR, -2);
-        Date twoHours = formatter.parse(String.valueOf(preTwoHours.getTime()));
+        Date twoHours = preTwoHours.getTime();
+        System.out.println("두시간전 캘린더 객체 생성 : " + preTwoHours);
 
         //하루 전
         Calendar preOneDay = Calendar.getInstance();
         preOneDay.setTime(dDayTime);
         preOneDay.add(Calendar.DATE, -1);
-        Date oneDay = formatter.parse(String.valueOf(preOneDay.getTime()));
+        Date oneDay = preOneDay.getTime();
+        System.out.println("하루전 캘린더 객체 생성 : " + preTwoHours);
 
         Timer timer = new Timer();
 
@@ -66,8 +84,9 @@ public class AlarmService {
         //하루 전 task 실행
         TimerTask oneDayAlarm = new TimerTask() {
             public void run() {
+                System.out.println("하루전 타이머생성");
                 //알람 텍스트 설정
-                String alarms = "신청하신 파티 하루 전입니다";
+                String alarms = "신청하신 파티 하루 전입니다 -----------------------------------";
 
                 //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
                 List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
@@ -85,7 +104,7 @@ public class AlarmService {
         //두시간 전 task 실행
         TimerTask twoHoursAlarm = new TimerTask() {
             public void run() {
-
+                System.out.println("두시간전 타이머생성 -----------------------------------");
                 String alarms = "신청하신 파티 두 시간 전입니다";
 
                 //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
@@ -99,7 +118,7 @@ public class AlarmService {
                 }
             }
         };
-
+        System.out.println("스케쥴러 등록 -----------------------------------");
         timer.schedule(oneDayAlarm, oneDay);
         timer.schedule(twoHoursAlarm, twoHours);
 

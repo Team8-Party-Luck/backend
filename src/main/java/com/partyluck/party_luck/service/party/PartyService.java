@@ -56,7 +56,8 @@ public class PartyService {
             }
             PartyJoin partyJoin = new PartyJoin(userRepository.findById(id).orElse(null), partyRepository.findById(partyid).orElse(null));
             partyJoinRepository.save(partyJoin);
-            alarmService.sendAlarm(id);
+
+            alarmService.sendAlarm(partyid);
         } catch (Exception e) {
             return new ResponseDto(false, 400, "등록 실패...");
         }
