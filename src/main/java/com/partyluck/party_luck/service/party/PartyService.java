@@ -10,6 +10,7 @@ import com.partyluck.party_luck.repository.*;
 import com.partyluck.party_luck.websocket.domain.Alarm;
 import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
 import com.partyluck.party_luck.websocket.repository.AlarmRepository;
+import com.partyluck.party_luck.websocket.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,6 +36,7 @@ public class PartyService {
     private final InitialInfoRepository initialInfoRepository;
     private final AlarmRepository alarmRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final AlarmService alarmService;
 
 
     //파티 등록
@@ -53,6 +56,7 @@ public class PartyService {
             }
             PartyJoin partyJoin = new PartyJoin(userRepository.findById(id).orElse(null), partyRepository.findById(partyid).orElse(null));
             partyJoinRepository.save(partyJoin);
+            alarmService.sendAlarm(id);
         } catch (Exception e) {
             return new ResponseDto(false, 400, "등록 실패...");
         }
@@ -120,7 +124,7 @@ public class PartyService {
                 dto = new PartyResponseResultDto(p, ist, true, true);
             else
 
-                dto=new PartyResponseResultDto(p,ist,false,true);
+                dto = new PartyResponseResultDto(p, ist, false, true);
 //            String city1 = initialInfoRepository.findByUserId(id).orElse(null).getCity();
 //            String region1 = initialInfoRepository.findByUserId(id).orElse(null).getRegion();
 
@@ -138,12 +142,34 @@ public class PartyService {
         if (partyRepository.findById(id).orElse(null).getUserid() == userDetailsId) {
             try {
                 if (partyRepository.findById(id).orElse(null) != null) {
+                    //파티삭제 알림
+                    //알람에 들어갈 내용
+                    String image = imageRepository.findImageByImgIndexAndPartyid(1, id).get().getImageSrc();
+                    String title = partyRepository.findById(id).get().getTitle();
+                    String store = partyRepository.findById(id).get().getStore();
+                    String alarms = "신청하신 파티가 취소 되었습니다";
+
+                    List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
+
+                    //파티 삭제
                     imageRepository.deleteAllByPartyid(id);
                     partyJoinRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
                     subscribeRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
                     partyRepository.deleteById(id);
 
-                    //파티삭제 알림
+                    //시간
+                    SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+                    Date cur = new Date();
+                    String curtime = format1.format(cur);
+
+                    //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
+                    for (PartyJoin p : tmp) {
+                        User user = p.getUser();
+                        AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
+                        Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
+                        alarmRepository.save(alarm);
+                        messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                    }
                 } else
                     return new ResponseDto(false, 500, "존재하지 않는 파티입니다.");
             } catch (Exception e) {
@@ -462,7 +488,7 @@ public class PartyService {
             //파티정보 수정시 메시지 설정
             //만약 정보가 여러개 수정되면 알람이 다 오는가???
             String alarmMessage = "";
-            List<String> alarms=new ArrayList<>();
+            List<String> alarms = new ArrayList<>();
             if (dto.getCapacity() != party.getCapacity()) {
                 alarmMessage = "인원 수가 변경되었습니다";
                 alarms.add(alarmMessage);
@@ -524,14 +550,14 @@ public class PartyService {
             String curtime = format1.format(cur);
 
             //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
-            List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
-            for(PartyJoin p : tmp){
-                for(int i=0;i<alarms.size();i++){
+            List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
+            for (PartyJoin p : tmp) {
+                for (int i = 0; i < alarms.size(); i++) {
                     User user = p.getUser();
                     AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms.get(i), curtime);
                     Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
                     alarmRepository.save(alarm);
-                    messagingTemplate.convertAndSend("/alarm/"+user.getId().toString(),alarmPageResponseDto);
+                    messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
                 }
 
             }
@@ -591,19 +617,19 @@ public class PartyService {
 
     //각 파티 참여자 조회
     public UserlistResultDto Userlist(Long partyid) {
-        List<UserlistResponseDto> results= new ArrayList<>();
-        List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(partyid).orElse(null));
-        Long hostId=partyRepository.findById(partyid).orElse(null).getUserid();
-        for(PartyJoin i : tmp){
-            Long userId=i.getUser().getId();
-            String nickname=userRepository.findById(i.getUser().getId()).orElse(null).getNickname();
-            String gender=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getGender();
-            String age=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getAge();
-            String imageUrl=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getProfile_img();
-            String city=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getCity();
-            String region=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getRegion();
-            String sns=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getSns_url();
-            UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region,sns);
+        List<UserlistResponseDto> results = new ArrayList<>();
+        List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyid).orElse(null));
+        Long hostId = partyRepository.findById(partyid).orElse(null).getUserid();
+        for (PartyJoin i : tmp) {
+            Long userId = i.getUser().getId();
+            String nickname = userRepository.findById(i.getUser().getId()).orElse(null).getNickname();
+            String gender = initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getGender();
+            String age = initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getAge();
+            String imageUrl = initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getProfile_img();
+            String city = initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getCity();
+            String region = initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getRegion();
+            String sns = initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getSns_url();
+            UserlistResponseDto dto = new UserlistResponseDto(userId, nickname, age, gender, imageUrl, city + " " + region, sns);
 
             results.add(dto);
         }

@@ -20,7 +20,7 @@ public class AlarmPageResponseDto {
         this.title = title;
         this.store = store;
         this.image = image;
-        this.alarms=alarms;
+        this.alarms= alarms;
         this.createdAt = createdAt;
     }
 }

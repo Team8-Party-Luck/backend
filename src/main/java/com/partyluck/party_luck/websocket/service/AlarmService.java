@@ -1,6 +1,7 @@
 package com.partyluck.party_luck.websocket.service;
 
-import com.partyluck.party_luck.dto.party.request.PartyRequestDto;
+import com.partyluck.party_luck.domain.PartyJoin;
+import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.repository.ImageRepository;
 import com.partyluck.party_luck.repository.PartyJoinRepository;
 import com.partyluck.party_luck.repository.PartyRepository;
@@ -9,10 +10,12 @@ import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
 import com.partyluck.party_luck.websocket.repository.AlarmRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,6 +25,86 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final PartyRepository partyRepository;
     private final ImageRepository imageRepository;
+    private final PartyJoinRepository partyJoinRepository;
+    private final SimpMessageSendingOperations messagingTemplate;
+
+
+    // 파티 하루 전 알림
+    public void sendAlarm(Long partyId) throws ParseException {
+
+        //조인한 파티 D-Day
+        String dDay = partyRepository.findById(partyId).get().getDate()
+                + partyRepository.findById(partyId).get().getTime();
+
+        //String 에서 Date 타입으로 변환
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
+        Date dDayTime = formatter.parse(dDay);
+
+        //두시간 전
+        Calendar preTwoHours = Calendar.getInstance();
+        preTwoHours.setTime(dDayTime);
+        preTwoHours.add(Calendar.HOUR, -2);
+        Date twoHours = formatter.parse(String.valueOf(preTwoHours.getTime()));
+
+        //하루 전
+        Calendar preOneDay = Calendar.getInstance();
+        preOneDay.setTime(dDayTime);
+        preOneDay.add(Calendar.DATE, -1);
+        Date oneDay = formatter.parse(String.valueOf(preOneDay.getTime()));
+
+        Timer timer = new Timer();
+
+        //알람에 들어갈 내용
+        String image = imageRepository.findImageByImgIndexAndPartyid(1, partyId).get().getImageSrc();
+        String title = partyRepository.findById(partyId).get().getTitle();
+        String store = partyRepository.findById(partyId).get().getStore();
+
+        SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+        Date cur = new Date();
+        String curtime = format1.format(cur);
+
+        //하루 전 task 실행
+        TimerTask oneDayAlarm = new TimerTask() {
+            public void run() {
+                //알람 텍스트 설정
+                String alarms = "신청하신 파티 하루 전입니다";
+
+                //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
+                List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
+                for (PartyJoin p : tmp) {
+                    User user = p.getUser();
+                    AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
+                    Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
+                    alarmRepository.save(alarm);
+                    System.out.println("alarm save");
+                    messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                }
+            }
+        };
+
+        //두시간 전 task 실행
+        TimerTask twoHoursAlarm = new TimerTask() {
+            public void run() {
+
+                String alarms = "신청하신 파티 두 시간 전입니다";
+
+                //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
+                List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
+                for (PartyJoin p : tmp) {
+                    User user = p.getUser();
+                    AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
+                    Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
+                    alarmRepository.save(alarm);
+                    messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                }
+            }
+        };
+
+        timer.schedule(oneDayAlarm, oneDay);
+        timer.schedule(twoHoursAlarm, twoHours);
+
+    }
+
 
     // 알람 메시지 전체 조회
     public List<AlarmPageResponseDto> getAlarm(Long userId) {
@@ -29,17 +112,16 @@ public class AlarmService {
         List<Alarm> alarmList = alarmRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
         List<AlarmPageResponseDto> alarmPageResponseDtoList = new ArrayList<>();
 
-
         for (Alarm alarm : alarmList) {
 
-            String image = imageRepository.findImageByImgIndexAndPartyid(1, alarm.getPartyId()).get().getImageSrc();
-            String title = partyRepository.findById(alarm.getPartyId()).get().getTitle();
-            String store = partyRepository.findById(alarm.getPartyId()).get().getStore();
-            String alarms=alarm.getAlarmMessage();
+            String image = alarm.getImage();
+            String title = alarm.getTitle();
+            String store = alarm.getStore();
+            String alarms = alarm.getAlarms();
             String curtime = alarm.getCreatedAt();
 
 
-            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(title, store, image, alarms,curtime);
+            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(title, store, image, alarms, curtime);
             alarmPageResponseDtoList.add(alarmPageResponseDto);
         }
         return alarmPageResponseDtoList;
