@@ -2,18 +2,17 @@ package com.partyluck.party_luck.test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Timer;
+import java.util.*;
 
 public class CalendarTest {
     public static void main(String[] args) throws ParseException {
 
-        String dDay = "03151730";
+        String dDay = "2022"+"05230146";
         System.out.println("dDay : " + dDay);
 
         //String 에서 Date 타입으로 변환
-        SimpleDateFormat formatter = new SimpleDateFormat("MMddHHmm");
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
         Date dDayTime = formatter.parse(dDay);
         System.out.println("dDay Date 변환 : " + dDayTime);
 
@@ -26,6 +25,23 @@ public class CalendarTest {
 
         Timer timer = new Timer();
 
+        //두시간 전 task 실행
+        TimerTask twoHoursAlarm = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("두시간전 타이머생성 -----------------------------------");
+            }
+        };
 
+        Date now = new Date();
+        Calendar nowSubTwo = Calendar.getInstance();
+        nowSubTwo.setTime(now);
+        nowSubTwo.add(Calendar.HOUR, -2);
+        System.out.println(nowSubTwo.getTime());
+        if(nowSubTwo.getTime().before(preTwoHours.getTime())) {
+            timer.schedule(twoHoursAlarm, preTwoHours.getTime());
+        } else {
+            timer.cancel();
+        }
     }
 }
