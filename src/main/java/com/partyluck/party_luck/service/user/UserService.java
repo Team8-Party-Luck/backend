@@ -82,7 +82,7 @@ public class UserService {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto(true,200,"수정 성공!");
         try {
-            info.setGender(dto.getGender());
+//            info.setGender(dto.getGender());
             String s="";
             try {
                 for (int i = 0; i < dto.getFood().size(); i++)
@@ -92,7 +92,7 @@ public class UserService {
                 info.setFood("");
             }
             info.setSns_url(dto.getSns());
-            info.setAge(dto.getAge());
+//            info.setAge(dto.getAge());
             if((dto.getImage()!=null)&&(!dto.getImage().isEmpty())) {
                 info.setProfile_img(s3Uploader.upload(dto.getImage()));
             }

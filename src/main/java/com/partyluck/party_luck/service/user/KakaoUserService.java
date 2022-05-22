@@ -59,7 +59,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "69e09d88a64e1a73b8fe2357f551ef81");
-        body.add("redirect_uri", "http://localhost:3000/auth/kakao");
+        body.add("redirect_uri", "https://www.eatsring.com/auth/kakao");
         body.add("code", code);
 
         // HTTP 요청 보내기

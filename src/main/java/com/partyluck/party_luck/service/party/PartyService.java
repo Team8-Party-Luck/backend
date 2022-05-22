@@ -127,10 +127,19 @@ public class PartyService {
                 dto=new PartyResponseResultDto(p,ist,false,true);
 //            String city1 = initialInfoRepository.findByUserId(id).orElse(null).getCity();
 //            String region1 = initialInfoRepository.findByUserId(id).orElse(null).getRegion();
+            String[] tmp1 = p.getDate().split("-");
+            String[] tmp3 = p.getTime().split(":");
+            String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
+            System.out.println(cmp);
+            SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+            Date cur = new Date();
+            String curtime = format1.format(cur);
+            Long a1 = Long.parseLong(cmp);
+            Long a2 = Long.parseLong(curtime);
 
             String[] cmpaddresses = p.getAddress().split(" ");
             String cmpaddress = cmpaddresses[0] + " " + cmpaddresses[1];
-            if ((localSearchDto.getAnswer()).equals(cmpaddress))
+            if ((localSearchDto.getAnswer()).equals(cmpaddress)&&(a1>=a2))
                 results.add(dto);
         }
         return new PartyResponseDto(results);
@@ -348,8 +357,17 @@ public class PartyService {
                 dto = new PartyResponseResultDto(p, ist, true, true);
             else
                 dto = new PartyResponseResultDto(p, ist, false, true);
+            String[] tmp1 = p.getDate().split("-");
+            String[] tmp3 = p.getTime().split(":");
+            String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
+            System.out.println(cmp);
+            SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+            Date cur = new Date();
+            String curtime = format1.format(cur);
+            Long a1 = Long.parseLong(cmp);
+            Long a2 = Long.parseLong(curtime);
             Subscribe subscribe = subscribeRepository.findByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
-            if (subscribe != null) {
+            if (subscribe != null&&(a1>=a2)) {
                 results.add(dto);
             }
 
@@ -377,7 +395,16 @@ public class PartyService {
                 dto = new PartyResponseResultDto(p, ist, true, true);
             else
                 dto = new PartyResponseResultDto(p, ist, false, true);
-            if (p.getUserid() == id) {
+            String[] tmp1 = p.getDate().split("-");
+            String[] tmp3 = p.getTime().split(":");
+            String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
+            System.out.println(cmp);
+            SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+            Date cur = new Date();
+            String curtime = format1.format(cur);
+            Long a1 = Long.parseLong(cmp);
+            Long a2 = Long.parseLong(curtime);
+            if (p.getUserid() == id&&(a1>=a2)) {
                 results.add(dto);
             }
         }
@@ -558,7 +585,18 @@ public class PartyService {
                 ist[i] = itmp.get(i).getImageSrc();
             }
             PartyResponseResultDto dto = new PartyResponseResultDto(p, ist);
-            resultss.add(dto);
+            String[] tmp1 = p.getDate().split("-");
+            String[] tmp3 = p.getTime().split(":");
+            String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
+            System.out.println(cmp);
+            SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+            Date cur = new Date();
+            String curtime = format1.format(cur);
+            Long a1 = Long.parseLong(cmp);
+            Long a2 = Long.parseLong(curtime);
+            if(a1>=a2) {
+                resultss.add(dto);
+            }
         }
         return new PartyResponseDto(resultss);
     }
