@@ -9,6 +9,7 @@ import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.websocket.domain.ChatRoom;
 import com.partyluck.party_luck.websocket.domain.JoinChatRoom;
 import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomResponseDto;
+import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomUserInofoResponseDto;
 import com.partyluck.party_luck.websocket.repository.ChatRoomRepository;
 import com.partyluck.party_luck.websocket.repository.JoinChatRoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,7 @@ public class ChatRoomService {
                     .chatRoomId(chatRoom.getChatRoomId())
                     .senderNickname(otherUser.getNickname())
                     .image(otherInitialUserInfo.getProfile_img())
-                    .creatdAt("")
+                    .createdAt("")
                     .lastMessage("")
                     .otherId(otherUser.getId())
                     .build();
@@ -136,6 +137,32 @@ public class ChatRoomService {
         return chatRoomId;
     }
 
+    // 채팅방 유저정보 조회
+    public ChatRoomUserInofoResponseDto readChatRoomUserInfo(UserDetailsImpl userDetails, String chatRoomId) {
+        Long userId = userDetails.getId();
+        List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatRoomId);
+        String otherNickname = "";
+        String otherProfileImg = "";
+        for(JoinChatRoom joinChatRoom : joinChatRoomList) {
+            if(!joinChatRoom.getUser().getId().equals(userId)) {
+                Long otherId = joinChatRoom.getUser().getId();
+                User otherUser = userRepository.findById(otherId).orElseThrow(
+                        () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+                );
+                InitialInfo otherInitialInfo = initialInfoRepository.findInitialInfoByUserId(otherId).orElseThrow(
+                        () -> new IllegalArgumentException("해당 유저의 이니셜 정보가 존재하지 않습니다.")
+                );
+                otherNickname = otherUser.getNickname();
+                otherProfileImg = otherInitialInfo.getProfile_img();
+            }
+        }
+
+        return ChatRoomUserInofoResponseDto.builder()
+                .otherNickname(otherNickname)
+                .otherProfile(otherProfileImg)
+                .userId(userId)
+                .build();
+    }
 }
 
 

@@ -16,7 +16,9 @@ import com.partyluck.party_luck.websocket.repository.JoinChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -46,21 +48,27 @@ public class ChatMessageService {
 
         String msg = message.getMessage();
         ChatMessage.MessageType messageType = message.getType();
-        String createdAt = message.getCreatedAt();
+        // createAt 날짜 만들기 (아시아/서울 시간)
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date now = new Date();
+        String createdAt = sdf.format(now);
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .senderId(userId)
                 .message(message)
+                .createdAt(createdAt)
                 .build();
         chatMessageRepository.save(chatMessage);
 
-        return MessageResponseDto.builder()
-                .message(message.getMessage())
-                .createdAt(message.getCreatedAt())
-                .userId(userId)
-                .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
-                .build();
+        return  new MessageResponseDto(message.getMessage(),extractDateFormat(createdAt),chatMessage.getSenderId(),initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img(),message.getChatRoomId());
+//        return MessageResponseDto.builder()
+//                .message(message.getMessage())
+//                .createdAt(extractDateFormat(createdAt))
+//                .userId(chatMessage.getSenderId())
+//                .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
+//                .chatroomId(message.getChatRoomId())
+//                .build();
     }
 
     // 해당 채팅방 메시지 조회
@@ -69,12 +77,7 @@ public class ChatMessageService {
 
         // 해당방에 맞는 유저인지 검증
         List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatroomId);
-        for(JoinChatRoom joinChatRoom : joinChatRoomList) {
-            if(joinChatRoom.getUser().getId().equals(userId)) {
-                break;
-            }
-            throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
-        }
+        checkCollectUser(userId, joinChatRoomList);
 
         List<ChatMessage> chatMessageList = chatMessageRepository.findChatMessagesByChatroom_ChatRoomIdOrderByCreatedAt(chatroomId);
         System.out.println("채팅 메시지 개수 : " + chatMessageList);
@@ -89,13 +92,69 @@ public class ChatMessageService {
 
             MessageResponseDto messageResponseDto = MessageResponseDto.builder()
                     .message(chatMessage.getMessage())
-                    .createdAt(chatMessage.getCreatedAt().toString())
-                    .userId(userId)
-                    .imageUrl(initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img())
+                    .createdAt(extractDateFormat(chatMessage.getCreatedAt()))
+                    .userId(senderId)
+                    .imageUrl(initialInfoRepository.findInitialInfoByUserId(senderId).orElse(null).getProfile_img())
                     .build();
             messageResponseDtoList.add(messageResponseDto);
         }
         return messageResponseDtoList;
     }
 
+
+    // 해당방에 맞는 유저인지 검증하는 메서드
+    private void checkCollectUser(Long userId, List<JoinChatRoom> joinChatRoomList) {
+        int cnt=0;
+        for(JoinChatRoom joinChatRoom : joinChatRoomList) {
+            if(joinChatRoom.getUser().getId().equals(userId)) {
+                break;
+            } else {
+                cnt++;
+            }
+        }
+        if(cnt== joinChatRoomList.size())
+            throw new IllegalArgumentException("해당 채팅방에 잘못된 유저가 접근하였습니다.");
+    }
+
+    // 채팅방 메시지 날짜&시간 형식을 만드는 메서드
+    private String extractDateFormat(String messageDate) {
+
+        String result = "";
+        Date now = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String formattedNow = simpleDateFormat.format(now).toString();
+        String[] curFormattedSplitByDash = formattedNow.split("-");
+        String curYear = curFormattedSplitByDash[0];
+        String curMonth = curFormattedSplitByDash[1];
+        String curDay = curFormattedSplitByDash[2].split(" ")[0];
+        String curHour = curFormattedSplitByDash[2].split(" ")[1].split(":")[0];
+        String curMinute = curFormattedSplitByDash[2].split(" ")[1].split(":")[1];
+        System.out.println("----------------- 현재 날짜 & 시각 -----------------");
+        System.out.println(curYear + "년 " + curMonth + "월 " + curDay + "일 " + curHour + "시 " + curMinute + "분 ");
+
+        String[] formattedSplitByDash = messageDate.split("-");
+        String year = formattedSplitByDash[0];
+        String month = formattedSplitByDash[1];
+        String day = formattedSplitByDash[2].split(" ")[0];
+        String hour = formattedSplitByDash[2].split(" ")[1].split(":")[0];
+        String minute = formattedSplitByDash[2].split(" ")[1].split(":")[1];
+
+        // 1) 오늘인지 아닌지
+        if(curMonth.equals(month) && curDay.equals(day)) {
+            // 2) 오전인지 오후 인지
+            if(Integer.parseInt(hour) < 12) {
+                result = "오전 " + hour + ":" + minute;
+            } else {
+                Integer afterHour = (Integer.parseInt(hour) - 12);
+                result = "오후 " + afterHour.toString() + ":" + minute;
+            }
+        } else if (curMonth.equals(month) && ((Integer.parseInt(curDay) - 1) == Integer.parseInt(day))) {
+            // 3) 하루 전인지 아닌지
+            result = "하루 전";
+        } else {
+            // 4) 하루 전이 아니라면
+            result = month + "월 " + day + "일";
+        }
+        return result;
+    }
 }

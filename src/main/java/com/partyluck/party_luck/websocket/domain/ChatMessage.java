@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter @Setter
 @Entity
-public class ChatMessage extends Timestamped {
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
@@ -30,6 +30,9 @@ public class ChatMessage extends Timestamped {
     @Column
     private Long senderId;
 
+    @Column
+    private String createdAt;
+
 
     // 메시지 타입 : 입장, 채팅
     public enum MessageType {
@@ -37,10 +40,11 @@ public class ChatMessage extends Timestamped {
     }
 
     @Builder
-    public ChatMessage(ChatRoom chatRoom, Long senderId, MessageRequestDto message){
+    public ChatMessage(ChatRoom chatRoom, Long senderId, MessageRequestDto message, String createdAt){
         this.senderId = senderId;
         this.chatroom = chatRoom;
         this.message = message.getMessage();
         this.messageType = message.getType();
+        this.createdAt = createdAt;
     }
 }

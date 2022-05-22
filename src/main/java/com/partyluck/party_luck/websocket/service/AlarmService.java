@@ -22,8 +22,6 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final PartyRepository partyRepository;
     private final ImageRepository imageRepository;
-    private final PartyRequestDto partyRequestDto;
-    private final PartyJoinRepository partyJoinRepository;
 
     // 알람 메시지 전체 조회
     public List<AlarmPageResponseDto> getAlarm(Long userId) {
@@ -37,11 +35,15 @@ public class AlarmService {
             String image = imageRepository.findImageByImgIndexAndPartyid(1, alarm.getPartyId()).get().getImageSrc();
             String title = partyRepository.findById(alarm.getPartyId()).get().getTitle();
             String store = partyRepository.findById(alarm.getPartyId()).get().getStore();
-            String alarmMessage = alarm.getAlarmMessage();
+            List<String> alarms=new ArrayList<>();
+            String[] tmp=alarm.getAlarmMessage().split(System.lineSeparator());
+            for(int i=0;i< tmp.length;i++){
+                alarms.add(tmp[i]);
+            }
             String curtime = alarm.getCreatedAt();
 
 
-            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(title, store, image, alarmMessage,curtime);
+            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(title, store, image, alarms,curtime,userId);
             alarmPageResponseDtoList.add(alarmPageResponseDto);
         }
         return alarmPageResponseDtoList;

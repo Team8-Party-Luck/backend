@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class PartyService {
     private final InitialInfoRepository initialInfoRepository;
     private final AlarmRepository alarmRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final RedisTemplate redisTemplate;
+    private final ChannelTopic channelTopic;
 
 
     //파티 등록
@@ -462,23 +466,35 @@ public class PartyService {
             //파티정보 수정시 메시지 설정
             //만약 정보가 여러개 수정되면 알람이 다 오는가???
             String alarmMessage = "";
+            List<String> alarms=new ArrayList<>();
             if (dto.getCapacity() != party.getCapacity()) {
                 alarmMessage = "인원 수가 변경되었습니다";
-            } else if (!Objects.equals(dto.getAddress(), party.getAddress())) {
+                alarms.add(alarmMessage);
+            }
+            if (!Objects.equals(dto.getAddress(), party.getAddress())) {
                 alarmMessage = "음식점 주소가 변경되었습니다";
-            } else if (!Objects.equals(dto.getStore(), party.getStore())) {
+                alarms.add(alarmMessage);
+            }
+            if (!Objects.equals(dto.getStore(), party.getStore())) {
                 alarmMessage = "음식점이 변경되었습니다";
-            } else if ((!Objects.equals(dto.getDate(), party.getDate()))
+                alarms.add(alarmMessage);
+            }
+            if ((!Objects.equals(dto.getDate(), party.getDate()))
                     || (!Objects.equals(dto.getTime(), party.getTime()))) {
                 alarmMessage = "파티 일정이 변경되었습니다";
-            } else if (!Objects.equals(dto.getMeeting(), party.getMeeting())) {
+                alarms.add(alarmMessage);
+            }
+            if (!Objects.equals(dto.getMeeting(), party.getMeeting())) {
                 alarmMessage = "만나는 장소가 변경되었습니다";
-            } else if (!Objects.equals(dto.getDesc(), party.getDescription())) {
+                alarms.add(alarmMessage);
+            }
+            if (!Objects.equals(dto.getDesc(), party.getDescription())) {
                 alarmMessage = "파티설명이 변경되었습니다";
-            } else if (!Objects.equals(dto.getAge(), party.getAge())) {
-                alarmMessage = "모집 연령대가 변경되었습니다";
-            } else if (!Objects.equals(dto.getGender(), party.getGender())) {
+                alarms.add(alarmMessage);
+            }
+            if (!Objects.equals(dto.getGender(), party.getGender())) {
                 alarmMessage = "모집 성별이 변경되었습니다";
+                alarms.add(alarmMessage);
             }
 
             //수정
@@ -515,10 +531,12 @@ public class PartyService {
             List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
             for(PartyJoin p : tmp){
                 User user = p.getUser();
-                AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarmMessage, curtime);
+                AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime,user.getId());
                 Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
                 alarmRepository.save(alarm);
-                messagingTemplate.convertAndSend("/queue/",alarmPageResponseDto); //destination 프론트랑 이야기해야
+                messagingTemplate.convertAndSend("/alarm/"+user.getId().toString(),alarmPageResponseDto); //destination 프론트랑 이야기해야
+                String topic=channelTopic.getTopic();
+                redisTemplate.convertAndSend(topic, alarmPageResponseDto);
             }
 
 
