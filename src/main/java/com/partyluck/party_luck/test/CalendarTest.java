@@ -7,7 +7,7 @@ import java.util.*;
 public class CalendarTest {
     public static void main(String[] args) throws ParseException {
 
-        String dDay = "2022"+"05230146";
+        String dDay = "2022"+"05230303";
         System.out.println("dDay : " + dDay);
 
         //String 에서 Date 타입으로 변환
@@ -34,14 +34,15 @@ public class CalendarTest {
         };
 
         Date now = new Date();
-        Calendar nowSubTwo = Calendar.getInstance();
-        nowSubTwo.setTime(now);
-        nowSubTwo.add(Calendar.HOUR, -2);
-        System.out.println(nowSubTwo.getTime());
-        if(nowSubTwo.getTime().before(preTwoHours.getTime())) {
+//        Calendar nowSubTwo = Calendar.getInstance();
+//        nowSubTwo.setTime(now);
+//        nowSubTwo.add(Calendar.HOUR, -2);
+//        System.out.println(nowSubTwo.getTime());
+        if(now.before(preTwoHours.getTime())) {
             timer.schedule(twoHoursAlarm, preTwoHours.getTime());
+//            timer.cancel();
         } else {
-            timer.cancel();
+            System.out.println("알림 필요 없음");
         }
     }
 }
