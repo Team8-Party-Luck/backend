@@ -59,7 +59,9 @@ public class ChatMessageService {
                 .message(message)
                 .createdAt(createdAt)
                 .build();
-        chatMessageRepository.save(chatMessage);
+        ChatMessage storedChatMessage = chatMessageRepository.save(chatMessage);
+        chatRoom.addLastMessage(storedChatMessage.getMessageId());
+        chatRoomRepository.save(chatRoom);
 
         return  new MessageResponseDto(message.getMessage(),extractDateFormat(createdAt),chatMessage.getSenderId(),initialInfoRepository.findInitialInfoByUserId(userId).orElse(null).getProfile_img(),message.getChatRoomId());
 //        return MessageResponseDto.builder()
