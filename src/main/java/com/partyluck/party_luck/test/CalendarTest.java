@@ -30,6 +30,7 @@ public class CalendarTest {
             @Override
             public void run() {
                 System.out.println("두시간전 타이머생성 -----------------------------------");
+                timer.cancel();
             }
         };
 
@@ -40,9 +41,9 @@ public class CalendarTest {
 //        System.out.println(nowSubTwo.getTime());
         if(now.before(preTwoHours.getTime())) {
             timer.schedule(twoHoursAlarm, preTwoHours.getTime());
-//            timer.cancel();
         } else {
-            System.out.println("알림 필요 없음");
+            System.out.println("알림 필요없음");
+            timer.cancel();
         }
     }
 }

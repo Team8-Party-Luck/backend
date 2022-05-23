@@ -32,7 +32,6 @@ public class AlarmService {
 
     // 파티 하루 전 알림
     public void sendAlarm(Long partyId) throws ParseException {
-        System.out.println("알림 시작 ---------------------");
         //조인한 파티 D-Day
         Party foundParty = partyRepository.findById(partyId).orElseThrow(
                 () -> new IllegalArgumentException("해당 파티가 존재하지 않습니다.")
@@ -42,35 +41,23 @@ public class AlarmService {
         String day = foundParty.getDate().split("-")[1];
         String hour = foundParty.getTime().split(":")[0];
         String minute = foundParty.getTime().split(":")[1];
-        String dDay = month + day + hour + minute;
-        System.out.println("dDay : " + dDay);
+        String dDay = "2022" + month + day + hour + minute;
 
         //String 에서 Date 타입으로 변환
-        SimpleDateFormat formatter = new SimpleDateFormat("MMddHHmm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
         Date dDayTime = formatter.parse(dDay);
-        System.out.println("dDay Date 변환 : " + dDayTime);
-
-
-        System.out.println("캘린더 객체 호출 전-------------------");
-        //두시간 전
-        Calendar preTwoHours = Calendar.getInstance();
-        System.out.println("setTime 호출 전 ");
-        preTwoHours.setTime(dDayTime);
-        System.out.println("setTime 호출 후 ");
-        System.out.println(preTwoHours.getTime());
-
-        preTwoHours.add(Calendar.HOUR, -2);
-        Date twoHours = preTwoHours.getTime();
-        System.out.println("두시간전 캘린더 객체 생성 : " + preTwoHours);
 
         //하루 전
         Calendar preOneDay = Calendar.getInstance();
         preOneDay.setTime(dDayTime);
         preOneDay.add(Calendar.DATE, -1);
         Date oneDay = preOneDay.getTime();
-        System.out.println("하루전 캘린더 객체 생성 : " + preTwoHours);
 
-        Timer timer = new Timer();
+        //두시간 전
+        Calendar preTwoHours = Calendar.getInstance();
+        preTwoHours.setTime(dDayTime);
+        preTwoHours.add(Calendar.HOUR, -2);
+        Date twoHours = preTwoHours.getTime();
 
         //알람에 들어갈 내용
         String image = imageRepository.findImageByImgIndexAndPartyid(1, partyId).get().getImageSrc();
@@ -80,6 +67,9 @@ public class AlarmService {
         SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
         Date cur = new Date();
         String curtime = format1.format(cur);
+
+
+        Timer timer = new Timer();
 
         //하루 전 task 실행
         TimerTask oneDayAlarm = new TimerTask() {
@@ -97,6 +87,7 @@ public class AlarmService {
                     alarmRepository.save(alarm);
                     System.out.println("alarm save");
                     messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                    timer.cancel();
                 }
             }
         };
@@ -115,15 +106,25 @@ public class AlarmService {
                     Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
                     alarmRepository.save(alarm);
                     messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                    timer.cancel();
                 }
             }
         };
-        System.out.println("스케쥴러 등록 -----------------------------------");
-        timer.schedule(oneDayAlarm, oneDay);
-        timer.schedule(twoHoursAlarm, twoHours);
 
+        System.out.println("알람 등록 -----------------------------------");
+        Date now = new Date();
+        //등록 시점이 (만나는 날짜- 하루)보다 전에 있을 때
+        if(now.before(oneDay)) {
+            timer.schedule(oneDayAlarm, oneDay);
+            timer.schedule(twoHoursAlarm, twoHours);
+            //등록 시점이 (만나는 날짜 -하루)보다 뒤에 있고 (만나는 날짜 - 2시간)보다 전에 있을 때
+        } else if(now.before(twoHours) && now.after(oneDay)){
+            timer.schedule(twoHoursAlarm, twoHours);
+            //등록 시점이 (만나는 날짜 -2시간)보다 뒤에 있을 때
+        } else if(now.after(twoHours)){
+            timer.cancel();
+        }
     }
-
 
     // 알람 메시지 전체 조회
     public List<AlarmPageResponseDto> getAlarm(Long userId) {
@@ -153,5 +154,3 @@ public class AlarmService {
     }
 
 }
-
-
