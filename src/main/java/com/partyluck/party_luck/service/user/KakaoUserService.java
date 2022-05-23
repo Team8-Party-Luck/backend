@@ -51,6 +51,7 @@ public class KakaoUserService {
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
+        System.out.println(code);
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -61,6 +62,7 @@ public class KakaoUserService {
         body.add("client_id", "69e09d88a64e1a73b8fe2357f551ef81");
         body.add("redirect_uri", "https://www.eatsring.com/auth/kakao");
         body.add("code", code);
+        System.out.println(code);
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
@@ -81,6 +83,7 @@ public class KakaoUserService {
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+        System.out.println(accessToken);
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
