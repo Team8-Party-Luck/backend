@@ -62,70 +62,81 @@ public class AlarmService {
         Date twoHours = preTwoHours.getTime();
 
         //알람에 들어갈 내용
-        String image = imageRepository.findImageByImgIndexAndPartyid(1, partyId).get().getImageSrc();
-        String title = partyRepository.findById(partyId).get().getTitle();
-        String store = partyRepository.findById(partyId).get().getStore();
+//        }
 
-        SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
-        Date cur = new Date();
-        String curtime = format1.format(cur);
+            String image = imageRepository.findImageByImgIndexAndPartyid(1, partyId).get().getImageSrc();
+            String title = partyRepository.findById(partyId).get().getTitle();
+            String store = partyRepository.findById(partyId).get().getStore();
+
+            SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+            Date cur = new Date();
+            String curtime = format1.format(cur);
 
 
-        Timer timer = new Timer();
+            Timer timer = new Timer();
 
-        //하루 전 task 실행
-        TimerTask oneDayAlarm = new TimerTask() {
-            public void run() {
-                System.out.println("하루전 타이머생성");
-                //알람 텍스트 설정
-                String alarms = "신청하신 파티 하루 전입니다 -----------------------------------";
+            //하루 전 task 실행
+            TimerTask oneDayAlarm = new TimerTask() {
+                public void run() {
+                    System.out.println("하루전 타이머생성");
+                    //알람 텍스트 설정
+                    String alarms = "신청하신 파티 하루 전입니다 -----------------------------------";
 
-                //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
-                List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
-                for (PartyJoin p : tmp) {
-                    User user = p.getUser();
-                    AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
-                    Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
-                    alarmRepository.save(alarm);
-                    System.out.println("alarm save");
-                    messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
-                    timer.cancel();
+                    if(partyRepository.findById(partyId).orElse(null)!= null) {
+                        //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
+                        List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
+                        for (PartyJoin p : tmp) {
+                            User user = p.getUser();
+                            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
+                            Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
+                            alarmRepository.save(alarm);
+                            System.out.println("alarm save");
+                            messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                            timer.cancel();
+                        }
+                    } else {
+                        timer.cancel();
+                    }
                 }
-            }
-        };
+            };
 
-        //두시간 전 task 실행
-        TimerTask twoHoursAlarm = new TimerTask() {
-            public void run() {
-                System.out.println("두시간전 타이머생성 -----------------------------------");
-                String alarms = "신청하신 파티 두 시간 전입니다";
+            //두시간 전 task 실행
+            TimerTask twoHoursAlarm = new TimerTask() {
+                public void run() {
+                    System.out.println("두시간전 타이머생성 -----------------------------------");
+                    String alarms = "신청하신 파티 두 시간 전입니다";
 
-                //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
-                List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
-                for (PartyJoin p : tmp) {
-                    User user = p.getUser();
-                    AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
-                    Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
-                    alarmRepository.save(alarm);
-                    messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
-                    timer.cancel();
+                    //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
+                    if(partyRepository.findById(partyId).orElse(null)!= null) {
+                        List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(partyId).orElse(null));
+                        for (PartyJoin p : tmp) {
+                            User user = p.getUser();
+                            AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime);
+                            Alarm alarm = new Alarm(alarmPageResponseDto, partyId, user, curtime);
+                            alarmRepository.save(alarm);
+                            messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                            timer.cancel();
+                        }
+                    } else {
+                        timer.cancel();
+                    }
                 }
-            }
-        };
+            };
 
-        System.out.println("알람 등록 -----------------------------------");
-        Date now = new Date();
-        //등록 시점이 (만나는 날짜- 하루)보다 전에 있을 때
-        if(now.before(oneDay)) {
-            timer.schedule(oneDayAlarm, oneDay);
-            timer.schedule(twoHoursAlarm, twoHours);
-            //등록 시점이 (만나는 날짜 -하루)보다 뒤에 있고 (만나는 날짜 - 2시간)보다 전에 있을 때
-        } else if(now.before(twoHours) && now.after(oneDay)){
-            timer.schedule(twoHoursAlarm, twoHours);
-            //등록 시점이 (만나는 날짜 -2시간)보다 뒤에 있을
-        } else if(now.after(twoHours)){
-            timer.cancel();
-        }
+            System.out.println("알람 등록 -----------------------------------");
+            Date now = new Date();
+            //등록 시점이 (만나는 날짜- 하루)보다 전에 있을 때
+            if (now.before(oneDay)) {
+                timer.schedule(oneDayAlarm, oneDay);
+                timer.schedule(twoHoursAlarm, twoHours);
+                //등록 시점이 (만나는 날짜 -하루)보다 뒤에 있고 (만나는 날짜 - 2시간)보다 전에 있을 때
+            } else if (now.before(twoHours) && now.after(oneDay)) {
+                timer.schedule(twoHoursAlarm, twoHours);
+                //등록 시점이 (만나는 날짜 -2시간)보다 뒤에 있을
+            } else if (now.after(twoHours)) {
+                timer.cancel();
+            }
+
     }
 
     // 알람 메시지 전체 조회
