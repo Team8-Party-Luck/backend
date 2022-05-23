@@ -6,6 +6,7 @@ import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.repository.ImageRepository;
 import com.partyluck.party_luck.repository.PartyJoinRepository;
 import com.partyluck.party_luck.repository.PartyRepository;
+import com.partyluck.party_luck.service.party.PartyService;
 import com.partyluck.party_luck.websocket.domain.Alarm;
 import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
 import com.partyluck.party_luck.websocket.repository.AlarmRepository;
@@ -28,6 +29,7 @@ public class AlarmService {
     private final ImageRepository imageRepository;
     private final PartyJoinRepository partyJoinRepository;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final PartyService partyService;
 
 
     // 파티 하루 전 알림
@@ -120,7 +122,7 @@ public class AlarmService {
             //등록 시점이 (만나는 날짜 -하루)보다 뒤에 있고 (만나는 날짜 - 2시간)보다 전에 있을 때
         } else if(now.before(twoHours) && now.after(oneDay)){
             timer.schedule(twoHoursAlarm, twoHours);
-            //등록 시점이 (만나는 날짜 -2시간)보다 뒤에 있을 때
+            //등록 시점이 (만나는 날짜 -2시간)보다 뒤에 있을
         } else if(now.after(twoHours)){
             timer.cancel();
         }
