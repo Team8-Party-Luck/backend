@@ -36,8 +36,9 @@ public class ChatRoomService {
 
 
     // 해당 유저의 채팅방 목록 불러오기
-    @Transactional
+
     public List<ChatRoomResponseDto> readChatRoomList(UserDetailsImpl userDetails) {
+        System.out.println("확인2");
         User user = userDetails.getUser();
 
         User otherUser = new User();
@@ -47,30 +48,46 @@ public class ChatRoomService {
 
         // 해당 유저의 JoinChatRoom 리스트를 불러온다
         List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByUser(user);
+        System.out.println("확인3");
 
         // 채팅방 리스트를 모두 가져온다.
         for(JoinChatRoom joinChatRoom : joinChatRoomList) {
             chatRoomList.add(joinChatRoom.getChatRoom());
         }
+        System.out.println("확인4");
 
         for(ChatRoom chatRoom : chatRoomList) {
             // 상대유저의 닉네임을 찾아내야한다.
             List<JoinChatRoom> foundJoinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatRoom.getChatRoomId());
             for(JoinChatRoom joinChatRoom : foundJoinChatRoomList) {
-                if(!joinChatRoom.getUser().getId().equals(userDetails.getUser().getId())) {
+                if(joinChatRoom.getUser().getId()!=userDetails.getId()) {
                     otherUser = joinChatRoom.getUser();
                 }
             }
+            System.out.println("확인5");
 
             // 상대방 유저의 프로필 이미지를 가져오기 위해서 해당 유저의 initialInfo가 필요하다.
             InitialInfo otherInitialUserInfo = initialInfoRepository.findInitialInfoByUserId(otherUser.getId()).orElseThrow(
                     () -> new IllegalArgumentException("해당 유저의 이니셜정보가 없습니다.")
             );
+            System.out.println("확인5-1");
+            ChatMessage lastMessage;
+            String createdAt;
 
-            ChatMessage lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElseThrow(
-                    () -> new IllegalArgumentException("해당 메시지가 존재하지 않습니다.")
-            );
-            String createdAt = extractDateFormat(lastMessage.getCreatedAt());
+            try {
+                lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
+                if(lastMessage==null)
+                    createdAt="";
+                else
+                    createdAt = extractDateFormat(lastMessage.getCreatedAt());
+                System.out.println("확인");
+            }catch(Exception e){
+                lastMessage=new ChatMessage();
+                lastMessage.setCreatedAt("");
+                createdAt = "";
+            }
+            System.out.println("확인5-2");
+            System.out.println("확인6");
 
             // Builder Annotation 사용
             ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
@@ -81,9 +98,11 @@ public class ChatRoomService {
                     .lastMessage(lastMessage.getMessage())
                     .otherId(otherUser.getId())
                     .build();
+            System.out.println("확인7");
             chatRoomResponseDtoList.add(chatRoomResponseDto);
+            System.out.println("확인8");
         }
-
+        System.out.println("확인9");
         return chatRoomResponseDtoList;
     }
 

@@ -24,6 +24,7 @@ public class ChatRoomController {
     // 해당 유저의 채팅방 목록 불러오기
     @GetMapping("/chatroom/get")
     public List<ChatRoomResponseDto> readChatRoomList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        System.out.println("확인1");
         return chatRoomService.readChatRoomList(userDetails);
     }
 
