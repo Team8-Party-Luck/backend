@@ -122,22 +122,22 @@ public class ChatRoomService {
         // 중복 채팅방 확인
         //List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByUser_Id(user.getId()).orElse(null);
 
-        Optional<JoinChatRoom> joinChatRoomUser = joinChatRoomRepository.findJoinChatRoomByUser_Id(user.getId());
-        Optional<JoinChatRoom> joinChatRoomOtherUser = joinChatRoomRepository.findJoinChatRoomByUser_Id(otherId);
+        List<JoinChatRoom> joinChatRoomUserList = joinChatRoomRepository.findJoinChatRoomsByUser_Id(user.getId());
 
-        if(joinChatRoomUser.isPresent() && joinChatRoomOtherUser.isPresent()) {
-            String userChatRoomId = joinChatRoomUser.get().getChatRoom().getChatRoomId();
-            String otherChatRoomId = joinChatRoomOtherUser.get().getChatRoom().getChatRoomId();
-
-            if(userChatRoomId.equals(otherChatRoomId))
-                chatRoomId = userChatRoomId;
-        } else {
-            System.out.println("기존 채팅방이 존재하지 않을 경우");
-            // 중복 채팅방이 없다면 채팅방을 새로 만들어준다.
-            // 채팅방 생성과 동시에 JoinChatRoom에 두명의 유저가 추가된다.
-            ChatRoom chatRoom = new ChatRoom();
-            JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom);
-            JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom);
+        for(JoinChatRoom joinChatRoom : joinChatRoomUserList) {
+            String tempChatRoomId = joinChatRoom.getChatRoom().getChatRoomId();
+            List<JoinChatRoom> joinChatRoomOtherList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(tempChatRoomId);
+            for(JoinChatRoom tempJoinChatRoom : joinChatRoomOtherList)
+                if(tempJoinChatRoom.getUser().getId().equals(otherId)) {
+                    return tempChatRoomId;
+                }
+        }
+        System.out.println("기존 채팅방이 존재하지 않을 경우");
+        // 중복 채팅방이 없다면 채팅방을 새로 만들어준다.
+        // 채팅방 생성과 동시에 JoinChatRoom에 두명의 유저가 추가된다.
+        ChatRoom chatRoom = new ChatRoom();
+        JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom);
+        JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom);
 
             /* JPA 관련 Hibernate 에러
               ## Error
@@ -151,18 +151,18 @@ public class ChatRoomService {
               joinChatRoom Entity => @ManyToOne(cascade = CascadeType.ALL)
                                      private ChatRoom chatRoom;
              */
-            joinChatRoomRepository.save(joinChatRoomUserTwo);
-            joinChatRoomRepository.save(joinChatRoomOtherUserTwo);
+        joinChatRoomRepository.save(joinChatRoomUserTwo);
+        joinChatRoomRepository.save(joinChatRoomOtherUserTwo);
 
-            List<JoinChatRoom> addJoinChatRoomList = new ArrayList<>();
-            addJoinChatRoomList.add(joinChatRoomUserTwo);
-            addJoinChatRoomList.add(joinChatRoomOtherUserTwo);
-            chatRoom.addJoinChatRooms(addJoinChatRoomList);
+        List<JoinChatRoom> addJoinChatRoomList = new ArrayList<>();
+        addJoinChatRoomList.add(joinChatRoomUserTwo);
+        addJoinChatRoomList.add(joinChatRoomOtherUserTwo);
+        chatRoom.addJoinChatRooms(addJoinChatRoomList);
 
-            chatRoomRepository.save(chatRoom);
+        chatRoomRepository.save(chatRoom);
 
-            chatRoomId = chatRoom.getChatRoomId();
-        }
+        chatRoomId = chatRoom.getChatRoomId();
+
         return chatRoomId;
     }
 

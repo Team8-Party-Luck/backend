@@ -34,6 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // handler를 설정안해도 됨
         registry.addEndpoint("/ws-stomp").setAllowedOriginPatterns("*")
                 .withSockJS();
+
     }
 
     // StompHandler가 Websocket 앞단에서 token을 체크할 수 있도록 다음과 같이 인터셉터 설정
