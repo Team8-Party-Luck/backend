@@ -576,7 +576,7 @@ public class PartyService {
     //파티 일반 보기(비로그인)
     public PartyResponseDto RawPartyView(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by((Sort.Direction.DESC), "id"));
-        Page<Party> parties = partyRepository.findAll(pageable);
+        List<Party> parties = partyRepository.findAll();
         List<PartyResponseResultDto> resultss = new ArrayList<>();
         for (Party p : parties) {
             List<Image> itmp = imageRepository.findAllByPartyid(p.getId());
@@ -598,7 +598,16 @@ public class PartyService {
                 resultss.add(dto);
             }
         }
-        return new PartyResponseDto(resultss);
+        Collections.reverse(resultss);
+        List<PartyResponseResultDto> results = new ArrayList<>();
+        for(int i=page*10-10;i<page*10;i++){
+            try{
+                results.add(resultss.get(i));
+            }catch(Exception e){
+                return new PartyResponseDto(results);
+            }
+        }
+        return new PartyResponseDto(results);
     }
 
     //등록할 때 유효성 검사

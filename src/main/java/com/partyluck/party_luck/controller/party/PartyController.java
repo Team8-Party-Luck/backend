@@ -30,7 +30,6 @@ public class PartyController {
 //파티 일반 조회(비로그인)
     @GetMapping("/api/parties/raw/{page}")
     public PartyResponseDto RawPartyView(@PathVariable Integer page){
-        page=page-1;
         return partyService.RawPartyView(page);
     }
 //파티 지역 조회
