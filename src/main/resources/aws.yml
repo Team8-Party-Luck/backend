@@ -1,10 +1,10 @@
 cloud:
   aws:
     credentials:
-      accessKey:
-      secretKey:
+      accessKey: AKIAVJT6JJKWUSU7YTJS
+      secretKey: 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
     s3:
-      bucket:
+      bucket: minibucketjwc
     region:
       static: ap-northeast-2
     stack:
