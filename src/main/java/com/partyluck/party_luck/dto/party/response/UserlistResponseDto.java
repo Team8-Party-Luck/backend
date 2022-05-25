@@ -13,7 +13,9 @@ public class UserlistResponseDto {
     private String imageUrl;
     private String location;
     private String sns;
-    public UserlistResponseDto(Long userId,String nickname, String age, String gender, String imageUrl, String location,String sns){
+    private String intro;
+    private String[] foods;
+    public UserlistResponseDto(Long userId,String nickname, String age, String gender, String imageUrl, String location,String sns, String intro, String[] foods){
         this.userId=userId;
         this.nickname=nickname;
         this.age=age;
@@ -21,5 +23,7 @@ public class UserlistResponseDto {
         this.imageUrl=imageUrl;
         this.location=location;
         this.sns=sns;
+        this.intro=intro;
+        this.foods=foods;
     }
 }

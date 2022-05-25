@@ -11,8 +11,10 @@ import com.partyluck.party_luck.dto.user.response.InitialResponseDto;
 import com.partyluck.party_luck.dto.user.response.UserResponseDto;
 import com.partyluck.party_luck.dto.user.response.UserResponseResultDto;
 import com.partyluck.party_luck.repository.InitialInfoRepository;
+import com.partyluck.party_luck.repository.PartyJoinRepository;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
+import com.partyluck.party_luck.websocket.repository.AlarmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final InitialInfoRepository initialInfoRepository;
     private final S3Uploader s3Uploader;
+    private final PartyJoinRepository partyJoinRepository;
+    private final AlarmRepository alarmRepository;
 
     //일반 회원가입
     public ResponseDto registerUser(SignupRequestDto dto){
@@ -136,6 +140,8 @@ public class UserService {
     @Transactional
     public ResponseDto deleteUser(long id) {
         try {
+            alarmRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
+            partyJoinRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }

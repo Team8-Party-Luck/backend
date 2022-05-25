@@ -101,7 +101,7 @@ public class KakaoUserService {
                 kakaoUserInfoRequest,
                 String.class
         );
-
+        System.out.println("response = " + response);
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);

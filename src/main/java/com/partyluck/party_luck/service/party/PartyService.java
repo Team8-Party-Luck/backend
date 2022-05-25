@@ -653,7 +653,9 @@ public class PartyService {
             String city=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getCity();
             String region=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getRegion();
             String sns=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getSns_url();
-            UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region,sns);
+            String intro=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getIntro();
+            String[] foods=initialInfoRepository.findByUserId(i.getUser().getId()).orElse(null).getFood().split(" ");
+            UserlistResponseDto dto=new UserlistResponseDto(userId,nickname,age,gender,imageUrl,city+" "+region,sns,intro,foods);
 
             results.add(dto);
         }

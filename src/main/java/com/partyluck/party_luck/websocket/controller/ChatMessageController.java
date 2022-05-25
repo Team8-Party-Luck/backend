@@ -33,7 +33,7 @@ public class ChatMessageController {
     private final JwtDecoder jwtDecoder;
     private final ChatMessageService chatMessageService;
     private final UserRepository userRepository;
-    private final AlarmRepository alarmRepository;
+//    private final AlarmRepository alarmRepository;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
 
