@@ -132,7 +132,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/user/signup");
 
         // CICD Test /health 허용
-        skipPathList.add("Get,/health");
+        skipPathList.add("GET,/health");
 
         skipPathList.add("POST,/api/user");
         skipPathList.add("POST,/auth/**");
