@@ -43,6 +43,8 @@ public class UserController {
     @PutMapping("/api/user/initial")
     public ResponseDto modifiyInitial(InitialDto dto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        System.out.println("Image 받아오는가? " + dto.getImage().getName());
+        System.out.println("Image 받아오는가? " + dto.getImage().getOriginalFilename());
         return userService.modifyInitial(dto,userDetails.getId());
     }
     //기본정보 보기

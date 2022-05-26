@@ -83,6 +83,7 @@ public class UserService {
 
     //유저 상세정보 수정
     public ResponseDto modifyInitial(InitialDto dto, long id) throws IOException {
+        System.out.println("modifyInitial method 실행");
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto(true,200,"수정 성공!");
         try {
@@ -97,8 +98,11 @@ public class UserService {
             }
             info.setSns_url(dto.getSns());
 //            info.setAge(dto.getAge());
+            System.out.println(dto.getImage().getOriginalFilename());
             if((dto.getImage()!=null)&&(!dto.getImage().isEmpty())) {
+                System.out.println("if문 안으로 ~~");
                 info.setProfile_img(s3Uploader.upload(dto.getImage()));
+                System.out.println("업로드 성공!");
             }
             info.setRegion(dto.getRegion());
             info.setCity(dto.getCity());
