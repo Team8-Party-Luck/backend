@@ -2,16 +2,19 @@ package com.partyluck.party_luck.service.user;
 
 import com.partyluck.party_luck.config.S3Uploader;
 import com.partyluck.party_luck.domain.InitialInfo;
+import com.partyluck.party_luck.domain.Report;
 import com.partyluck.party_luck.domain.User;
 import com.partyluck.party_luck.dto.*;
 import com.partyluck.party_luck.dto.user.request.InitialDto;
 import com.partyluck.party_luck.dto.user.request.ModifyUserRequestDto;
+import com.partyluck.party_luck.dto.user.request.ReportRequestDto;
 import com.partyluck.party_luck.dto.user.request.SignupRequestDto;
 import com.partyluck.party_luck.dto.user.response.InitialResponseDto;
 import com.partyluck.party_luck.dto.user.response.UserResponseDto;
 import com.partyluck.party_luck.dto.user.response.UserResponseResultDto;
 import com.partyluck.party_luck.repository.InitialInfoRepository;
 import com.partyluck.party_luck.repository.PartyJoinRepository;
+import com.partyluck.party_luck.repository.ReportRepository;
 import com.partyluck.party_luck.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.websocket.repository.AlarmRepository;
@@ -33,6 +36,7 @@ public class UserService {
     private final S3Uploader s3Uploader;
     private final PartyJoinRepository partyJoinRepository;
     private final AlarmRepository alarmRepository;
+    private final ReportRepository reportRepository;
 
     //일반 회원가입
     public ResponseDto registerUser(SignupRequestDto dto){
@@ -149,5 +153,19 @@ public class UserService {
             return new ResponseDto(false,500,"삭제 실패...");
         }
         return new ResponseDto(true,200,"삭제 성공!");
+    }
+
+    public ResponseDto reportUser(long id, ReportRequestDto dto) {
+        Report tmp=reportRepository.findByReportIdAndOtherId(id,dto.getOtherId()).orElse(null);
+        User user=userRepository.findById(dto.getOtherId()).orElse(null);
+        if(tmp==null&&user!=null) {
+            Report report = new Report(id, dto);
+            reportRepository.save(report);
+            return new ResponseDto(true,200,"신고가 완료되었습니다");
+        }
+        else if(tmp == null)
+            return new ResponseDto(false,404,"요청이 올바르지 않습니다");
+        else
+            return new ResponseDto(false,400,"이미 신고한 사용자입니다");
     }
 }
