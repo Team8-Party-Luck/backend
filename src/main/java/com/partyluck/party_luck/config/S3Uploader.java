@@ -40,6 +40,7 @@ public class S3Uploader {
         // String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
         String fileName = IMAGE_UPLOAD_DIR + "/" + UUID.randomUUID();
         // s3로 업로드
+        System.out.println("AWS 업로드 전");
         String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
         return uploadImageUrl;
@@ -47,8 +48,10 @@ public class S3Uploader {
 
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
+        System.out.println("putS3() 메서드 호출됨 ------------");
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(
                 CannedAccessControlList.PublicRead));
+        System.out.println("아마존 S3에 업로드 완료-----------");
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
