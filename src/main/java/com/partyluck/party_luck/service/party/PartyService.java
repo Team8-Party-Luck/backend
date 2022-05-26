@@ -137,7 +137,6 @@ public class PartyService {
             Long a2 = Long.parseLong(curtime);
 
             String[] cmpaddresses = p.getAddress().split(" ");
-
             String cmpaddress = cmpaddresses[0] + " " + cmpaddresses[1];
             if ((localSearchDto.getAnswer()).equals(cmpaddress)&&(a1>=a2))
                 results.add(dto);

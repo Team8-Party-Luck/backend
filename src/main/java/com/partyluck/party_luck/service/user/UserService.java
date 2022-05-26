@@ -73,7 +73,7 @@ public class UserService {
 
     }
 
-//본인 상세정보 조회
+    //본인 상세정보 조회
     public InitialResponseDto myInitial(long id) {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         InitialResponseDto result=new InitialResponseDto(info);
@@ -81,7 +81,7 @@ public class UserService {
         return result;
     }
 
-//유저 상세정보 수정
+    //유저 상세정보 수정
     public ResponseDto modifyInitial(InitialDto dto, long id) throws IOException {
         InitialInfo info=initialInfoRepository.findByUserId(id).orElse(null);
         ResponseDto result=new ResponseDto(true,200,"수정 성공!");
@@ -113,7 +113,7 @@ public class UserService {
         }
         return result;
     }
-//본인 기본정보 조회
+    //본인 기본정보 조회
     public UserResponseDto userView(long id) {
         User user=userRepository.findById(id).orElse(null);
         UserResponseResultDto resultDto=new UserResponseResultDto(user,id);
@@ -124,7 +124,7 @@ public class UserService {
             return new UserResponseDto(true,resultDto);
 
     }
-//기본정보 수정
+    //기본정보 수정
     public ResponseDto modifyUser(long id, ModifyUserRequestDto dto) {
         User user=userRepository.findById(id).orElse(null);
         ResponseDto result=new ResponseDto(false,400,ILLEGAL_PASSWORD_INVALIDATION);
@@ -136,7 +136,7 @@ public class UserService {
         }
         return result;
     }
-//회원 탈퇴
+    //회원 탈퇴
     @Transactional
     public ResponseDto deleteUser(long id) {
         try {
