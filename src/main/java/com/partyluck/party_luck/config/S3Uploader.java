@@ -69,6 +69,13 @@ public class S3Uploader {
     private Optional<File> convert(MultipartFile file) throws IOException {
         // "현재 폴더/파일 이름" 정보를 가지고 있는 file 객체 생성
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
+        System.out.println("MultipartFile -> File로 변환");
+        // 파일 권한 적용
+        convertFile.setWritable(true);  // 쓰기 가능 설정
+        convertFile.setReadable(true);  // 읽기 가능 설정
+        System.out.println(convertFile.canWrite());
+        System.out.println(convertFile.canRead());
+
         // 바로 위에서 지정한 경로에 File이 생성됨 (경로가 잘못되었다면 생성 불가능)
         if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
