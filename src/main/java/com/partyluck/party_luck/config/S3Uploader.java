@@ -71,8 +71,9 @@ public class S3Uploader {
         File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
         System.out.println("MultipartFile -> File로 변환");
         // 파일 권한 적용
-        convertFile.setWritable(true);  // 쓰기 가능 설정
-        convertFile.setReadable(true);  // 읽기 가능 설정
+        Runtime.getRuntime().exec("chmod 777" + System.getProperty("user.dir") + "/" + file.getOriginalFilename());
+        convertFile.setWritable(true, false);  // 쓰기 가능 설정
+        convertFile.setReadable(true, false);  // 읽기 가능 설정
         System.out.println(convertFile.canWrite());
         System.out.println(convertFile.canRead());
 
