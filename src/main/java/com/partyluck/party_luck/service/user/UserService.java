@@ -114,7 +114,10 @@ public class UserService {
         }
         catch(Exception e){
             System.out.println("Image Upload S3 Error 내용");
+            System.out.println(e);
+            System.out.println(e.toString());
             System.out.println(e.getMessage());
+
             return new ResponseDto(false,400,"수정 실패..");
         }
         return result;

@@ -28,9 +28,10 @@ public class S3Uploader {
     public String bucket;  // S3 버킷 이름
 
     public String upload(MultipartFile multipartFile) throws IOException {
+        System.out.println("upload() 메서드 호출");
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-
+        System.out.println("File형식으로 변환완료");
         return upload(uploadFile);
     }
 
