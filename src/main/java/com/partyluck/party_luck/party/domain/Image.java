@@ -1,7 +1,7 @@
-package com.partyluck.party_luck.user.controller.party.domain;
+package com.partyluck.party_luck.party.domain;
 
 import com.partyluck.party_luck.config.S3Uploader;
-import com.partyluck.party_luck.user.controller.party.requestDto.PartyRequestDto;
+import com.partyluck.party_luck.party.requestDto.PartyRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.Entity;

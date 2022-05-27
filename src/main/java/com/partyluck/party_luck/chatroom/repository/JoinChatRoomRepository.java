@@ -1,9 +1,9 @@
-package com.partyluck.party_luck.websocket.repository;
+package com.partyluck.party_luck.chatroom.repository;
 
 
 
 import com.partyluck.party_luck.user.domain.User;
-import com.partyluck.party_luck.websocket.domain.JoinChatRoom;
+import com.partyluck.party_luck.chatroom.domain.JoinChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

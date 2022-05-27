@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.controller;
+package com.partyluck.party_luck.chatmessage;
 
 
 import com.partyluck.party_luck.user.domain.User;
@@ -6,10 +6,9 @@ import com.partyluck.party_luck.user.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
 
-import com.partyluck.party_luck.websocket.dto.reponse.EQMessageDto;
-import com.partyluck.party_luck.websocket.dto.reponse.MessageResponseDto;
-import com.partyluck.party_luck.websocket.dto.request.MessageRequestDto;
-import com.partyluck.party_luck.websocket.service.ChatMessageService;
+import com.partyluck.party_luck.chatmessage.responseDto.EQMessageDto;
+import com.partyluck.party_luck.chatmessage.responseDto.MessageResponseDto;
+import com.partyluck.party_luck.chatmessage.requestDto.MessageRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;

@@ -1,8 +1,8 @@
 package com.partyluck.party_luck.security;
 
 
-import com.partyluck.party_luck.domain.User;
-import com.partyluck.party_luck.repository.UserRepository;
+import com.partyluck.party_luck.user.domain.User;
+import com.partyluck.party_luck.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,6 +1,6 @@
-package com.partyluck.party_luck.dto.user.response;
+package com.partyluck.party_luck.user.responseDto;
 
-import com.partyluck.party_luck.domain.InitialInfo;
+import com.partyluck.party_luck.user.domain.InitialInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

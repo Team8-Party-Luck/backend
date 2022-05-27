@@ -1,19 +1,19 @@
-package com.partyluck.party_luck.websocket.service;
+package com.partyluck.party_luck.chatroom;
 
 
+import com.partyluck.party_luck.chatroom.repository.ChatRoomRepository;
+import com.partyluck.party_luck.chatroom.repository.JoinChatRoomRepository;
 import com.partyluck.party_luck.user.domain.InitialInfo;
 import com.partyluck.party_luck.user.domain.User;
 import com.partyluck.party_luck.user.repository.InitialInfoRepository;
 import com.partyluck.party_luck.user.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
-import com.partyluck.party_luck.websocket.domain.ChatMessage;
-import com.partyluck.party_luck.websocket.domain.ChatRoom;
-import com.partyluck.party_luck.websocket.domain.JoinChatRoom;
-import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomResponseDto;
-import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomUserInofoResponseDto;
-import com.partyluck.party_luck.websocket.repository.ChatMessageRepository;
-import com.partyluck.party_luck.websocket.repository.ChatRoomRepository;
-import com.partyluck.party_luck.websocket.repository.JoinChatRoomRepository;
+import com.partyluck.party_luck.chatmessage.ChatMessage;
+import com.partyluck.party_luck.chatroom.domain.ChatRoom;
+import com.partyluck.party_luck.chatroom.domain.JoinChatRoom;
+import com.partyluck.party_luck.chatroom.responseDto.ChatRoomResponseDto;
+import com.partyluck.party_luck.chatroom.responseDto.ChatRoomUserInofoResponseDto;
+import com.partyluck.party_luck.chatmessage.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

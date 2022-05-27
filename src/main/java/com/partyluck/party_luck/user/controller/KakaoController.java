@@ -1,10 +1,10 @@
-package com.partyluck.party_luck.controller.user;
+package com.partyluck.party_luck.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.partyluck.party_luck.domain.User;
+import com.partyluck.party_luck.user.domain.User;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtTokenUtils;
-import com.partyluck.party_luck.service.user.KakaoUserService;
+import com.partyluck.party_luck.user.service.KakaoUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

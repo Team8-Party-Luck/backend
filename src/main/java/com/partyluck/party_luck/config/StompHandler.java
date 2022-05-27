@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.config;
+package com.partyluck.party_luck.config;
 
 import com.partyluck.party_luck.security.provider.JWTAuthProvider;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.user.controller.party.domain;
+package com.partyluck.party_luck.party.domain;
 
 import com.partyluck.party_luck.user.domain.User;
 import lombok.Getter;

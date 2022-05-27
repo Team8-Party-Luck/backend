@@ -1,12 +1,9 @@
 package com.partyluck.party_luck.security;
 
-import com.partyluck.party_luck.domain.User;
-import com.partyluck.party_luck.domain.UserRoleEnum;
+import com.partyluck.party_luck.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {

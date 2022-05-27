@@ -1,4 +1,4 @@
-package com.partyluck.party_luck;
+package com.partyluck.party_luck.logging;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

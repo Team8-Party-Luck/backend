@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.domain;
+package com.partyluck.party_luck.chatroom.domain;
 
 import lombok.Getter;
 import lombok.Setter;

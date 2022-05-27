@@ -1,7 +1,7 @@
-package com.partyluck.party_luck.websocket.domain;
+package com.partyluck.party_luck.alarm;
 
 import com.partyluck.party_luck.user.domain.User;
-import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
+import com.partyluck.party_luck.alarm.responseDto.AlarmPageResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

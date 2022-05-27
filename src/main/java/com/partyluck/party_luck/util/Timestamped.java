@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket;
+package com.partyluck.party_luck.util;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

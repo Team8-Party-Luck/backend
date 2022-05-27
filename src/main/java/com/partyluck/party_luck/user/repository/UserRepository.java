@@ -1,6 +1,6 @@
-package com.partyluck.party_luck.repository;
+package com.partyluck.party_luck.user.repository;
 
-import com.partyluck.party_luck.domain.User;
+import com.partyluck.party_luck.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

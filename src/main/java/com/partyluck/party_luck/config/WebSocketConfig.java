@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.config;
+package com.partyluck.party_luck.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

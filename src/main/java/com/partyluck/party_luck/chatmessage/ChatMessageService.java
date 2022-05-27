@@ -1,18 +1,16 @@
-package com.partyluck.party_luck.websocket.service;
+package com.partyluck.party_luck.chatmessage;
 
 import com.partyluck.party_luck.user.domain.User;
 import com.partyluck.party_luck.user.repository.InitialInfoRepository;
 import com.partyluck.party_luck.user.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
-import com.partyluck.party_luck.websocket.domain.ChatMessage;
-import com.partyluck.party_luck.websocket.domain.ChatRoom;
-import com.partyluck.party_luck.websocket.domain.JoinChatRoom;
-import com.partyluck.party_luck.websocket.dto.reponse.MessageResponseDto;
-import com.partyluck.party_luck.websocket.dto.request.MessageRequestDto;
-import com.partyluck.party_luck.websocket.repository.ChatMessageRepository;
-import com.partyluck.party_luck.websocket.repository.ChatRoomRepository;
-import com.partyluck.party_luck.websocket.repository.JoinChatRoomRepository;
+import com.partyluck.party_luck.chatroom.domain.ChatRoom;
+import com.partyluck.party_luck.chatroom.domain.JoinChatRoom;
+import com.partyluck.party_luck.chatmessage.responseDto.MessageResponseDto;
+import com.partyluck.party_luck.chatmessage.requestDto.MessageRequestDto;
+import com.partyluck.party_luck.chatroom.repository.ChatRoomRepository;
+import com.partyluck.party_luck.chatroom.repository.JoinChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

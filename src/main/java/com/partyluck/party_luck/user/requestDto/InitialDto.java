@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.dto.user.request;
+package com.partyluck.party_luck.user.requestDto;
 
 
 import lombok.Getter;

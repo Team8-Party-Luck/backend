@@ -1,6 +1,6 @@
-package com.partyluck.party_luck.websocket.config;
+package com.partyluck.party_luck.config;
 
-import com.partyluck.party_luck.websocket.RedisSubscriber;
+import com.partyluck.party_luck.chatmessage.RedisSubscriber;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

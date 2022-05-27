@@ -1,10 +1,10 @@
-package com.partyluck.party_luck.websocket;
+package com.partyluck.party_luck.chatmessage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
-import com.partyluck.party_luck.websocket.dto.reponse.EQMessageDto;
-import com.partyluck.party_luck.websocket.dto.reponse.MessageResponseDto;
+import com.partyluck.party_luck.alarm.responseDto.AlarmPageResponseDto;
+import com.partyluck.party_luck.chatmessage.responseDto.EQMessageDto;
+import com.partyluck.party_luck.chatmessage.responseDto.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;

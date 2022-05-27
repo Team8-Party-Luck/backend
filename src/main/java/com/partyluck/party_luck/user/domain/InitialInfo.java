@@ -1,6 +1,6 @@
-package com.partyluck.party_luck.domain;
+package com.partyluck.party_luck.user.domain;
 
-import com.partyluck.party_luck.dto.user.request.InitialDto;
+import com.partyluck.party_luck.user.requestDto.InitialDto;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

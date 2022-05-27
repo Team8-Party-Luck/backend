@@ -1,14 +1,14 @@
-package com.partyluck.party_luck.user.controller.party.responseDto;
+package com.partyluck.party_luck.party.responseDto;
 
-import com.partyluck.party_luck.user.controller.party.domain.Party;
-import com.partyluck.party_luck.user.controller.party.repository.PartyJoinRepository;
+import com.partyluck.party_luck.party.repository.PartyJoinRepository;
+import com.partyluck.party_luck.party.domain.Party;
 import com.partyluck.party_luck.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 
-import static com.partyluck.party_luck.user.controller.party.DefaultImage.DefaultImages;
+import static com.partyluck.party_luck.party.DefaultImage.DefaultImages;
 
 @Getter
 @NoArgsConstructor

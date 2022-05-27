@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.dto.user.response;
+package com.partyluck.party_luck.user.responseDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,8 @@
-package com.partyluck.party_luck.websocket.domain;
+package com.partyluck.party_luck.chatmessage;
 
 
-import com.partyluck.party_luck.websocket.dto.request.MessageRequestDto;
+import com.partyluck.party_luck.chatroom.domain.ChatRoom;
+import com.partyluck.party_luck.chatmessage.requestDto.MessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

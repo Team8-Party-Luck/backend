@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.user.controller.test;
+package com.partyluck.party_luck.test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

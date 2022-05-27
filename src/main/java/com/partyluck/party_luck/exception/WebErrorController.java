@@ -1,6 +1,6 @@
 package com.partyluck.party_luck.exception;
 
-import com.partyluck.party_luck.dto.ResponseDto;
+import com.partyluck.party_luck.party.responseDto.ResponseDto;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

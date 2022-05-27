@@ -1,11 +1,11 @@
-package com.partyluck.party_luck.user.controller.party;
+package com.partyluck.party_luck.party;
 
-import com.partyluck.party_luck.user.controller.party.requestDto.LocalSearchDto;
-import com.partyluck.party_luck.user.controller.party.requestDto.PartyRequestDto;
-import com.partyluck.party_luck.user.controller.party.responseDto.PartyDetailsResponseDto;
-import com.partyluck.party_luck.user.controller.party.responseDto.PartyResponseDto;
-import com.partyluck.party_luck.user.controller.party.responseDto.ResponseDto;
-import com.partyluck.party_luck.user.controller.party.responseDto.UserlistResultDto;
+import com.partyluck.party_luck.party.requestDto.LocalSearchDto;
+import com.partyluck.party_luck.party.requestDto.PartyRequestDto;
+import com.partyluck.party_luck.party.responseDto.PartyDetailsResponseDto;
+import com.partyluck.party_luck.party.responseDto.PartyResponseDto;
+import com.partyluck.party_luck.party.responseDto.UserlistResultDto;
+import com.partyluck.party_luck.party.responseDto.ResponseDto;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

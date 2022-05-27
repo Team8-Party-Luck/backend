@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.dto.request;
+package com.partyluck.party_luck.chatroom.requestDto;
 
 import lombok.Getter;
 import lombok.Setter;

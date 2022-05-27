@@ -1,10 +1,8 @@
-package com.partyluck.party_luck.websocket.service;
+package com.partyluck.party_luck.alarm;
 
 import com.partyluck.party_luck.party.repository.ImageRepository;
 import com.partyluck.party_luck.party.repository.PartyRepository;
-import com.partyluck.party_luck.websocket.domain.Alarm;
-import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
-import com.partyluck.party_luck.websocket.repository.AlarmRepository;
+import com.partyluck.party_luck.alarm.responseDto.AlarmPageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

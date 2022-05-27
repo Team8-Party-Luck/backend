@@ -1,9 +1,7 @@
-package com.partyluck.party_luck.websocket.controller;
+package com.partyluck.party_luck.alarm;
 
 import com.partyluck.party_luck.security.UserDetailsImpl;
-import com.partyluck.party_luck.websocket.dto.reponse.AlarmPageResponseDto;
-import com.partyluck.party_luck.websocket.repository.AlarmRepository;
-import com.partyluck.party_luck.websocket.service.AlarmService;
+import com.partyluck.party_luck.alarm.responseDto.AlarmPageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;

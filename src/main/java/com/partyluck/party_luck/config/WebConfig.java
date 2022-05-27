@@ -1,4 +1,4 @@
-package com.partyluck.party_luck;
+package com.partyluck.party_luck.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

@@ -1,11 +1,10 @@
-package com.partyluck.party_luck.websocket.controller;
+package com.partyluck.party_luck.chatroom;
 
 
+import com.partyluck.party_luck.chatroom.responseDto.ChatRoomResponseDto;
+import com.partyluck.party_luck.chatroom.responseDto.ChatRoomUserInofoResponseDto;
 import com.partyluck.party_luck.security.UserDetailsImpl;
-import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomResponseDto;
-import com.partyluck.party_luck.websocket.dto.reponse.ChatRoomUserInofoResponseDto;
-import com.partyluck.party_luck.websocket.dto.request.ChatRoomRequestDto;
-import com.partyluck.party_luck.websocket.service.ChatRoomService;
+import com.partyluck.party_luck.chatroom.requestDto.ChatRoomRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

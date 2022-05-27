@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.websocket.dto.reponse;
+package com.partyluck.party_luck.chatmessage.responseDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

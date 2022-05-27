@@ -1,12 +1,12 @@
-package com.partyluck.party_luck.service.user;
+package com.partyluck.party_luck.user.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.partyluck.party_luck.domain.User;
-import com.partyluck.party_luck.repository.UserRepository;
+import com.partyluck.party_luck.user.domain.User;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtTokenUtils;
+import com.partyluck.party_luck.user.repository.UserRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

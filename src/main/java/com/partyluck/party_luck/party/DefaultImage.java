@@ -1,4 +1,4 @@
-package com.partyluck.party_luck.user.controller.party;
+package com.partyluck.party_luck.party;
 
 public class DefaultImage {
     public static final String[] DefaultImages={

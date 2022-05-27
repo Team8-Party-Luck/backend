@@ -1,8 +1,8 @@
-package com.partyluck.party_luck.websocket.repository;
+package com.partyluck.party_luck.chatmessage;
 
 
 
-import com.partyluck.party_luck.websocket.domain.ChatMessage;
+import com.partyluck.party_luck.chatmessage.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

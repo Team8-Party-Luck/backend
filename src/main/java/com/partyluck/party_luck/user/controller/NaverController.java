@@ -1,7 +1,7 @@
-package com.partyluck.party_luck.controller.user;
+package com.partyluck.party_luck.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.partyluck.party_luck.service.user.NaverUserService;
+import com.partyluck.party_luck.user.service.NaverUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
