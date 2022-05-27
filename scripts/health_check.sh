@@ -5,6 +5,8 @@
 # Crawl current connected port of WAS
 CURRENT_PORT=$(cat /etc/nginx/conf.d/service_url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
+JASYPT_PASSWORD=$JASYPT_PASSWORD
+echo "JASYPT_PASSWORD = ${JASYPT_PASSWORD}"
 
 # Toggle port Number
 if [ ${CURRENT_PORT} -eq 8081 ]; then
