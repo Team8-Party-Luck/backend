@@ -4,7 +4,9 @@
 
 CURRENT_PORT=$(cat /etc/nginx/conf.d/service_url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
+JASYPT_PASSWORD=$JASYPT_PASSWORD
 
+echo "JASYPT_PASSWORD is ${JASYPT_PASSWORD}"
 echo "> Current port of running WAS is ${CURRENT_PORT}."
 
 if [ ${CURRENT_PORT} -eq 8081 ]; then
@@ -23,6 +25,6 @@ if [ ! -z ${TARGET_PID} ]; then
   sudo kill ${TARGET_PID}
 fi
 
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/eatsring-logging/build/libs/* > /home/ubuntu/eatsring-logging/nohup.out 2>&1 &
+nohup java -jar -jasypt.encryptor.password=${JASYPT_PASSWORD} -Dserver.port=${TARGET_PORT} /home/ubuntu/eatsring-logging/build/libs/* > /home/ubuntu/eatsring-logging/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0

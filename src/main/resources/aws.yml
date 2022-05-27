@@ -9,3 +9,7 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+  jasypt:
+    encryptor:
+      bean: jasyptStringEncryptor  # 빈으로 등록한 빈 이름과 매핑
