@@ -1,4 +1,3 @@
-
 # application.yml
 
 logging-module:
@@ -7,4 +6,3 @@ logging-module:
 spring:
   profiles:
     active: local
-

@@ -1,14 +1,3 @@
-cloud:
-  aws:
-    credentials:
-      accessKey: ENC(7a0xYT4vvqYZaoFcCwpeSHxsvl3na8B7ddxVuDlrLCY=)
-      secretKey: ENC(RWr3pCdVSyY1xlLuuWEk7jE90G/AmCxVaA9aMOhqDEQiXN3qOxC9z+2/BnBd9FoyL8+DPIxxkSY=)
-    s3:
-      bucket: ENC(xJ4kOzrw78dmuzHjgjLX9ZuPVMw+UFGR)
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
 
   jasypt:
     encryptor:
