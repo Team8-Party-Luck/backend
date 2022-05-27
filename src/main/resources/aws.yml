@@ -13,3 +13,4 @@ cloud:
   jasypt:
     encryptor:
       bean: jasyptStringEncryptor  # 빈으로 등록한 빈 이름과 매핑
+      password: ${JASYPT_PASSWORD}
