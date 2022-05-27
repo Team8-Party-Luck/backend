@@ -1,8 +1,8 @@
 package com.partyluck.party_luck.security.provider;
 
 
-import com.partyluck.party_luck.domain.User;
-import com.partyluck.party_luck.repository.UserRepository;
+import com.partyluck.party_luck.user.domain.User;
+import com.partyluck.party_luck.user.repository.UserRepository;
 import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.security.jwt.JwtDecoder;
 import com.partyluck.party_luck.security.jwt.JwtPreProcessingToken;
