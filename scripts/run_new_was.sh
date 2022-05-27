@@ -7,7 +7,7 @@ TARGET_PORT=0
 JASYPT_PASSWORD=$(echo $JASYPT_PASSWORD)
 
 # EC2 서버에 미리 만들어둔 jasypt_password를 환경변수에 등록
-#source /etc/profile.d/codedeploy.sh
+source /etc/profile.d/codedeploy.sh
 
 echo "JASYPT_PASSWORD is ${JASYPT_PASSWORD}"
 echo "> Current port of running WAS is ${CURRENT_PORT}."
