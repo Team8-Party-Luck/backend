@@ -3,6 +3,7 @@ package com.partyluck.party_luck.controller.user;
 import com.partyluck.party_luck.dto.*;
 import com.partyluck.party_luck.dto.user.request.InitialDto;
 import com.partyluck.party_luck.dto.user.request.ModifyUserRequestDto;
+import com.partyluck.party_luck.dto.user.request.ReportRequestDto;
 import com.partyluck.party_luck.dto.user.request.SignupRequestDto;
 import com.partyluck.party_luck.dto.user.response.InitialResponseDto;
 import com.partyluck.party_luck.dto.user.response.UserResponseDto;
@@ -59,5 +60,11 @@ public class UserController {
     @DeleteMapping("/api/user")
     public ResponseDto deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.deleteUser(userDetails.getId());
+    }
+
+    //유저 신고
+    @PostMapping("/api/user/report")
+    public ResponseDto reportUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ReportRequestDto dto){
+        return userService.reportUser(userDetails.getId(),dto);
     }
 }
