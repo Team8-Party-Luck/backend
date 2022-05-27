@@ -21,15 +21,12 @@ public class RedisSubscriber implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        System.out.println("보이나 안보이나");
         String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
         System.out.println(publishMessage);
         if(publishMessage.split("\"")[1].equals("alarms")){
             try {
                 AlarmPageResponseDto dto=objectMapper.readValue(publishMessage,AlarmPageResponseDto.class);
-                System.out.println("alarms:"+dto.getAlarms());
                 messagingTemplate.convertAndSend("/alarm/"+dto.getUserId().toString(),dto);
-                System.out.println("성공");
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

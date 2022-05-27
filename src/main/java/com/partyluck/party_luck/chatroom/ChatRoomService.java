@@ -36,7 +36,6 @@ public class ChatRoomService {
     // 해당 유저의 채팅방 목록 불러오기
 
     public List<ChatRoomResponseDto> readChatRoomList(UserDetailsImpl userDetails) {
-        System.out.println("확인2");
         User user = userDetails.getUser();
 
         User otherUser = new User();
@@ -46,13 +45,11 @@ public class ChatRoomService {
 
         // 해당 유저의 JoinChatRoom 리스트를 불러온다
         List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByUser(user);
-        System.out.println("확인3");
 
         // 채팅방 리스트를 모두 가져온다.
         for(JoinChatRoom joinChatRoom : joinChatRoomList) {
             chatRoomList.add(joinChatRoom.getChatRoom());
         }
-        System.out.println("확인4");
 
         for(ChatRoom chatRoom : chatRoomList) {
             // 상대유저의 닉네임을 찾아내야한다.
@@ -62,13 +59,11 @@ public class ChatRoomService {
                     otherUser = joinChatRoom.getUser();
                 }
             }
-            System.out.println("확인5");
 
             // 상대방 유저의 프로필 이미지를 가져오기 위해서 해당 유저의 initialInfo가 필요하다.
             InitialInfo otherInitialUserInfo = initialInfoRepository.findInitialInfoByUserId(otherUser.getId()).orElseThrow(
                     () -> new IllegalArgumentException("해당 유저의 이니셜정보가 없습니다.")
             );
-            System.out.println("확인5-1");
             ChatMessage lastMessage;
             String createdAt;
 
@@ -78,14 +73,11 @@ public class ChatRoomService {
                     createdAt="";
                 else
                     createdAt = extractDateFormat(lastMessage.getCreatedAt());
-                System.out.println("확인");
             }catch(Exception e){
                 lastMessage=new ChatMessage();
                 lastMessage.setCreatedAt("");
                 createdAt = "";
             }
-            System.out.println("확인5-2");
-            System.out.println("확인6");
 
             // Builder Annotation 사용
             ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
@@ -96,11 +88,8 @@ public class ChatRoomService {
                     .lastMessage(lastMessage.getMessage())
                     .otherId(otherUser.getId())
                     .build();
-            System.out.println("확인7");
             chatRoomResponseDtoList.add(chatRoomResponseDto);
-            System.out.println("확인8");
         }
-        System.out.println("확인9");
         return chatRoomResponseDtoList;
     }
 

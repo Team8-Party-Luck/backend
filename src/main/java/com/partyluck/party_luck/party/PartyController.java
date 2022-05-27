@@ -32,7 +32,6 @@ public class PartyController {
     //파티 지역 조회
     @PostMapping("/home/parties/local")
     public PartyResponseDto LocalPartyView(@AuthenticationPrincipal UserDetailsImpl userDetails, LocalSearchDto localSearchDto){
-        System.out.println(localSearchDto.getAnswer()+"dsfsdfsdfdsag");
         return partyService.LocalPartyView(userDetails.getId(),localSearchDto);
     }
     //좋아요한 파티 조회

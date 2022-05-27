@@ -31,7 +31,6 @@ public class ChatMessageService {
     private final InitialInfoRepository initialInfoRepository;
 
     public MessageResponseDto save(MessageRequestDto message, String token) {
-        System.out.println("save 시작!");
         String username = jwtDecoder.decodeUsername(token);
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")

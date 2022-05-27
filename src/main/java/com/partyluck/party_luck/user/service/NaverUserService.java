@@ -36,11 +36,6 @@ public class NaverUserService {
 
 
     public String loginWithNaver(String code, String state, HttpServletResponse responseh) throws JsonProcessingException {
-
-
-
-        System.out.println(code);
-        System.out.println(state);
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest =
                 new HttpEntity<>(headers);

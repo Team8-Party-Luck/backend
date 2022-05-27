@@ -19,12 +19,9 @@ public class KakaoController {
 
     @GetMapping("/auth/kakao")
     public String kakaoLogin(@RequestParam String code, final HttpServletResponse response) throws JsonProcessingException {
-        System.out.println("11111");
         User user=kakaoUserService.kakaoLogin(code);
-        System.out.println("22222");
         UserDetailsImpl userDetails=new UserDetailsImpl(user);
         final String token = JwtTokenUtils.generateJwtToken(userDetails);
-        System.out.println("33333");
         System.out.println(token);
         response.addHeader("Authorization", "BEARER" + " " + token);
         System.out.println(response.getStatus());
