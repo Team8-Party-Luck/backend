@@ -15,6 +15,7 @@ import com.partyluck.party_luck.chatroom.responseDto.ChatRoomResponseDto;
 import com.partyluck.party_luck.chatroom.responseDto.ChatRoomUserInofoResponseDto;
 import com.partyluck.party_luck.chatmessage.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -48,7 +49,9 @@ public class ChatRoomService {
 
         // 채팅방 리스트를 모두 가져온다.
         for(JoinChatRoom joinChatRoom : joinChatRoomList) {
-            chatRoomList.add(joinChatRoom.getChatRoom());
+            if(!joinChatRoom.isJoinChatRoomOut()) {
+                chatRoomList.add(joinChatRoom.getChatRoom());
+            }
         }
 
         for(ChatRoom chatRoom : chatRoomList) {
@@ -123,8 +126,8 @@ public class ChatRoomService {
         // 중복 채팅방이 없다면 채팅방을 새로 만들어준다.
         // 채팅방 생성과 동시에 JoinChatRoom에 두명의 유저가 추가된다.
         ChatRoom chatRoom = new ChatRoom();
-        JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom);
-        JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom);
+        JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom, false);
+        JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom, false);
 
             /* JPA 관련 Hibernate 에러
               ## Error
@@ -221,9 +224,30 @@ public class ChatRoomService {
         }
         return result;
     }
+
+    // 채팅방 나가기
+    public void outChatRoom(UserDetailsImpl userDetails, String chatRoomId) {
+        Long userId = userDetails.getUser().getId();
+        List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatRoomId);
+        int count = 0;
+        // 채팅방 둘다 아웃인 경우 즉, false일 경우 채팅방 삭제
+        for(JoinChatRoom tempJoinChatRoom : joinChatRoomList) {
+            if(tempJoinChatRoom.isJoinChatRoomOut()) {
+                count ++;
+            }
+        }
+        if(count==2)
+            chatRoomRepository.deleteByChatRoomId(chatRoomId);
+
+        // 채팅방 둘다 아웃이 아닌 경우 즉, 한쪽이라도 true일 경우 joinChatroom 채팅방 아웃 칼럼을 수정하여 저장
+        for(JoinChatRoom tempJoinChatRoom : joinChatRoomList) {
+            if(tempJoinChatRoom.getUser().getId().equals(userId)) {
+                tempJoinChatRoom.isOut(true);
+                joinChatRoomRepository.save(tempJoinChatRoom);
+            }
+        }
+    }
 }
-
-
 
 
 
