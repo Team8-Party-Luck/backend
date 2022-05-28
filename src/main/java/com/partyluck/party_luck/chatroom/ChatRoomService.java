@@ -124,6 +124,7 @@ public class ChatRoomService {
     // 1:1 채팅방 만들기(파티상세 페이지 -> 호스트문의하기, 유저리스트 페이지 -> 채팅하기 누르기)
     // 중복 채팅방이 없으면 새로운 채팅방을 만들고 그 채팅방 ID를 프론트엔드에게 전달한다.
     // 중복 채팅방이 있으면 기존의 채팅방 ID를 찾아 프론트엔드에게 전달한다.
+    @Transactional
     public String createChatRoom(UserDetailsImpl userDetails, Long otherId) {
         // 채팅 기록이 있는지 확인 - 기존에 있는 채팅인지 아닌지 판별하기(유저 두명이 다 있는 채팅방인지 판별해야한다.)
         User user = userDetails.getUser();
@@ -142,11 +143,19 @@ public class ChatRoomService {
         for(JoinChatRoom joinChatRoom : joinChatRoomUserList) {
             String tempChatRoomId = joinChatRoom.getChatRoom().getChatRoomId();
             List<JoinChatRoom> joinChatRoomOtherList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(tempChatRoomId);
-            for(JoinChatRoom tempJoinChatRoom : joinChatRoomOtherList)
-                if(tempJoinChatRoom.getUser().getId().equals(otherId)) {
-                    return tempChatRoomId;
+            boolean exist = false;
+            for(JoinChatRoom tempJoinChatRoom : joinChatRoomOtherList) {
+                if (tempJoinChatRoom.getUser().getId().equals(otherId)) {
+                    exist = true;
+                } else {
+                    tempJoinChatRoom.isOut(false);
+                    joinChatRoomRepository.save(tempJoinChatRoom);
                 }
+            }
+            if(exist)
+                return tempChatRoomId;
         }
+
         System.out.println("기존 채팅방이 존재하지 않을 경우");
         // 중복 채팅방이 없다면 채팅방을 새로 만들어준다.
         // 채팅방 생성과 동시에 JoinChatRoom에 두명의 유저가 추가된다.
