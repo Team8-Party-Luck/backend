@@ -2,6 +2,7 @@ package com.partyluck.party_luck.user.service;
 
 import com.partyluck.party_luck.chatroom.repository.JoinChatRoomRepository;
 import com.partyluck.party_luck.config.S3Uploader;
+import com.partyluck.party_luck.party.domain.Party;
 import com.partyluck.party_luck.party.repository.PartyRepository;
 import com.partyluck.party_luck.party.repository.SubscribeRepository;
 import com.partyluck.party_luck.party.responseDto.ResponseDto;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.partyluck.party_luck.exception.ExceptionMessage.*;
 
@@ -153,6 +155,10 @@ public class UserService {
             alarmRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             partyJoinRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             subscribeRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
+            List<Party> tmp=partyRepository.findAllByUserid(id);
+            for(Party p:tmp){
+                partyJoinRepository.deleteAllByParty(p);
+            }
             partyRepository.deleteAllByUserid(id);
             joinChatRoomRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             initialInfoRepository.deleteInitialInfoByUserId(id);
