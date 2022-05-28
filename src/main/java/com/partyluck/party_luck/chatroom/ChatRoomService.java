@@ -77,7 +77,7 @@ public class ChatRoomService {
                 // Builder Annotation 사용
                 ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
                         .chatRoomId(chatRoom.getChatRoomId())
-                        .senderNickname("알 수 없음")
+                        .senderNickname("탈퇴한 사용자")
                         .image(null)
                         .createdAt(createdAt)
                         .lastMessage(lastMessage.getMessage())
@@ -199,7 +199,7 @@ public class ChatRoomService {
         }
         if(otherNickname.equals("")){
             return ChatRoomUserInofoResponseDto.builder()
-                    .otherNickname("알 수 없음")
+                    .otherNickname("탈퇴한 사용자")
                     .otherProfile(null)
                     .userId(userId)
                     .build();
