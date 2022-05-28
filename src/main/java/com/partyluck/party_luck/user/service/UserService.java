@@ -1,6 +1,8 @@
 package com.partyluck.party_luck.user.service;
 
+import com.partyluck.party_luck.chatroom.repository.JoinChatRoomRepository;
 import com.partyluck.party_luck.config.S3Uploader;
+import com.partyluck.party_luck.party.repository.SubscribeRepository;
 import com.partyluck.party_luck.party.responseDto.ResponseDto;
 import com.partyluck.party_luck.user.domain.InitialInfo;
 import com.partyluck.party_luck.user.domain.Report;
@@ -37,6 +39,8 @@ public class UserService {
     private final PartyJoinRepository partyJoinRepository;
     private final AlarmRepository alarmRepository;
     private final ReportRepository reportRepository;
+    private final SubscribeRepository subscribeRepository;
+    private final JoinChatRoomRepository joinChatRoomRepository;
 
     //일반 회원가입
     public ResponseDto registerUser(SignupRequestDto dto){
@@ -146,6 +150,8 @@ public class UserService {
         try {
             alarmRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             partyJoinRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
+            subscribeRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
+            joinChatRoomRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }

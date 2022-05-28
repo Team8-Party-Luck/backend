@@ -38,7 +38,7 @@ public class ChatRoomService {
     public List<ChatRoomResponseDto> readChatRoomList(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
-        User otherUser = new User();
+        User otherUser;
 
         List<ChatRoom> chatRoomList = new ArrayList<>();
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
@@ -52,6 +52,7 @@ public class ChatRoomService {
         }
 
         for(ChatRoom chatRoom : chatRoomList) {
+            otherUser = null;
             // 상대유저의 닉네임을 찾아내야한다.
             List<JoinChatRoom> foundJoinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatRoom.getChatRoomId());
             for(JoinChatRoom joinChatRoom : foundJoinChatRoomList) {
@@ -59,36 +60,60 @@ public class ChatRoomService {
                     otherUser = joinChatRoom.getUser();
                 }
             }
-
-            // 상대방 유저의 프로필 이미지를 가져오기 위해서 해당 유저의 initialInfo가 필요하다.
-            InitialInfo otherInitialUserInfo = initialInfoRepository.findInitialInfoByUserId(otherUser.getId()).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저의 이니셜정보가 없습니다.")
-            );
-            ChatMessage lastMessage;
-            String createdAt;
-
-            try {
-                lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
-                if(lastMessage==null)
-                    createdAt="";
-                else
-                    createdAt = extractDateFormat(lastMessage.getCreatedAt());
-            }catch(Exception e){
-                lastMessage=new ChatMessage();
-                lastMessage.setCreatedAt("");
-                createdAt = "";
+            if(otherUser==null){
+                ChatMessage lastMessage;
+                String createdAt;
+                try {
+                    lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
+                    if(lastMessage==null)
+                        createdAt="";
+                    else
+                        createdAt = extractDateFormat(lastMessage.getCreatedAt());
+                }catch(Exception e){
+                    lastMessage=new ChatMessage();
+                    lastMessage.setCreatedAt("");
+                    createdAt = "";
+                }
+                // Builder Annotation 사용
+                ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
+                        .chatRoomId(chatRoom.getChatRoomId())
+                        .senderNickname("알 수 없음")
+                        .image(null)
+                        .createdAt(createdAt)
+                        .lastMessage(lastMessage.getMessage())
+                        .otherId(null)
+                        .build();
+                chatRoomResponseDtoList.add(chatRoomResponseDto);
             }
-
-            // Builder Annotation 사용
-            ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
-                    .chatRoomId(chatRoom.getChatRoomId())
-                    .senderNickname(otherUser.getNickname())
-                    .image(otherInitialUserInfo.getProfile_img())
-                    .createdAt(createdAt)
-                    .lastMessage(lastMessage.getMessage())
-                    .otherId(otherUser.getId())
-                    .build();
-            chatRoomResponseDtoList.add(chatRoomResponseDto);
+            else{
+                // 상대방 유저의 프로필 이미지를 가져오기 위해서 해당 유저의 initialInfo가 필요하다.
+                InitialInfo otherInitialUserInfo = initialInfoRepository.findInitialInfoByUserId(otherUser.getId()).orElseThrow(
+                        () -> new IllegalArgumentException("해당 유저의 이니셜정보가 없습니다.")
+                );
+                ChatMessage lastMessage;
+                String createdAt;
+                try {
+                    lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
+                    if(lastMessage==null)
+                        createdAt="";
+                    else
+                        createdAt = extractDateFormat(lastMessage.getCreatedAt());
+                }catch(Exception e){
+                    lastMessage=new ChatMessage();
+                    lastMessage.setCreatedAt("");
+                    createdAt = "";
+                }
+                // Builder Annotation 사용
+                ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
+                        .chatRoomId(chatRoom.getChatRoomId())
+                        .senderNickname(otherUser.getNickname())
+                        .image(otherInitialUserInfo.getProfile_img())
+                        .createdAt(createdAt)
+                        .lastMessage(lastMessage.getMessage())
+                        .otherId(otherUser.getId())
+                        .build();
+                chatRoomResponseDtoList.add(chatRoomResponseDto);
+            }
         }
         return chatRoomResponseDtoList;
     }
@@ -171,6 +196,13 @@ public class ChatRoomService {
                 otherNickname = otherUser.getNickname();
                 otherProfileImg = otherInitialInfo.getProfile_img();
             }
+        }
+        if(otherNickname.equals("")){
+            return ChatRoomUserInofoResponseDto.builder()
+                    .otherNickname("알 수 없음")
+                    .otherProfile(null)
+                    .userId(userId)
+                    .build();
         }
 
         return ChatRoomUserInofoResponseDto.builder()
