@@ -1,6 +1,8 @@
 package com.partyluck.party_luck.party.responseDto;
 
 import com.partyluck.party_luck.party.domain.Party;
+import com.partyluck.party_luck.party.repository.PartyJoinRepository;
+import com.partyluck.party_luck.party.repository.PartyRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,8 +25,9 @@ public class PartyResponseResultDto {
     private String age;
     private String gender;
     private Long hostId;
+    private Integer memberCnt;
 
-    public PartyResponseResultDto(Party p,String[] ist){
+    public PartyResponseResultDto(Party p, String[] ist, PartyJoinRepository partyJoinRepository){
         this.partyId=p.getId();
         this.title=p.getTitle();
         this.capacity=p.getCapacity();
@@ -39,8 +42,9 @@ public class PartyResponseResultDto {
         this.gender=p.getGender();
         this.image=ist;
         this.hostId=p.getUserid();
+        this.memberCnt=partyJoinRepository.findAllByParty(p).size();
     }
-    public PartyResponseResultDto(Party p,String[] ist,boolean ishost,boolean issub){
+    public PartyResponseResultDto(Party p,String[] ist,boolean ishost,boolean issub,PartyJoinRepository partyJoinRepository){
         this.partyId=p.getId();
         this.title=p.getTitle();
         this.capacity=p.getCapacity();
@@ -57,6 +61,7 @@ public class PartyResponseResultDto {
         this.hostId=p.getUserid();
         this.ishost=ishost;
         this.issub=issub;
+        this.memberCnt=partyJoinRepository.findAllByParty(p).size();
     }
 
 

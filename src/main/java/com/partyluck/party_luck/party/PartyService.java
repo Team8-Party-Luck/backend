@@ -125,14 +125,13 @@ public class PartyService {
             Subscribe issubpresent = subscribeRepository.findByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             PartyResponseResultDto dto;
             if (p.getUserid() == id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, true, false);
+                dto = new PartyResponseResultDto(p, ist, true, false,partyJoinRepository);
             else if (p.getUserid() != id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, false, false);
+                dto = new PartyResponseResultDto(p, ist, false, false,partyJoinRepository);
             else if (p.getUserid() == id && issubpresent != null)
-                dto = new PartyResponseResultDto(p, ist, true, true);
+                dto = new PartyResponseResultDto(p, ist, true, true,partyJoinRepository);
             else
-
-                dto=new PartyResponseResultDto(p,ist,false,true);
+                dto=new PartyResponseResultDto(p,ist,false,true,partyJoinRepository);
 //            String city1 = initialInfoRepository.findByUserId(id).orElse(null).getCity();
 //            String region1 = initialInfoRepository.findByUserId(id).orElse(null).getRegion();
             String[] tmp1 = p.getDate().split("-");
@@ -365,13 +364,13 @@ public class PartyService {
             Subscribe issubpresent = subscribeRepository.findByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             PartyResponseResultDto dto;
             if (p.getUserid() == id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, true, false);
+                dto = new PartyResponseResultDto(p, ist, true, false,partyJoinRepository);
             else if (p.getUserid() != id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, false, false);
+                dto = new PartyResponseResultDto(p, ist, false, false,partyJoinRepository);
             else if (p.getUserid() == id && issubpresent != null)
-                dto = new PartyResponseResultDto(p, ist, true, true);
+                dto = new PartyResponseResultDto(p, ist, true, true,partyJoinRepository);
             else
-                dto = new PartyResponseResultDto(p, ist, false, true);
+                dto = new PartyResponseResultDto(p, ist, false, true,partyJoinRepository);
             String[] tmp1 = p.getDate().split("-");
             String[] tmp3 = p.getTime().split(":");
             String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
@@ -402,13 +401,13 @@ public class PartyService {
             Subscribe issubpresent = subscribeRepository.findByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             PartyResponseResultDto dto;
             if (p.getUserid() == id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, true, false);
+                dto = new PartyResponseResultDto(p, ist, true, false,partyJoinRepository);
             else if (p.getUserid() != id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, false, false);
+                dto = new PartyResponseResultDto(p, ist, false, false,partyJoinRepository);
             else if (p.getUserid() == id && issubpresent != null)
-                dto = new PartyResponseResultDto(p, ist, true, true);
+                dto = new PartyResponseResultDto(p, ist, true, true,partyJoinRepository);
             else
-                dto = new PartyResponseResultDto(p, ist, false, true);
+                dto = new PartyResponseResultDto(p, ist, false, true,partyJoinRepository);
             String[] tmp1 = p.getDate().split("-");
             String[] tmp3 = p.getTime().split(":");
             String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
@@ -437,13 +436,13 @@ public class PartyService {
             Subscribe issubpresent = subscribeRepository.findByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             PartyResponseResultDto dto;
             if (p.getUserid() == id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, true, false);
+                dto = new PartyResponseResultDto(p, ist, true, false,partyJoinRepository);
             else if (p.getUserid() != id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, false, false);
+                dto = new PartyResponseResultDto(p, ist, false, false,partyJoinRepository);
             else if (p.getUserid() == id && issubpresent != null)
-                dto = new PartyResponseResultDto(p, ist, true, true);
+                dto = new PartyResponseResultDto(p, ist, true, true,partyJoinRepository);
             else
-                dto = new PartyResponseResultDto(p, ist, false, true);
+                dto = new PartyResponseResultDto(p, ist, false, true,partyJoinRepository);
             PartyJoin partyJoin = partyJoinRepository.findPartyJoinByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             String[] tmp1 = p.getDate().split("-");
             String[] tmp3 = p.getTime().split(":");
@@ -472,13 +471,13 @@ public class PartyService {
             Subscribe issubpresent = subscribeRepository.findByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             PartyResponseResultDto dto;
             if (p.getUserid() == id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, true, false);
+                dto = new PartyResponseResultDto(p, ist, true, false,partyJoinRepository);
             else if (p.getUserid() != id && issubpresent == null)
-                dto = new PartyResponseResultDto(p, ist, false, false);
+                dto = new PartyResponseResultDto(p, ist, false, false,partyJoinRepository);
             else if (p.getUserid() == id && issubpresent != null)
-                dto = new PartyResponseResultDto(p, ist, true, true);
+                dto = new PartyResponseResultDto(p, ist, true, true,partyJoinRepository);
             else
-                dto = new PartyResponseResultDto(p, ist, false, true);
+                dto = new PartyResponseResultDto(p, ist, false, true,partyJoinRepository);
             PartyJoin partyJoin = partyJoinRepository.findPartyJoinByPartyAndUser(p, userRepository.findById(id).orElse(null)).orElse(null);
             String[] tmp1 = p.getDate().split("-");
             String[] tmp3 = p.getTime().split(":");
@@ -595,7 +594,7 @@ public class PartyService {
             for (int i = 0; i < itmp.size(); i++) {
                 ist[i] = itmp.get(i).getImageSrc();
             }
-            PartyResponseResultDto dto = new PartyResponseResultDto(p, ist);
+            PartyResponseResultDto dto = new PartyResponseResultDto(p, ist,partyJoinRepository);
             String[] tmp1 = p.getDate().split("-");
             String[] tmp3 = p.getTime().split(":");
             String cmp = tmp1[0] + tmp1[1] + tmp3[0] + tmp3[1];
