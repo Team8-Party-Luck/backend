@@ -17,7 +17,7 @@ public class JoinChatRoom {
     @ManyToOne
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private ChatRoom chatRoom;
 
     public JoinChatRoom(User user, ChatRoom chatRoom) {

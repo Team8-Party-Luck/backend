@@ -143,11 +143,19 @@ public class PartyService {
             String curtime = format1.format(cur);
             Long a1 = Long.parseLong(cmp);
             Long a2 = Long.parseLong(curtime);
+            if(!localSearchDto.getAnswer().contains(" ")){
+                String[] cmpaddresses = p.getAddress().split(" ");
+                String cmpaddress = cmpaddresses[0];
+                if ((localSearchDto.getAnswer()).equals(cmpaddress)&&(a1>=a2))
+                    results.add(dto);
+            }
+            else{
+                String[] cmpaddresses = p.getAddress().split(" ");
+                String cmpaddress = cmpaddresses[0] + " " + cmpaddresses[1];
+                if ((localSearchDto.getAnswer()).equals(cmpaddress)&&(a1>=a2))
+                    results.add(dto);
 
-            String[] cmpaddresses = p.getAddress().split(" ");
-            String cmpaddress = cmpaddresses[0] + " " + cmpaddresses[1];
-            if ((localSearchDto.getAnswer()).equals(cmpaddress)&&(a1>=a2))
-                results.add(dto);
+            }
         }
         return new PartyResponseDto(results);
     }
