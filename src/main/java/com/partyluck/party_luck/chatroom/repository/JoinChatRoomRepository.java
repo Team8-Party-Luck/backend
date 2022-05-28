@@ -13,4 +13,5 @@ public interface JoinChatRoomRepository extends JpaRepository<JoinChatRoom, Long
     List<JoinChatRoom> findJoinChatRoomsByChatRoom_ChatRoomId(String chatRoomId);
     List<JoinChatRoom> findJoinChatRoomsByUser_Id(Long userId);
     void deleteAllByUser(User user);
+    List<JoinChatRoom> deleteAllByChatRoom_ChatRoomId(String chatRoomId);
 }
