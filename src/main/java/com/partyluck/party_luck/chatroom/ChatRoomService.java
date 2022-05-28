@@ -236,8 +236,14 @@ public class ChatRoomService {
                 count ++;
             }
         }
-        if(count==2)
+        if(count==2) {
+            // JoinChatRoom 삭제
+            joinChatRoomRepository.deleteAllByChatRoom_ChatRoomId(chatRoomId);
+            // 채팅방메시지 모두 삭제
+            chatMessageRepository.deleteAllByChatroom_ChatRoomId(chatRoomId);
+            // 채팅방 삭제
             chatRoomRepository.deleteByChatRoomId(chatRoomId);
+        }
 
         // 채팅방 둘다 아웃이 아닌 경우 즉, 한쪽이라도 true일 경우 joinChatroom 채팅방 아웃 칼럼을 수정하여 저장
         for(JoinChatRoom tempJoinChatRoom : joinChatRoomList) {
