@@ -49,4 +49,11 @@ public class ChatRoomController {
     public ChatRoomUserInofoResponseDto readChatRoomUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String chatRoomId) {
         return chatRoomService.readChatRoomUserInfo(userDetails, chatRoomId);
     }
+
+    // 채팅 방 나갈 때 로직
+    @GetMapping("/chatroom/out/{chatRoomId}")
+    public ResponseEntity<?> outChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String chatRoomId) {
+        chatRoomService.outChatRoom(userDetails, chatRoomId);
+        return ResponseEntity.status(200).body("채팅룸 나가기 완료!");
+    }
 }

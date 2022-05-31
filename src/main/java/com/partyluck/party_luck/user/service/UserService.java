@@ -1,6 +1,11 @@
 package com.partyluck.party_luck.user.service;
 
+import com.partyluck.party_luck.chatroom.repository.JoinChatRoomRepository;
 import com.partyluck.party_luck.config.S3Uploader;
+import com.partyluck.party_luck.party.domain.Party;
+import com.partyluck.party_luck.party.repository.ImageRepository;
+import com.partyluck.party_luck.party.repository.PartyRepository;
+import com.partyluck.party_luck.party.repository.SubscribeRepository;
 import com.partyluck.party_luck.party.responseDto.ResponseDto;
 import com.partyluck.party_luck.user.domain.InitialInfo;
 import com.partyluck.party_luck.user.domain.Report;
@@ -24,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.partyluck.party_luck.exception.ExceptionMessage.*;
 
@@ -37,6 +43,10 @@ public class UserService {
     private final PartyJoinRepository partyJoinRepository;
     private final AlarmRepository alarmRepository;
     private final ReportRepository reportRepository;
+    private final SubscribeRepository subscribeRepository;
+    private final JoinChatRoomRepository joinChatRoomRepository;
+    private final PartyRepository partyRepository;
+    private final ImageRepository imageRepository;
 
     //일반 회원가입
     public ResponseDto registerUser(SignupRequestDto dto){
@@ -146,6 +156,15 @@ public class UserService {
         try {
             alarmRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             partyJoinRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
+            subscribeRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
+            List<Party> tmp=partyRepository.findAllByUserid(id);
+            for(Party p:tmp){
+                imageRepository.deleteAllByPartyid(p.getId());
+                subscribeRepository.deleteAllByParty(p);
+                partyJoinRepository.deleteAllByParty(p);
+            }
+            partyRepository.deleteAllByUserid(id);
+            joinChatRoomRepository.deleteAllByUser(userRepository.findById(id).orElse(null));
             initialInfoRepository.deleteInitialInfoByUserId(id);
             userRepository.deleteById(id);
         }

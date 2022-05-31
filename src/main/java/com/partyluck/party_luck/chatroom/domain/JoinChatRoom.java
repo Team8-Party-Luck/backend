@@ -14,14 +14,22 @@ public class JoinChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private boolean isJoinChatRoomOut;
+
     @ManyToOne
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private ChatRoom chatRoom;
 
-    public JoinChatRoom(User user, ChatRoom chatRoom) {
+    public JoinChatRoom(User user, ChatRoom chatRoom, boolean isJoinChatRoomOut) {
         this.user = user;
         this.chatRoom = chatRoom;
+        this.isJoinChatRoomOut = isJoinChatRoomOut;
+    }
+
+    public void isOut(boolean isJoinChatRoomOut) {
+        this.isJoinChatRoomOut = isJoinChatRoomOut;
     }
 }

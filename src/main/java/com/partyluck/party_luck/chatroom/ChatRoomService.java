@@ -15,8 +15,10 @@ import com.partyluck.party_luck.chatroom.responseDto.ChatRoomResponseDto;
 import com.partyluck.party_luck.chatroom.responseDto.ChatRoomUserInofoResponseDto;
 import com.partyluck.party_luck.chatmessage.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +40,7 @@ public class ChatRoomService {
     public List<ChatRoomResponseDto> readChatRoomList(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 
-        User otherUser = new User();
+        User otherUser;
 
         List<ChatRoom> chatRoomList = new ArrayList<>();
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
@@ -48,10 +50,13 @@ public class ChatRoomService {
 
         // 채팅방 리스트를 모두 가져온다.
         for(JoinChatRoom joinChatRoom : joinChatRoomList) {
-            chatRoomList.add(joinChatRoom.getChatRoom());
+            if(!joinChatRoom.isJoinChatRoomOut()) {
+                chatRoomList.add(joinChatRoom.getChatRoom());
+            }
         }
 
         for(ChatRoom chatRoom : chatRoomList) {
+            otherUser = null;
             // 상대유저의 닉네임을 찾아내야한다.
             List<JoinChatRoom> foundJoinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatRoom.getChatRoomId());
             for(JoinChatRoom joinChatRoom : foundJoinChatRoomList) {
@@ -59,36 +64,60 @@ public class ChatRoomService {
                     otherUser = joinChatRoom.getUser();
                 }
             }
-
-            // 상대방 유저의 프로필 이미지를 가져오기 위해서 해당 유저의 initialInfo가 필요하다.
-            InitialInfo otherInitialUserInfo = initialInfoRepository.findInitialInfoByUserId(otherUser.getId()).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저의 이니셜정보가 없습니다.")
-            );
-            ChatMessage lastMessage;
-            String createdAt;
-
-            try {
-                lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
-                if(lastMessage==null)
-                    createdAt="";
-                else
-                    createdAt = extractDateFormat(lastMessage.getCreatedAt());
-            }catch(Exception e){
-                lastMessage=new ChatMessage();
-                lastMessage.setCreatedAt("");
-                createdAt = "";
+            if(otherUser==null){
+                ChatMessage lastMessage;
+                String createdAt;
+                try {
+                    lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
+                    if(lastMessage==null)
+                        createdAt="";
+                    else
+                        createdAt = extractDateFormat(lastMessage.getCreatedAt());
+                }catch(Exception e){
+                    lastMessage=new ChatMessage();
+                    lastMessage.setCreatedAt("");
+                    createdAt = "";
+                }
+                // Builder Annotation 사용
+                ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
+                        .chatRoomId(chatRoom.getChatRoomId())
+                        .senderNickname("탈퇴한 사용자")
+                        .image(null)
+                        .createdAt(createdAt)
+                        .lastMessage(lastMessage.getMessage())
+                        .otherId(null)
+                        .build();
+                chatRoomResponseDtoList.add(chatRoomResponseDto);
             }
-
-            // Builder Annotation 사용
-            ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
-                    .chatRoomId(chatRoom.getChatRoomId())
-                    .senderNickname(otherUser.getNickname())
-                    .image(otherInitialUserInfo.getProfile_img())
-                    .createdAt(createdAt)
-                    .lastMessage(lastMessage.getMessage())
-                    .otherId(otherUser.getId())
-                    .build();
-            chatRoomResponseDtoList.add(chatRoomResponseDto);
+            else{
+                // 상대방 유저의 프로필 이미지를 가져오기 위해서 해당 유저의 initialInfo가 필요하다.
+                InitialInfo otherInitialUserInfo = initialInfoRepository.findInitialInfoByUserId(otherUser.getId()).orElseThrow(
+                        () -> new IllegalArgumentException("해당 유저의 이니셜정보가 없습니다.")
+                );
+                ChatMessage lastMessage;
+                String createdAt;
+                try {
+                    lastMessage = chatMessageRepository.findById(chatRoom.getLastMessageId()).orElse(null);
+                    if(lastMessage==null)
+                        createdAt="";
+                    else
+                        createdAt = extractDateFormat(lastMessage.getCreatedAt());
+                }catch(Exception e){
+                    lastMessage=new ChatMessage();
+                    lastMessage.setCreatedAt("");
+                    createdAt = "";
+                }
+                // Builder Annotation 사용
+                ChatRoomResponseDto chatRoomResponseDto = ChatRoomResponseDto.builder()
+                        .chatRoomId(chatRoom.getChatRoomId())
+                        .senderNickname(otherUser.getNickname())
+                        .image(otherInitialUserInfo.getProfile_img())
+                        .createdAt(createdAt)
+                        .lastMessage(lastMessage.getMessage())
+                        .otherId(otherUser.getId())
+                        .build();
+                chatRoomResponseDtoList.add(chatRoomResponseDto);
+            }
         }
         return chatRoomResponseDtoList;
     }
@@ -96,6 +125,7 @@ public class ChatRoomService {
     // 1:1 채팅방 만들기(파티상세 페이지 -> 호스트문의하기, 유저리스트 페이지 -> 채팅하기 누르기)
     // 중복 채팅방이 없으면 새로운 채팅방을 만들고 그 채팅방 ID를 프론트엔드에게 전달한다.
     // 중복 채팅방이 있으면 기존의 채팅방 ID를 찾아 프론트엔드에게 전달한다.
+    @Transactional
     public String createChatRoom(UserDetailsImpl userDetails, Long otherId) {
         // 채팅 기록이 있는지 확인 - 기존에 있는 채팅인지 아닌지 판별하기(유저 두명이 다 있는 채팅방인지 판별해야한다.)
         User user = userDetails.getUser();
@@ -114,17 +144,24 @@ public class ChatRoomService {
         for(JoinChatRoom joinChatRoom : joinChatRoomUserList) {
             String tempChatRoomId = joinChatRoom.getChatRoom().getChatRoomId();
             List<JoinChatRoom> joinChatRoomOtherList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(tempChatRoomId);
-            for(JoinChatRoom tempJoinChatRoom : joinChatRoomOtherList)
-                if(tempJoinChatRoom.getUser().getId().equals(otherId)) {
-                    return tempChatRoomId;
+            boolean exist = false;
+            for(JoinChatRoom tempJoinChatRoom : joinChatRoomOtherList) {
+                if (tempJoinChatRoom.getUser().getId().equals(otherId)) {
+                    exist = true;
+                } else {
+                    tempJoinChatRoom.isOut(false);
+                    joinChatRoomRepository.save(tempJoinChatRoom);
                 }
+            }
+            if(exist)
+                return tempChatRoomId;
         }
         System.out.println("기존 채팅방이 존재하지 않을 경우");
         // 중복 채팅방이 없다면 채팅방을 새로 만들어준다.
         // 채팅방 생성과 동시에 JoinChatRoom에 두명의 유저가 추가된다.
         ChatRoom chatRoom = new ChatRoom();
-        JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom);
-        JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom);
+        JoinChatRoom joinChatRoomUserTwo = new JoinChatRoom(user, chatRoom, false);
+        JoinChatRoom joinChatRoomOtherUserTwo = new JoinChatRoom(otherUser, chatRoom, false);
 
             /* JPA 관련 Hibernate 에러
               ## Error
@@ -171,6 +208,13 @@ public class ChatRoomService {
                 otherNickname = otherUser.getNickname();
                 otherProfileImg = otherInitialInfo.getProfile_img();
             }
+        }
+        if(otherNickname.equals("")){
+            return ChatRoomUserInofoResponseDto.builder()
+                    .otherNickname("탈퇴한 사용자")
+                    .otherProfile(null)
+                    .userId(userId)
+                    .build();
         }
 
         return ChatRoomUserInofoResponseDto.builder()
@@ -221,9 +265,36 @@ public class ChatRoomService {
         }
         return result;
     }
+
+    // 채팅방 나가기
+    public void outChatRoom(UserDetailsImpl userDetails, String chatRoomId) {
+        Long userId = userDetails.getUser().getId();
+        List<JoinChatRoom> joinChatRoomList = joinChatRoomRepository.findJoinChatRoomsByChatRoom_ChatRoomId(chatRoomId);
+        int count = 0;
+        // 채팅방 둘다 아웃인 경우 즉, false일 경우 채팅방 삭제
+        for(JoinChatRoom tempJoinChatRoom : joinChatRoomList) {
+            if(tempJoinChatRoom.isJoinChatRoomOut()) {
+                count ++;
+            }
+        }
+        if(count==2) {
+            // JoinChatRoom 삭제
+            joinChatRoomRepository.deleteAllByChatRoom_ChatRoomId(chatRoomId);
+            // 채팅방메시지 모두 삭제
+            chatMessageRepository.deleteAllByChatroom_ChatRoomId(chatRoomId);
+            // 채팅방 삭제
+            chatRoomRepository.deleteByChatRoomId(chatRoomId);
+        }
+
+        // 채팅방 둘다 아웃이 아닌 경우 즉, 한쪽이라도 true일 경우 joinChatroom 채팅방 아웃 칼럼을 수정하여 저장
+        for(JoinChatRoom tempJoinChatRoom : joinChatRoomList) {
+            if(tempJoinChatRoom.getUser().getId().equals(userId)) {
+                tempJoinChatRoom.isOut(true);
+                joinChatRoomRepository.save(tempJoinChatRoom);
+            }
+        }
+    }
 }
-
-
 
 
 

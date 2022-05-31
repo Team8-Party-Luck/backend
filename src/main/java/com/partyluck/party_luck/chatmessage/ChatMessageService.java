@@ -85,17 +85,26 @@ public class ChatMessageService {
 
         for(ChatMessage chatMessage : chatMessageList) {
             Long senderId = chatMessage.getSenderId();
-            User sender = userRepository.findById(senderId).orElseThrow(
-                    () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
-            );
+            User sender = userRepository.findById(senderId).orElse(null);
+            if(sender==null){
+                MessageResponseDto messageResponseDto = MessageResponseDto.builder()
+                        .message(chatMessage.getMessage())
+                        .createdAt(extractDateFormat(chatMessage.getCreatedAt()))
+                        .userId(senderId)
+                        .imageUrl(null)
+                        .build();
+                messageResponseDtoList.add(messageResponseDto);
 
-            MessageResponseDto messageResponseDto = MessageResponseDto.builder()
-                    .message(chatMessage.getMessage())
-                    .createdAt(extractDateFormat(chatMessage.getCreatedAt()))
-                    .userId(senderId)
-                    .imageUrl(initialInfoRepository.findInitialInfoByUserId(senderId).orElse(null).getProfile_img())
-                    .build();
-            messageResponseDtoList.add(messageResponseDto);
+            }
+            else{
+                MessageResponseDto messageResponseDto = MessageResponseDto.builder()
+                        .message(chatMessage.getMessage())
+                        .createdAt(extractDateFormat(chatMessage.getCreatedAt()))
+                        .userId(senderId)
+                        .imageUrl(initialInfoRepository.findInitialInfoByUserId(senderId).orElse(null).getProfile_img())
+                        .build();
+                messageResponseDtoList.add(messageResponseDto);
+            }
         }
         return messageResponseDtoList;
     }
