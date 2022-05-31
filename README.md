@@ -36,17 +36,18 @@
 
 <img src="https://img.shields.io/badge/Stomp-010101?style=flat-square&logo=Stomp&logoColor=white"/> <img src="https://img.shields.io/badge/Socket-010101?style=flat-square&logo=Socket.io&logoColor=white"/> <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white"/> <img src="https://img.shields.io/badge/Sourcetree-0052CC?style=flat-square&logo=Sourcetree&logoColor=white"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>
 
-<img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=Amazon S3&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=Amazon AWS&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/> <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=Amazon S3&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat-square&logo=Amazon AWS&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/>
 
 ### ⚙️ 개발 환경
 - **Server** : AWS EC2(Ubuntu)
 - **Framework** : Springboot
-- **Database** : Mysql (AWS RDS), Redis (Aws ElastiCache)
-- **ETC** : AWS S3, AWS IAM, AWS Code deploy, NginX
+- **Database** : Mysql (AWS RDS), Redis
+- **ETC** : AWS S3, AWS IAM, AWS Code deploy, NginX, GitHub Actions
 
 
 ### 💥 트러블 슈팅
-- **XXXXX** - <a href="입력주소"> 페이지로 이동</a>
-- **XXXXX** - <a href="입력주소"> 페이지로 이동</a>
-- **XXXXX** - <a href="입력주소"> 페이지로 이동</a>
+- **회원탈퇴시 JPA Error** - <a href="https://www.notion.so/JPA-55471ad24b554307bf7a0401bf09c070"> 페이지로 이동</a>
+- **413 Request Entity Too Large Error** - <a href="https://www.notion.so/Nginx-413-Request-Entity-Too-Large-a8129fb300cb4af5a8ab55d5f6860e66"> 페이지로 이동</a>
+- **File Upload시 Permission Denied** - <a href="https://www.notion.so/ERROR-File-Upload-Permission-Denied-1ac95a8c772b43939be3722bcffb8779"> 페이지로 이동</a>
+- **XXXXXXX** - <a href="XXXXX"> 페이지로 이동</a>
+- **XXXXXXX** - <a href="XXXXX"> 페이지로 이동</a>
