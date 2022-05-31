@@ -7,11 +7,17 @@
 
 
 ### 🏠 소개
-- Eatsring(잇츨링) 서비스는 <b>맛집탐방</b>과 <b>파티원 모집</b> 서비스입니다.
-- 맛집탐방을 함께하고 싶은 파티원을 모집해주는 서비스입니다.
+- Eatsring(잇츨링) 서비스는 <b>맛집탐방</b>을 위한 <b>파티원 모집</b> 서비스입니다.
 - 주요기능
-  1. WebSocket을 이용한 실시간 채팅
-
+  1. 파티 조회
+    - 지역별 파티 조회
+    - 신청한 파티 조회
+    - 찜한 파티 조회
+  2. 파티 등록 및 신청
+    - 모집 인원의 연령, 성별 설정
+    - 모집 인원 정보에 해당하지 않으면 신청 불가
+  3. WebSocket을 이용한 실시간 채팅
+  4. 프로필 조회 및 수정
 
 ### ⏲️ 개발기간
 2022년 04월 22일 ~ 2022년 06월 3일
@@ -26,7 +32,7 @@
 
 
 ### 👉 서비스 아키텍쳐
-![image](https://user-images.githubusercontent.com/35111721/170951628-cb9fe39a-f035-4099-b1ee-f9a24aeb78ca.png)
+<img width="632" alt="서비스아키텍처수정" src="https://user-images.githubusercontent.com/100110567/171096435-5cb4aef0-72d8-40a0-aa07-5e9e7dcbbb4f.png">
 
 ### 👉 ERD
 ![image](https://user-images.githubusercontent.com/35111721/170952046-a159e451-5222-4d28-874c-6eae748c8455.png)
