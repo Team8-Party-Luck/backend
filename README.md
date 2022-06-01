@@ -32,7 +32,7 @@
 
 
 ### 👉 서비스 아키텍쳐
-<img width="632" alt="서비스아키텍처수정" src="https://user-images.githubusercontent.com/100110567/171096435-5cb4aef0-72d8-40a0-aa07-5e9e7dcbbb4f.png">
+<img width="713" alt="스크린샷 2022-06-01 오후 3 45 33" src="https://user-images.githubusercontent.com/100110567/171344376-2ecf28f0-5650-4695-b850-28bb20502285.png">
 
 ### 👉 ERD
 ![image](https://user-images.githubusercontent.com/35111721/170952046-a159e451-5222-4d28-874c-6eae748c8455.png)
