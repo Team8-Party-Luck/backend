@@ -1,5 +1,6 @@
 package com.partyluck.party_luck.party;
 
+import com.partyluck.party_luck.alarm.AlarmService;
 import com.partyluck.party_luck.config.S3Uploader;
 import com.partyluck.party_luck.party.domain.Image;
 import com.partyluck.party_luck.party.domain.Party;
@@ -46,6 +47,7 @@ public class PartyService {
     private final SimpMessageSendingOperations messagingTemplate;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
+    private final AlarmService alarmService;
 
 
     //파티 등록
@@ -65,6 +67,8 @@ public class PartyService {
             }
             PartyJoin partyJoin = new PartyJoin(userRepository.findById(id).orElse(null), partyRepository.findById(partyid).orElse(null));
             partyJoinRepository.save(partyJoin);
+
+            alarmService.sendAlarm(partyid);
         } catch (Exception e) {
             return new ResponseDto(false, 400, "등록 실패...");
         }
@@ -165,12 +169,35 @@ public class PartyService {
         if (partyRepository.findById(id).orElse(null).getUserid() == userDetailsId) {
             try {
                 if (partyRepository.findById(id).orElse(null) != null) {
+
+                    //알람에 들어갈 내용
+                    String image = imageRepository.findImageByImgIndexAndPartyid(1, id).get().getImageSrc();
+                    String title = partyRepository.findById(id).get().getTitle();
+                    String store = partyRepository.findById(id).get().getStore();
+                    String alarms = "신청하신 파티가 취소 되었습니다";
+
+                    List<PartyJoin> tmp = partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
+
+                    //파티 삭제
                     imageRepository.deleteAllByPartyid(id);
                     partyJoinRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
                     subscribeRepository.deleteAllByParty(partyRepository.findById(id).orElse(null));
                     partyRepository.deleteById(id);
 
-                    //파티삭제 알림
+                    //시간
+                    SimpleDateFormat format1 = new SimpleDateFormat("MMddHHmm");
+                    Date cur = new Date();
+                    String curtime = format1.format(cur);
+
+                    //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
+                    for (PartyJoin p : tmp) {
+                        User user = p.getUser();
+                        AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime, user.getId());
+                        Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
+                        alarmRepository.save(alarm);
+                        messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto);
+                    }
+
                 } else
                     return new ResponseDto(false, 500, "존재하지 않는 파티입니다.");
             } catch (Exception e) {
@@ -566,14 +593,16 @@ public class PartyService {
 
             //알람보내기 - 참여한 파티 구성원들에게 다 보내주기
             List<PartyJoin> tmp=partyJoinRepository.findAllByParty(partyRepository.findById(id).orElse(null));
-            for(PartyJoin p : tmp){
-                User user = p.getUser();
-                AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms, curtime,user.getId());
-                Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
-                alarmRepository.save(alarm);
-                messagingTemplate.convertAndSend("/alarm/"+user.getId().toString(),alarmPageResponseDto); //destination 프론트랑 이야기해야
-                String topic=channelTopic.getTopic();
-                redisTemplate.convertAndSend(topic, alarmPageResponseDto);
+            for(PartyJoin p : tmp) {
+                for (int i = 0; i < alarms.size(); i++) {
+                    User user = p.getUser();
+                    AlarmPageResponseDto alarmPageResponseDto = new AlarmPageResponseDto(image, title, store, alarms.get(i), curtime, user.getId());
+                    Alarm alarm = new Alarm(alarmPageResponseDto, id, user, curtime);
+                    alarmRepository.save(alarm);
+                    messagingTemplate.convertAndSend("/alarm/" + user.getId().toString(), alarmPageResponseDto); //destination 프론트랑 이야기해야
+                    String topic = channelTopic.getTopic();
+                    redisTemplate.convertAndSend(topic, alarmPageResponseDto);
+                }
             }
 
 

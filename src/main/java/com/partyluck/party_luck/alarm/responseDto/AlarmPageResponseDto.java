@@ -10,19 +10,19 @@ import java.util.List;
 @NoArgsConstructor
 public class AlarmPageResponseDto {
 
-    private List<String> alarms;
+    private String alarms;
     private String title;
     private String store;
     private String image;
     private String createdAt;
     private Long userId;
 
-    public AlarmPageResponseDto(String title, String store, String image, List<String> alarms, String createdAt,Long userId) {
+    public AlarmPageResponseDto(String title, String store, String image, String alarms, String createdAt, Long userId) {
         this.title = title;
         this.store = store;
         this.image = image;
-        this.alarms=alarms;
+        this.alarms= alarms;
         this.createdAt = createdAt;
-        this.userId=userId;
+        this.userId = userId;
     }
 }

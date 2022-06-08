@@ -16,10 +16,19 @@ public class Alarm {
     private Long alarmId;
 
     @Column
-    private String alarmMessage;
+    private String alarms;
 
     @Column
     private Long partyId;
+
+    @Column
+    private String title;
+
+    @Column
+    private String store;
+
+    @Column
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
@@ -36,11 +45,12 @@ public class Alarm {
 
 
     public Alarm(AlarmPageResponseDto alarmPageResponseDto, Long id, User user, String createdAt) {
-        String s="";
-        for(int i=0;i<alarmPageResponseDto.getAlarms().size();i++)
-            s+=alarmPageResponseDto.getAlarms().get(i)+System.lineSeparator();
-        this.alarmMessage = s.substring(0,s.length()-1);
+
+        this.alarms = alarmPageResponseDto.getAlarms();
         this.partyId = id;
+        this.title = alarmPageResponseDto.getTitle();
+        this.store = alarmPageResponseDto.getStore();
+        this.image = alarmPageResponseDto.getImage();
         this.user = user;
         this.createdAt = createdAt;
     }

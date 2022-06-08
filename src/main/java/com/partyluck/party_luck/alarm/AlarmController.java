@@ -4,10 +4,7 @@ import com.partyluck.party_luck.security.UserDetailsImpl;
 import com.partyluck.party_luck.alarm.responseDto.AlarmPageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +24,11 @@ public class AlarmController {
 
         return alarmPageResponseDtoList;
     }
+
+//    @PutMapping("/alarm/check")
+//    public String checkAlarm(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//    }
 
     //알람 메시지 삭제
     @DeleteMapping("/delete/alarm/{alarmId}")
